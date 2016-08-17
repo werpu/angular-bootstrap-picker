@@ -223,7 +223,15 @@ var DatePicker = (function () {
                  */
                 this._selectDate = function (selectedDate) {
                     if (!selectedDate.invalid) {
-                        _format(selectedDate.momentDate.toDate());
+                        if (_this.startDate && selectedDate.momentDate.isBefore(moment.tz(_this.startDate, _getTimezone()))) {
+                            _this.ngModel.$setViewValue(_this.startDate);
+                        }
+                        else if (_this.endDate && selectedDate.momentDate.isAfter(moment.tz(_this.endDate, _getTimezone()))) {
+                            _this.ngModel.$setViewValue(_this.endDate);
+                        }
+                        else {
+                            _format(selectedDate.momentDate.toDate());
+                        }
                         _this.pickerVisible = false;
                     }
                 };
@@ -397,6 +405,13 @@ var DatePicker = (function () {
                         if (data == "") {
                             return null;
                         }
+                        //TODO move this into the formatting loop
+                        if (_this.startDate && data === moment.tz(_this.startDate, _getTimezone()).format(_getDateFormat())) {
+                            return _this.startDate;
+                        }
+                        if (_this.endDate && data === moment.tz(_this.endDate, _getTimezone()).format(_getDateFormat())) {
+                            return _this.endDate;
+                        }
                         return moment.tz(data, _getDateFormat(), _getTimezone()).toDate();
                     });
                     /**
@@ -412,7 +427,7 @@ var DatePicker = (function () {
                         return moment.tz(viewValue, _getDateFormat(), _getTimezone()).isValid();
                     };
                     /**
-                     * checks if it is within the alllowed date range if there is one
+                     * checks if it is within the allowed date range if there is one
                      * @param data
                      * @param viewValue
                      * @returns {boolean}
@@ -618,10 +633,10 @@ var ViewModelBuilder = (function () {
             }
             var isInvalid = false;
             if (momentStartDate) {
-                isInvalid = isInvalid || date.isBefore(momentStartDate);
+                isInvalid = isInvalid || (date.startOf("day").isBefore(momentStartDate) && date.endOf("day").isBefore(momentStartDate));
             }
             if (!isInvalid && momentEndDate) {
-                isInvalid = isInvalid || date.isAfter(momentEndDate);
+                isInvalid = isInvalid || (date.startOf("day").isAfter(momentEndDate) && date.endOf("day").isAfter(momentEndDate));
             }
             pickerPage.row[pickerPage.row.length - 1].push(new DatePickerTypes_1.PickerYear(isInvalid, date, parseInt(date.tz(timezone).format("YYYY"))));
             cnt++;
@@ -646,10 +661,10 @@ var ViewModelBuilder = (function () {
             }
             var isInvalid = false;
             if (momentStartDate) {
-                isInvalid = isInvalid || date.isBefore(momentStartDate);
+                isInvalid = isInvalid || (date.startOf("day").isBefore(momentStartDate) && date.endOf("day").isBefore(momentStartDate));
             }
             if (!isInvalid && momentEndDate) {
-                isInvalid = isInvalid || date.isAfter(momentEndDate);
+                isInvalid = isInvalid || (date.startOf("day").isAfter(momentEndDate) && date.endOf("day").isAfter(momentEndDate));
             }
             pickerPage.row[pickerPage.row.length - 1].push(new DatePickerTypes_1.PickerMonth(isInvalid, date, date.tz(timezone).format("MMMM"), date.tz(timezone).isSame(momentDate, "year")));
             cnt++;
@@ -670,8 +685,8 @@ var ViewModelBuilder = (function () {
         var momentDate = moment.tz(newValue, timezone);
         var start = moment.tz(newValue, timezone).startOf("month").startOf("week");
         var end = moment.tz(newValue, timezone).endOf("month").endOf("week");
-        var momentStartDate = (startDate) ? moment.tz(startDate, timezone).startOf("day") : null;
-        var momentEndDate = (endDate) ? moment.tz(endDate, timezone).endOf("day") : null;
+        var momentStartDate = (startDate) ? startDate : null;
+        var momentEndDate = (endDate) ? endDate : null;
         var range1 = moment.range(start, end);
         var weeks = [];
         var dayOfWeek = [];
@@ -682,10 +697,10 @@ var ViewModelBuilder = (function () {
             }
             var isInvalid = false;
             if (momentStartDate) {
-                isInvalid = isInvalid || date.isBefore(momentStartDate);
+                isInvalid = isInvalid || (date.startOf("day").isBefore(momentStartDate) && date.endOf("day").isBefore(momentStartDate));
             }
             if (!isInvalid && momentEndDate) {
-                isInvalid = isInvalid || date.isAfter(momentEndDate);
+                isInvalid = isInvalid || (date.startOf("day").isAfter(momentEndDate) && date.endOf("day").isAfter(momentEndDate));
             }
             weeks[weeks.length - 1].days.push(new DatePickerTypes_1.PickerDate(isInvalid, date, date.tz(timezone).get("date"), date.tz(timezone).isSame(momentDate, "month")));
             //We also need to display the work days

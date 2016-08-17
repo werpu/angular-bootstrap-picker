@@ -24,7 +24,6 @@ import {ViewModelBuilder} from "./ViewModelBuilder";
 import {PickerDate, PickerMonth, PickerYear} from "./DatePickerTypes";
 
 
-
 class DatePicker implements IComponentOptions {
 
     template = () => {
@@ -240,7 +239,14 @@ class DatePicker implements IComponentOptions {
              */
             this._selectDate = (selectedDate: PickerDate) => {
                 if (!selectedDate.invalid) {
-                    _format(selectedDate.momentDate.toDate());
+                    if (this.startDate && selectedDate.momentDate.isBefore(moment.tz(this.startDate, _getTimezone()))) {
+                        this.ngModel.$setViewValue(this.startDate);
+                    } else if (this.endDate && selectedDate.momentDate.isAfter(moment.tz(this.endDate, _getTimezone()))) {
+                        this.ngModel.$setViewValue(this.endDate);
+                    } else {
+                        _format(selectedDate.momentDate.toDate());
+                    }
+
 
                     this.pickerVisible = false;
                 }
@@ -445,6 +451,13 @@ class DatePicker implements IComponentOptions {
                     if (data == "") {
                         return null;
                     }
+                    //TODO move this into the formatting loop
+                    if (this.startDate && data === moment.tz(this.startDate, _getTimezone()).format(_getDateFormat())) {
+                        return this.startDate;
+                    }
+                    if (this.endDate && data === moment.tz(this.endDate, _getTimezone()).format(_getDateFormat())) {
+                        return this.endDate;
+                    }
                     return moment.tz(data, _getDateFormat(), _getTimezone()).toDate();
                 });
 
@@ -462,7 +475,7 @@ class DatePicker implements IComponentOptions {
                 };
 
                 /**
-                 * checks if it is within the alllowed date range if there is one
+                 * checks if it is within the allowed date range if there is one
                  * @param data
                  * @param viewValue
                  * @returns {boolean}
