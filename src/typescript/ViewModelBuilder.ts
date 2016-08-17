@@ -55,10 +55,10 @@ export class ViewModelBuilder {
 
             var isInvalid = false;
             if (momentStartDate) {
-                isInvalid = isInvalid || date.isBefore(momentStartDate);
+                isInvalid = isInvalid || (date.startOf("day").isBefore(momentStartDate) && date.endOf("day").isBefore(momentStartDate));
             }
             if (!isInvalid && momentEndDate) {
-                isInvalid = isInvalid || date.isAfter(momentEndDate);
+                isInvalid = isInvalid || (date.startOf("day").isAfter(momentEndDate) && date.endOf("day").isAfter(momentEndDate));
             }
 
             pickerPage.row[pickerPage.row.length - 1].push(
@@ -96,10 +96,10 @@ export class ViewModelBuilder {
 
             var isInvalid = false;
             if (momentStartDate) {
-                isInvalid = isInvalid || date.isBefore(momentStartDate);
+                isInvalid = isInvalid || (date.startOf("day").isBefore(momentStartDate) && date.endOf("day").isBefore(momentStartDate));
             }
             if (!isInvalid && momentEndDate) {
-                isInvalid = isInvalid || date.isAfter(momentEndDate);
+                isInvalid = isInvalid || (date.startOf("day").isAfter(momentEndDate) && date.endOf("day").isAfter(momentEndDate));
             }
 
             pickerPage.row[pickerPage.row.length - 1].push(
@@ -128,8 +128,8 @@ export class ViewModelBuilder {
         var start = moment.tz(newValue, timezone).startOf("month").startOf("week");
         var end = moment.tz(newValue, timezone).endOf("month").endOf("week");
 
-        var momentStartDate = (startDate) ? moment.tz(startDate, timezone).startOf("day") : null;
-        var momentEndDate = (endDate) ? moment.tz(endDate, timezone).endOf("day") : null;
+        var momentStartDate = (startDate) ? startDate : null;
+        var momentEndDate = (endDate) ? endDate : null;
 
 
         var range1 = moment.range(start, end);
@@ -144,11 +144,12 @@ export class ViewModelBuilder {
             }
 
             var isInvalid = false;
+
             if (momentStartDate) {
-                isInvalid = isInvalid || date.isBefore(momentStartDate);
+                isInvalid = isInvalid || (date.startOf("day").isBefore(momentStartDate) && date.endOf("day").isBefore(momentStartDate));
             }
             if (!isInvalid && momentEndDate) {
-                isInvalid = isInvalid || date.isAfter(momentEndDate);
+                isInvalid = isInvalid || (date.startOf("day").isAfter(momentEndDate) && date.endOf("day").isAfter(momentEndDate));
             }
 
             weeks[weeks.length - 1].days.push(
