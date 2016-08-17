@@ -25,7 +25,11 @@ unless the need arises. Also expect additonal refactorings in the near future to
 
 ## Installation
 
-TODO installation instructions via bower once i have bower working
+Installation via bower
+
+```
+bower install werpu/angular-bootstrap-picker --save
+```
 
 ## Demo
 
