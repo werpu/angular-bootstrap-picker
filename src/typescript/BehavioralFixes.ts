@@ -66,20 +66,9 @@ export class BehavioralFixes {
         if (!controller.documentClickHandler) {
             var clickHandler = () => {
 
-                //if event target not child of element we close
-                var target = event.target;
-                var isChild = false;
-                $element.find(".picker-popup, .picker-popup *").each((cnt, element) => {
-                    isChild = isChild || element == target;
-                    if(isChild) {
-                        return false;
-                    }
-                });
-
-                if(!isChild) {
                     BehavioralFixes.unregisterDocumentBindings(controller);
                     $element.find(".picker-close").click();
-                }
+
 
             };
             angular.element(document).bind("click", clickHandler);
@@ -98,5 +87,12 @@ export class BehavioralFixes {
             angular.element(document).unbind("click", controller.documentClickHandler);
             controller.documentClickHandler = null;
         }
+    }
+
+    static registerPopupBindings($element: JQuery) {
+        $element.find(".picker-popup").on("click", (event: JQueryEventObject) => {
+            event.stopImmediatePropagation();
+            event.stopPropagation();
+        });
     }
 }
