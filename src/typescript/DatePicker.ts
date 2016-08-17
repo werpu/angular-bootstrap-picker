@@ -19,153 +19,10 @@
 import IComponentOptions = angular.IComponentOptions;
 import ITimeoutService = angular.ITimeoutService;
 import IScope = angular.IScope;
-import {
-    YearPickerPage, MonthPickerPage, DatePickerPage, PickerDate, PickerMonth, PickerYear,
-    PickerWeek
-} from "./DatePickerTypes";
+import {BehavioralFixes} from "./BehavioralFixes";
+import {ViewModelBuilder} from "./ViewModelBuilder";
+import {PickerDate, PickerMonth, PickerYear} from "./DatePickerTypes";
 
-
-var _calculateYearView = function (newValue:Date, startDate:Date, endDate:Date, timezone:string):YearPickerPage {
-
-    if (!newValue) {
-        newValue = new Date();
-    }
-
-    var current = moment.tz(newValue, timezone);
-
-    var offset = current.get("year") % 20 - 1;
-    var nextDecadeOffset = 20-offset - 1;
-
-
-   var start = moment.tz(newValue, timezone).startOf("year").startOf("month").startOf("day").subtract("year", offset);
-   var end = moment.tz(newValue, timezone).endOf("year").endOf("month").endOf("day").add("year", nextDecadeOffset);
-
-    var momentStartDate = (startDate) ? moment.tz(startDate, timezone).startOf("year").startOf("month").startOf("day") : null;
-    var momentEndDate = (endDate) ? moment.tz(endDate, timezone).endOf("year").endOf("month").endOf("day") : null;
-
-    var cnt = 0;
-    var pickerPage = new YearPickerPage();
-
-    var range1 = moment.range(start, end);
-    range1.by("year", (date:moment.Moment) => {
-        if (cnt % 5 == 0) {
-            pickerPage.row.push([]);
-        }
-
-        var isInvalid = false;
-        if (momentStartDate) {
-            isInvalid = isInvalid || date.isBefore(momentStartDate);
-        }
-        if (!isInvalid && momentEndDate) {
-            isInvalid = isInvalid || date.isAfter(momentEndDate);
-        }
-
-        pickerPage.row[pickerPage.row.length - 1].push(
-            new PickerYear(isInvalid, date, parseInt(date.tz(timezone).format("YYYY")))
-        );
-
-        cnt++;
-    });
-    return pickerPage;
-};
-
-
-
-var _calculateMonthView = function (newValue:Date, startDate:Date, endDate:Date, timezone:string):MonthPickerPage {
-    if (!newValue) {
-        newValue = new Date();
-    }
-
-    var momentDate = moment.tz(newValue, timezone);
-
-    var start = moment.tz(newValue, timezone).startOf("year").startOf("month").startOf("day");
-    var end = moment.tz(newValue, timezone).endOf("year").endOf("month").endOf("day");
-
-    var momentStartDate = (startDate) ? moment.tz(startDate, timezone).startOf("month").startOf("day") : null;
-    var momentEndDate = (endDate) ? moment.tz(endDate, timezone).endOf("month").endOf("day") : null;
-
-    var range1 = moment.range(start, end);
-
-    var cnt = 0;
-    var pickerPage = new MonthPickerPage(momentDate.get("year"));
-    range1.by("month", (date:moment.Moment) => {
-
-        if (cnt % 3 == 0) {
-            pickerPage.row.push([]);
-        }
-
-        var isInvalid = false;
-        if (momentStartDate) {
-            isInvalid = isInvalid || date.isBefore(momentStartDate);
-        }
-        if (!isInvalid && momentEndDate) {
-            isInvalid = isInvalid || date.isAfter(momentEndDate);
-        }
-
-        pickerPage.row[pickerPage.row.length - 1].push(
-            new PickerMonth(isInvalid, date, date.tz(timezone).format("MMMM"), date.tz(timezone).isSame(momentDate, "year"))
-        );
-
-        cnt++;
-    });
-
-    return pickerPage;
-};
-
-/**
- * calculates the current page for a given date
- * this is the main layout calculation function for the date view
- * for
- * @param newValue
- * @private
- */
-var _calculateDateView = function (newValue:Date, startDate:Date, endDate:Date, timezone:string):DatePickerPage {
-    if (!newValue) {
-        newValue = new Date();
-    }
-
-    var momentDate = moment.tz(newValue, timezone);
-    var start = moment.tz(newValue, timezone).startOf("month").startOf("week");
-    var end = moment.tz(newValue, timezone).endOf("month").endOf("week");
-
-    var momentStartDate = (startDate) ? moment.tz(startDate, timezone).startOf("day") : null;
-    var momentEndDate = (endDate) ? moment.tz(endDate, timezone).endOf("day") : null;
-
-
-    var range1 = moment.range(start, end);
-    var weeks:any = [];
-    var dayOfWeek:Array<string> = [];
-
-    var cnt = 0;
-    range1.by("day", (date:moment.Moment) => {
-
-        if (cnt % 7 == 0) {
-            weeks.push(new PickerWeek(date.tz(timezone).get("week")));
-        }
-
-        var isInvalid = false;
-        if (momentStartDate) {
-            isInvalid = isInvalid || date.isBefore(momentStartDate);
-        }
-        if (!isInvalid && momentEndDate) {
-            isInvalid = isInvalid || date.isAfter(momentEndDate);
-        }
-
-        weeks[weeks.length - 1].days.push(
-            new PickerDate(isInvalid, date, date.tz(timezone).get("date"), date.tz(timezone).isSame(momentDate, "month"))
-        );
-
-        //We also need to display the work days
-        if (dayOfWeek.length < 7) {
-            dayOfWeek.push(date.tz(timezone).format("ddd"));
-        }
-
-        cnt++;
-
-    });
-
-    return new DatePickerPage(momentDate.get("year"), dayOfWeek, weeks);
-};
 
 
 class DatePicker implements IComponentOptions {
@@ -176,12 +33,13 @@ class DatePicker implements IComponentOptions {
                <input type="text" placeholder="{{ctrl.placeholder}}" class="form-control" name="{{ctrl.name}}" ng-model="ctrl.innerSelection"></input>
                <span class="input-group-btn">
                    <button class="picker-open btn btn-default" ng-click="ctrl._openPicker()">
-                         <span class="glyphicon glyphicon-align-right glyph-icon glyphicon-calendar"> Date </span>
+                         <span class="glyphicon glyphicon-align-right glyph-icon glyphicon-calendar"> {{ctrl.buttonLabel}} </span>
                    </button>
                </span>
+               <input type="button" class="picker-close" ng-click="ctrl._close()" value="Close" ng-show="false"/>
            </div>
            <!-- date view - default view -->
-           <div class="picker-popup date-picker" ng-if="ctrl.pickerVisible && ctrl.view == 'DATE'">                
+           <div class="picker-popup date-picker" ng-show="ctrl.pickerVisible && ctrl.view == 'DATE'">                
                 <table>
                     <thead>
                         <!-- TODO year forward and backward -->
@@ -208,7 +66,7 @@ class DatePicker implements IComponentOptions {
            </div>
            
            <!-- month view -->
-            <div class="picker-popup month-picker" ng-if="ctrl.pickerVisible && ctrl.view == 'MONTH'">
+            <div class="picker-popup month-picker" ng-show="ctrl.pickerVisible && ctrl.view == 'MONTH'">
                  <table>
                     <thead>
                           <tr>
@@ -231,7 +89,7 @@ class DatePicker implements IComponentOptions {
             </div>    
                  
             <!-- year view -->  
-            <div class="picker-popup year-picker" ng-if="ctrl.pickerVisible && ctrl.view == 'YEAR'">
+            <div class="picker-popup year-picker" ng-show="ctrl.pickerVisible && ctrl.view == 'YEAR'">
                   <table>
                     <thead>
                     <tr>
@@ -256,21 +114,24 @@ class DatePicker implements IComponentOptions {
 
     controllerAs = "ctrl";
 
-    bindings:any = {
+    bindings: any = {
         name: "@",
         timezone: "@",
         startDate: "<",
         endDate: "<",
         dateFormat: "@",
-        placeholder: "@"
+        placeholder: "@",
+        buttonLabel: "@"
     };
 
-    require:any = {
+    require: any = {
         "ngModel": 'ngModel',
     };
 
-    controller:any = ["$scope",
-        function ($scope:IScope) {
+    controller: any = ["$scope", "$element", "$timeout",
+        function ($scope: IScope, $element: JQuery, $timeout: ITimeoutService) {
+
+            this.buttonLabel = ("undefined" == typeof  this.buttonLabel || null == this.buttonLabel) ? "Date" : this.buttonLabel;
 
             this.visibleDays = [];
 
@@ -283,11 +144,11 @@ class DatePicker implements IComponentOptions {
              * @returns {string}
              * @private
              */
-            var _getTimezone = ():string => {
+            var _getTimezone = (): string => {
                 return this.timezone || moment.tz.guess();
             };
 
-            var _getDateFormat = ():string => {
+            var _getDateFormat = (): string => {
                 return this.dateFormat || "DD.MM.YYYY";
             };
 
@@ -300,9 +161,9 @@ class DatePicker implements IComponentOptions {
              * @param value
              * @private
              */
-            var _format = (value:Date) => {
+            var _format = (value: Date) => {
                 var innerSelection = value;
-                for(var cnt = 0;this.ngModel.$formatters && cnt < this.ngModel.$formatters.length; cnt++) {
+                for (var cnt = 0; this.ngModel.$formatters && cnt < this.ngModel.$formatters.length; cnt++) {
                     innerSelection = this.ngModel.$formatters[cnt](innerSelection);
                 }
 
@@ -316,7 +177,7 @@ class DatePicker implements IComponentOptions {
              * @returns {boolean}
              * @private
              */
-            this._isSelectedDate = (selectedDate:PickerDate) => {
+            this._isSelectedDate = (selectedDate: PickerDate) => {
                 if (!this.ngModel.$modelValue) {
                     return false;
                 } else {
@@ -333,7 +194,7 @@ class DatePicker implements IComponentOptions {
              * @returns {boolean}
              * @private
              */
-            this._isToday = (selectedDate:PickerDate) => {
+            this._isToday = (selectedDate: PickerDate) => {
 
                 var modelDate = moment.tz(new Date(), _getTimezone());
                 return modelDate.isSame(selectedDate.momentDate, "date") &&
@@ -342,7 +203,7 @@ class DatePicker implements IComponentOptions {
 
             };
 
-            this._isTodayMonth = (selectedDate:PickerMonth) => {
+            this._isTodayMonth = (selectedDate: PickerMonth) => {
 
                 var modelDate = moment.tz(new Date(), _getTimezone());
                 return modelDate.isSame(selectedDate.momentDate, "month") &&
@@ -350,7 +211,7 @@ class DatePicker implements IComponentOptions {
 
             };
 
-            this._isSameMonth = (selectedMonth:PickerMonth) => {
+            this._isSameMonth = (selectedMonth: PickerMonth) => {
                 var modelDate = moment.tz(new Date(), _getTimezone());
 
                 return modelDate.isSame(selectedMonth.momentDate, "month") &&
@@ -358,14 +219,14 @@ class DatePicker implements IComponentOptions {
             };
 
 
-            this._isTodayYear = (selectedDate:PickerYear) => {
+            this._isTodayYear = (selectedDate: PickerYear) => {
 
                 var modelDate = moment.tz(new Date(), _getTimezone());
                 return modelDate.isSame(selectedDate.momentDate, "year");
 
             };
 
-            this._isSameYear = (selectedMonth:PickerYear) => {
+            this._isSameYear = (selectedMonth: PickerYear) => {
                 var modelDate = moment.tz(new Date(), _getTimezone());
 
                 return modelDate.isSame(selectedMonth.momentDate, "year");
@@ -377,7 +238,7 @@ class DatePicker implements IComponentOptions {
              * @param selectedDate
              * @private
              */
-            this._selectDate = (selectedDate:PickerDate) => {
+            this._selectDate = (selectedDate: PickerDate) => {
                 if (!selectedDate.invalid) {
                     _format(selectedDate.momentDate.toDate());
 
@@ -390,9 +251,9 @@ class DatePicker implements IComponentOptions {
              * @param selectedDate
              * @private
              */
-            this._selectMonth = (selectedDate:PickerMonth) => {
+            this._selectMonth = (selectedDate: PickerMonth) => {
                 if (!selectedDate.invalid) {
-                    if(!this.ngModel.$modelValue) {
+                    if (!this.ngModel.$modelValue) {
                         this._currentDate = selectedDate;
                     } else {
                         //we also have to update our currently selected date
@@ -408,9 +269,9 @@ class DatePicker implements IComponentOptions {
              * @param selectedDate
              * @private
              */
-            this._selectYear = (selectedDate:PickerYear) => {
+            this._selectYear = (selectedDate: PickerYear) => {
                 if (!selectedDate.invalid) {
-                    if(!this.ngModel.$modelValue) {
+                    if (!this.ngModel.$modelValue) {
                         _format(selectedDate.momentDate.toDate());
                     } else {
                         var value = moment.tz(this.ngModel.$modelValue, _getTimezone());
@@ -424,15 +285,15 @@ class DatePicker implements IComponentOptions {
 
 
             this._updatePickerData = () => {
-                this.monthPickerData = _calculateDateView(this._currentDate.toDate(), this.startDate, this.endDate, _getTimezone());
-                this.yearPickerData = _calculateMonthView(this._currentDate.toDate(), this.startDate, this.endDate, _getTimezone());
-                this.decadePickerData = _calculateYearView(this._currentDate.toDate(), this.startDate, this.endDate, _getTimezone());
+                this.monthPickerData = ViewModelBuilder.calculateDateView(this._currentDate.toDate(), this.startDate, this.endDate, _getTimezone());
+                this.yearPickerData = ViewModelBuilder.calculateMonthView(this._currentDate.toDate(), this.startDate, this.endDate, _getTimezone());
+                this.decadePickerData = ViewModelBuilder.calculateYearView(this._currentDate.toDate(), this.startDate, this.endDate, _getTimezone());
 
                 var offset = this._currentDate.get("year") % 20 - 1;
                 this.decadeFrom = moment.tz(this._currentDate.toDate(), _getTimezone()).subtract("year", offset).format("YYYY");
 
-                var offset = this._currentDate.get("year")  % 20 - 1;
-                var nextDecadeOffset = 20-offset-1;
+                var offset = this._currentDate.get("year") % 20 - 1;
+                var nextDecadeOffset = 20 - offset - 1;
                 this.decadeTo = moment.tz(this._currentDate.toDate(), _getTimezone()).add("year", nextDecadeOffset).format("YYYY");
 
             };
@@ -444,12 +305,18 @@ class DatePicker implements IComponentOptions {
              */
             this._openPicker = () => {
 
+
                 var timezone = this.timezone || moment.tz.guess();
 
                 this._currentDate = (this.ngModel.$modelValue) ? moment.tz(this.ngModel.$modelValue, timezone) : moment.tz(new Date(), timezone);
 
                 this._updatePickerData();
                 this.pickerVisible = true;
+                if (!this.documentClickHandler) {
+                    $timeout(() => {
+                        BehavioralFixes.registerDocumentBindings($element, this);
+                    });
+                }
             };
 
             /**
@@ -529,6 +396,8 @@ class DatePicker implements IComponentOptions {
              * @private
              */
             this._close = () => {
+                this.view = "DATE";
+                this.viewStack = [];
                 this.pickerVisible = false;
             };
 
@@ -548,13 +417,21 @@ class DatePicker implements IComponentOptions {
             };
 
             //with this trick we are able to traverse the outer ngModel view value into the inner ngModel
-            $scope.$watch('ctrl.innerSelection', (newval:string, oldval:string) => {
+            $scope.$watch('ctrl.innerSelection', (newval: string, oldval: string) => {
                 if (newval != oldval) {
                     this.ngModel.$setViewValue(newval);
                 }
             });
 
             this.$postLink = () => {
+
+                /**
+                 * we change the key handling a little bit
+                 * an enter should trigger a form submit
+                 * and a keydown should open the picker
+                 */
+                BehavioralFixes.registerKeyBindings($element);
+
                 //with this trick we are able to traverse the outer ngModel view value into the inner ngModel
                 this.ngModel.$render = () => {
                     this.innerSelection = this.ngModel.$viewValue;
@@ -564,7 +441,7 @@ class DatePicker implements IComponentOptions {
                  * registers the internal parsers, validators and formatters
                  * into the ngModel for the date string conversion
                  */
-                this.ngModel.$parsers.push((data:string) => {
+                this.ngModel.$parsers.push((data: string) => {
                     if (data == "") {
                         return null;
                     }
@@ -577,7 +454,7 @@ class DatePicker implements IComponentOptions {
                  * @param viewValue
                  * @returns {boolean}
                  */
-                this.ngModel.$validators.validDate = (data:Date, viewValue:string) => {
+                this.ngModel.$validators.validDate = (data: Date, viewValue: string) => {
                     if (!viewValue) {
                         return true;
                     }
@@ -590,7 +467,7 @@ class DatePicker implements IComponentOptions {
                  * @param viewValue
                  * @returns {boolean}
                  */
-                this.ngModel.$validators.dateRange = (data:Date, viewValue:string) => {
+                this.ngModel.$validators.dateRange = (data: Date, viewValue: string) => {
                     if (data == null) {
                         return true; //empty value allowed
                     }
@@ -616,15 +493,20 @@ class DatePicker implements IComponentOptions {
                  * (if no timezone is used then the default one is used and the date format is
                  * DD.MM.YYYY
                  */
-                this.ngModel.$formatters.push((data:Date) => {
+                this.ngModel.$formatters.push((data: Date) => {
                     if (data == null) {
                         return "";
                     }
                     var timezone = this.timezone || moment.tz.guess();
                     return moment.tz(data, timezone).format(_getDateFormat());
                 });
+            };
+
+            this.$onDestroy = () => {
+                BehavioralFixes.unregisterDocumentBindings(this.documentClickHandler, this);
             }
         }
+
     ];
 }
 

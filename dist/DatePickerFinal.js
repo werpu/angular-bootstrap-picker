@@ -16,109 +16,112 @@
 
  */
 "use strict";
-var DatePickerTypes_1 = require("./DatePickerTypes");
-var _calculateYearView = function (newValue, startDate, endDate, timezone) {
-    if (!newValue) {
-        newValue = new Date();
-    }
-    var current = moment.tz(newValue, timezone);
-    var offset = current.get("year") % 20 - 1;
-    var nextDecadeOffset = 20 - offset - 1;
-    var start = moment.tz(newValue, timezone).startOf("year").startOf("month").startOf("day").subtract("year", offset);
-    var end = moment.tz(newValue, timezone).endOf("year").endOf("month").endOf("day").add("year", nextDecadeOffset);
-    var momentStartDate = (startDate) ? moment.tz(startDate, timezone).startOf("year").startOf("month").startOf("day") : null;
-    var momentEndDate = (endDate) ? moment.tz(endDate, timezone).endOf("year").endOf("month").endOf("day") : null;
-    var cnt = 0;
-    var pickerPage = new DatePickerTypes_1.YearPickerPage();
-    var range1 = moment.range(start, end);
-    range1.by("year", function (date) {
-        if (cnt % 5 == 0) {
-            pickerPage.row.push([]);
-        }
-        var isInvalid = false;
-        if (momentStartDate) {
-            isInvalid = isInvalid || date.isBefore(momentStartDate);
-        }
-        if (!isInvalid && momentEndDate) {
-            isInvalid = isInvalid || date.isAfter(momentEndDate);
-        }
-        pickerPage.row[pickerPage.row.length - 1].push(new DatePickerTypes_1.PickerYear(isInvalid, date, parseInt(date.tz(timezone).format("YYYY"))));
-        cnt++;
-    });
-    return pickerPage;
-};
-var _calculateMonthView = function (newValue, startDate, endDate, timezone) {
-    if (!newValue) {
-        newValue = new Date();
-    }
-    var momentDate = moment.tz(newValue, timezone);
-    var start = moment.tz(newValue, timezone).startOf("year").startOf("month").startOf("day");
-    var end = moment.tz(newValue, timezone).endOf("year").endOf("month").endOf("day");
-    var momentStartDate = (startDate) ? moment.tz(startDate, timezone).startOf("month").startOf("day") : null;
-    var momentEndDate = (endDate) ? moment.tz(endDate, timezone).endOf("month").endOf("day") : null;
-    var range1 = moment.range(start, end);
-    var cnt = 0;
-    var pickerPage = new DatePickerTypes_1.MonthPickerPage(momentDate.get("year"));
-    range1.by("month", function (date) {
-        if (cnt % 3 == 0) {
-            pickerPage.row.push([]);
-        }
-        var isInvalid = false;
-        if (momentStartDate) {
-            isInvalid = isInvalid || date.isBefore(momentStartDate);
-        }
-        if (!isInvalid && momentEndDate) {
-            isInvalid = isInvalid || date.isAfter(momentEndDate);
-        }
-        pickerPage.row[pickerPage.row.length - 1].push(new DatePickerTypes_1.PickerMonth(isInvalid, date, date.tz(timezone).format("MMMM"), date.tz(timezone).isSame(momentDate, "year")));
-        cnt++;
-    });
-    return pickerPage;
-};
 /**
- * calculates the current page for a given date
- * this is the main layout calculation function for the date view
- * for
- * @param newValue
- * @private
+ * Some bootstrtrap behavioral fixes
  */
-var _calculateDateView = function (newValue, startDate, endDate, timezone) {
-    if (!newValue) {
-        newValue = new Date();
+var BehavioralFixes = (function () {
+    function BehavioralFixes() {
     }
-    var momentDate = moment.tz(newValue, timezone);
-    var start = moment.tz(newValue, timezone).startOf("month").startOf("week");
-    var end = moment.tz(newValue, timezone).endOf("month").endOf("week");
-    var momentStartDate = (startDate) ? moment.tz(startDate, timezone).startOf("day") : null;
-    var momentEndDate = (endDate) ? moment.tz(endDate, timezone).endOf("day") : null;
-    var range1 = moment.range(start, end);
-    var weeks = [];
-    var dayOfWeek = [];
-    var cnt = 0;
-    range1.by("day", function (date) {
-        if (cnt % 7 == 0) {
-            weeks.push(new DatePickerTypes_1.PickerWeek(date.tz(timezone).get("week")));
+    /**
+     * we register some keyboard events
+     * to override the default behavior
+     *
+     * @param $element
+     */
+    BehavioralFixes.registerKeyBindings = function ($element) {
+        $element.on("keydown", function (event, controller) {
+            /*
+             * enter should trigger a form submit
+             */
+            if (event.keyCode == 13 /*enter*/) {
+                event.preventDefault();
+                $element.parents("form").find("input[type=submit]").click();
+                return false;
+            }
+            /*
+             * arrow down should open the date picker
+             */
+            if (event.keyCode == 40 /*arrow down*/) {
+                $element.find(".picker-open").click();
+                return false;
+            }
+            /*
+             * escape should close it
+             */
+            if (event.keyCode == 27 /*escape*/) {
+                $element.find(".picker-close").click();
+                return false;
+            }
+        });
+    };
+    /**
+     * for clicks outside of our date picker area
+     * the date picker automatically should close
+     *
+     * @param $element
+     * @param controller
+     */
+    BehavioralFixes.registerDocumentBindings = function ($element, controller) {
+        if (!controller.documentClickHandler) {
+            var clickHandler = function () {
+                //if event target not child of element we close
+                var target = event.target;
+                var isChild = false;
+                $element.find("*").each(function (cnt, element) {
+                    isChild = isChild || element == target;
+                    if (isChild) {
+                        return false;
+                    }
+                });
+                if (!isChild) {
+                    BehavioralFixes.unregisterDocumentBindings(clickHandler, controller);
+                    $element.find(".picker-close").click();
+                }
+            };
+            angular.element(document).bind("click", clickHandler);
+            controller.documentClickHandler = clickHandler;
         }
-        var isInvalid = false;
-        if (momentStartDate) {
-            isInvalid = isInvalid || date.isBefore(momentStartDate);
+    };
+    /**
+     * we also have to unregister global events
+     *
+     * @param clickHandler
+     * @param controller
+     */
+    BehavioralFixes.unregisterDocumentBindings = function (clickHandler, controller) {
+        if (controller.documentClickHandler) {
+            angular.element(document).unbind("click", clickHandler);
+            controller.documentClickHandler = null;
         }
-        if (!isInvalid && momentEndDate) {
-            isInvalid = isInvalid || date.isAfter(momentEndDate);
-        }
-        weeks[weeks.length - 1].days.push(new DatePickerTypes_1.PickerDate(isInvalid, date, date.tz(timezone).get("date"), date.tz(timezone).isSame(momentDate, "month")));
-        //We also need to display the work days
-        if (dayOfWeek.length < 7) {
-            dayOfWeek.push(date.tz(timezone).format("ddd"));
-        }
-        cnt++;
-    });
-    return new DatePickerTypes_1.DatePickerPage(momentDate.get("year"), dayOfWeek, weeks);
-};
+    };
+    return BehavioralFixes;
+}());
+exports.BehavioralFixes = BehavioralFixes;
+
+},{}],2:[function(require,module,exports){
+/*
+ Copyright (c) 2016 Werner Punz
+
+ Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
+ (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
+ modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the
+ Software is furnished to do so, subject to the following conditions:
+
+ The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+ WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+ */
+"use strict";
+var BehavioralFixes_1 = require("./BehavioralFixes");
+var ViewModelBuilder_1 = require("./ViewModelBuilder");
 var DatePicker = (function () {
     function DatePicker() {
         this.template = function () {
-            return "\n           <div class=\"input-group\">\n               <input type=\"text\" placeholder=\"{{ctrl.placeholder}}\" class=\"form-control\" name=\"{{ctrl.name}}\" ng-model=\"ctrl.innerSelection\"></input>\n               <span class=\"input-group-btn\">\n                   <button class=\"picker-open btn btn-default\" ng-click=\"ctrl._openPicker()\">\n                         <span class=\"glyphicon glyphicon-align-right glyph-icon glyphicon-calendar\"> Date </span>\n                   </button>\n               </span>\n           </div>\n           <!-- date view - default view -->\n           <div class=\"picker-popup date-picker\" ng-if=\"ctrl.pickerVisible && ctrl.view == 'DATE'\">                \n                <table>\n                    <thead>\n                        <!-- TODO year forward and backward -->\n                       \n                        <tr>\n                            <td><a class=\"prev glyphicon glyphicon-menu-left\" ng-click=\"ctrl._prevMonth()\"></a><td colspan=\"2\" ng-click=\"ctrl._switchToMonthView()\">{{ctrl._currentDate.format(\"MMMM\")}}</td><td><a class=\"next glyphicon glyphicon-menu-right\" ng-click=\"ctrl._nextMonth()\"></a></td>\n                            <td><a class=\"prev glyphicon glyphicon-menu-left\" ng-click=\"ctrl._prevYear()\"></a></td><td colspan=\"2\" ng-click=\"ctrl._switchToYearView()\">{{ctrl.monthPickerData.year}}</td><td><a class=\"next glyphicon glyphicon-menu-right\" ng-click=\"ctrl._nextYear()\"></a></td>\n                        </tr>\n                        <tr>\n                            <td class=\"calendarWeek\"><!-- week of year --></td>\n                            <td class=\"dayOfWeek\" ng-repeat=\"dayOfWeek in ctrl.monthPickerData.dayOfWeek\" ng-click=\"ctrl._selectDate(dayOfWeek)\">{{::dayOfWeek}}</td>    \n                        </tr>\n                    </thead>\n                    <tbody>\n                        <tr ng-repeat=\"week in ctrl.monthPickerData.weeks\">\n                            <td class=\"calendarWeek\">{{::week.calendarWeek}}</td>\n                            <td class=\"day\" ng-repeat=\"day in week.days\" ng-class=\"{'outside': !day.sameMonth, 'invalid': day.invalid, 'selected' : ctrl._isSelectedDate(day), 'today': ctrl._isToday(day)}\" ng-click=\"ctrl._selectDate(day)\">{{::day.day}}</td>\n                        </tr>\n                    </tbody>\n                </table>\n                <input type=\"button\" class=\"clear btn btn-default btn-sm\" ng-click=\"ctrl._clear()\" value=\"Clear\" />\n                <input type=\"button\" class=\"today btn btn-default btn-sm\" ng-click=\"ctrl._today()\" value=\"Today\" />\n                <input type=\"button\" class=\"picker-close btn btn-default btn-sm\" ng-click=\"ctrl._close()\" value=\"Close\" />\n           </div>\n           \n           <!-- month view -->\n            <div class=\"picker-popup month-picker\" ng-if=\"ctrl.pickerVisible && ctrl.view == 'MONTH'\">\n                 <table>\n                    <thead>\n                          <tr>\n                          <td><a class=\"prev glyphicon glyphicon-menu-left\" ng-click=\"ctrl._prevYear()\" class=\"glyphicon glyphicon-menu-left\"></a></td>\n                          <td ng-click=\"ctrl._switchToYearView()\">{{ctrl.monthPickerData.year}}</td>\n                          <td><a class=\"next glyphicon glyphicon-menu-right\" ng-click=\"ctrl._nextYear()\"></a></td>\n                          </tr>\n                    </thead>\n                    <tbody>\n                        <tr ng-repeat=\"monthRow in ctrl.yearPickerData.row\">\n                            <td ng-repeat=\"month in monthRow\" ng-class=\"{'invalid': month.invalid, 'selected' : ctrl._isSameMonth(month), 'today': ctrl._isSameMonth(month)}\"\n                            ng-click=\"ctrl._selectMonth(month)\"\n                            >{{::month.month}}</td>\n                        </tr>\n                    </tbody>\n                 </table>   \n            \n            \n                <input type=\"button\" class=\"btn btn-default btn-sm\" ng-click=\"ctrl._goBackInView()\" value=\"Back\" />\n            </div>    \n                 \n            <!-- year view -->  \n            <div class=\"picker-popup year-picker\" ng-if=\"ctrl.pickerVisible && ctrl.view == 'YEAR'\">\n                  <table>\n                    <thead>\n                    <tr>\n                        <td><a ng-click=\"ctrl._prevDecade()\" class=\"glyphicon glyphicon-menu-left\"></a></td>\n                        <td colspan=\"3\">{{ctrl.decadeFrom}} - {{ctrl.decadeTo}}</td>\n                        <td><a ng-click=\"ctrl._nextDecade()\" class=\"glyphicon glyphicon-menu-right\"></a></td>\n                    </tr>\n                    </thead>\n                    <tbody>\n                        <tr ng-repeat=\"yearrow in ctrl.decadePickerData.row\">\n                            <td ng-repeat=\"year in yearrow\"\n                            ng-class=\"{'invalid': year.invalid, 'selected' : ctrl._isSameYear(year), 'today': ctrl._isSameYear(year)}\"\n                             ng-click=\"ctrl._selectYear(year)\"\n                            >{{::year.year}}</td></td>\n                        </tr>\n                  </table>\n                <input type=\"button\" class=\"btn btn-default btn-sm\" ng-click=\"ctrl._goBackInView()\" value=\"Back\" />\n            </div>      \n                 \n        ";
+            return "\n           <div class=\"input-group\">\n               <input type=\"text\" placeholder=\"{{ctrl.placeholder}}\" class=\"form-control\" name=\"{{ctrl.name}}\" ng-model=\"ctrl.innerSelection\"></input>\n               <span class=\"input-group-btn\">\n                   <button class=\"picker-open btn btn-default\" ng-click=\"ctrl._openPicker()\">\n                         <span class=\"glyphicon glyphicon-align-right glyph-icon glyphicon-calendar\"> {{ctrl.buttonLabel}} </span>\n                   </button>\n               </span>\n               <input type=\"button\" class=\"picker-close\" ng-click=\"ctrl._close()\" value=\"Close\" ng-show=\"false\"/>\n           </div>\n           <!-- date view - default view -->\n           <div class=\"picker-popup date-picker\" ng-show=\"ctrl.pickerVisible && ctrl.view == 'DATE'\">                \n                <table>\n                    <thead>\n                        <!-- TODO year forward and backward -->\n                       \n                        <tr>\n                            <td><a class=\"prev glyphicon glyphicon-menu-left\" ng-click=\"ctrl._prevMonth()\"></a><td colspan=\"2\" ng-click=\"ctrl._switchToMonthView()\">{{ctrl._currentDate.format(\"MMMM\")}}</td><td><a class=\"next glyphicon glyphicon-menu-right\" ng-click=\"ctrl._nextMonth()\"></a></td>\n                            <td><a class=\"prev glyphicon glyphicon-menu-left\" ng-click=\"ctrl._prevYear()\"></a></td><td colspan=\"2\" ng-click=\"ctrl._switchToYearView()\">{{ctrl.monthPickerData.year}}</td><td><a class=\"next glyphicon glyphicon-menu-right\" ng-click=\"ctrl._nextYear()\"></a></td>\n                        </tr>\n                        <tr>\n                            <td class=\"calendarWeek\"><!-- week of year --></td>\n                            <td class=\"dayOfWeek\" ng-repeat=\"dayOfWeek in ctrl.monthPickerData.dayOfWeek\" ng-click=\"ctrl._selectDate(dayOfWeek)\">{{::dayOfWeek}}</td>    \n                        </tr>\n                    </thead>\n                    <tbody>\n                        <tr ng-repeat=\"week in ctrl.monthPickerData.weeks\">\n                            <td class=\"calendarWeek\">{{::week.calendarWeek}}</td>\n                            <td class=\"day\" ng-repeat=\"day in week.days\" ng-class=\"{'outside': !day.sameMonth, 'invalid': day.invalid, 'selected' : ctrl._isSelectedDate(day), 'today': ctrl._isToday(day)}\" ng-click=\"ctrl._selectDate(day)\">{{::day.day}}</td>\n                        </tr>\n                    </tbody>\n                </table>\n                <input type=\"button\" class=\"clear btn btn-default btn-sm\" ng-click=\"ctrl._clear()\" value=\"Clear\" />\n                <input type=\"button\" class=\"today btn btn-default btn-sm\" ng-click=\"ctrl._today()\" value=\"Today\" />\n                <input type=\"button\" class=\"picker-close btn btn-default btn-sm\" ng-click=\"ctrl._close()\" value=\"Close\" />\n           </div>\n           \n           <!-- month view -->\n            <div class=\"picker-popup month-picker\" ng-show=\"ctrl.pickerVisible && ctrl.view == 'MONTH'\">\n                 <table>\n                    <thead>\n                          <tr>\n                          <td><a class=\"prev glyphicon glyphicon-menu-left\" ng-click=\"ctrl._prevYear()\" class=\"glyphicon glyphicon-menu-left\"></a></td>\n                          <td ng-click=\"ctrl._switchToYearView()\">{{ctrl.monthPickerData.year}}</td>\n                          <td><a class=\"next glyphicon glyphicon-menu-right\" ng-click=\"ctrl._nextYear()\"></a></td>\n                          </tr>\n                    </thead>\n                    <tbody>\n                        <tr ng-repeat=\"monthRow in ctrl.yearPickerData.row\">\n                            <td ng-repeat=\"month in monthRow\" ng-class=\"{'invalid': month.invalid, 'selected' : ctrl._isSameMonth(month), 'today': ctrl._isSameMonth(month)}\"\n                            ng-click=\"ctrl._selectMonth(month)\"\n                            >{{::month.month}}</td>\n                        </tr>\n                    </tbody>\n                 </table>   \n            \n            \n                <input type=\"button\" class=\"btn btn-default btn-sm\" ng-click=\"ctrl._goBackInView()\" value=\"Back\" />\n            </div>    \n                 \n            <!-- year view -->  \n            <div class=\"picker-popup year-picker\" ng-show=\"ctrl.pickerVisible && ctrl.view == 'YEAR'\">\n                  <table>\n                    <thead>\n                    <tr>\n                        <td><a ng-click=\"ctrl._prevDecade()\" class=\"glyphicon glyphicon-menu-left\"></a></td>\n                        <td colspan=\"3\">{{ctrl.decadeFrom}} - {{ctrl.decadeTo}}</td>\n                        <td><a ng-click=\"ctrl._nextDecade()\" class=\"glyphicon glyphicon-menu-right\"></a></td>\n                    </tr>\n                    </thead>\n                    <tbody>\n                        <tr ng-repeat=\"yearrow in ctrl.decadePickerData.row\">\n                            <td ng-repeat=\"year in yearrow\"\n                            ng-class=\"{'invalid': year.invalid, 'selected' : ctrl._isSameYear(year), 'today': ctrl._isSameYear(year)}\"\n                             ng-click=\"ctrl._selectYear(year)\"\n                            >{{::year.year}}</td></td>\n                        </tr>\n                  </table>\n                <input type=\"button\" class=\"btn btn-default btn-sm\" ng-click=\"ctrl._goBackInView()\" value=\"Back\" />\n            </div>      \n                 \n        ";
         };
         this.controllerAs = "ctrl";
         this.bindings = {
@@ -127,14 +130,16 @@ var DatePicker = (function () {
             startDate: "<",
             endDate: "<",
             dateFormat: "@",
-            placeholder: "@"
+            placeholder: "@",
+            buttonLabel: "@"
         };
         this.require = {
             "ngModel": 'ngModel',
         };
-        this.controller = ["$scope",
-            function ($scope) {
+        this.controller = ["$scope", "$element", "$timeout",
+            function ($scope, $element, $timeout) {
                 var _this = this;
+                this.buttonLabel = ("undefined" == typeof this.buttonLabel || null == this.buttonLabel) ? "Date" : this.buttonLabel;
                 this.visibleDays = [];
                 this.view = "DATE";
                 this.viewStack = [];
@@ -259,9 +264,9 @@ var DatePicker = (function () {
                     }
                 };
                 this._updatePickerData = function () {
-                    _this.monthPickerData = _calculateDateView(_this._currentDate.toDate(), _this.startDate, _this.endDate, _getTimezone());
-                    _this.yearPickerData = _calculateMonthView(_this._currentDate.toDate(), _this.startDate, _this.endDate, _getTimezone());
-                    _this.decadePickerData = _calculateYearView(_this._currentDate.toDate(), _this.startDate, _this.endDate, _getTimezone());
+                    _this.monthPickerData = ViewModelBuilder_1.ViewModelBuilder.calculateDateView(_this._currentDate.toDate(), _this.startDate, _this.endDate, _getTimezone());
+                    _this.yearPickerData = ViewModelBuilder_1.ViewModelBuilder.calculateMonthView(_this._currentDate.toDate(), _this.startDate, _this.endDate, _getTimezone());
+                    _this.decadePickerData = ViewModelBuilder_1.ViewModelBuilder.calculateYearView(_this._currentDate.toDate(), _this.startDate, _this.endDate, _getTimezone());
                     var offset = _this._currentDate.get("year") % 20 - 1;
                     _this.decadeFrom = moment.tz(_this._currentDate.toDate(), _getTimezone()).subtract("year", offset).format("YYYY");
                     var offset = _this._currentDate.get("year") % 20 - 1;
@@ -277,6 +282,11 @@ var DatePicker = (function () {
                     _this._currentDate = (_this.ngModel.$modelValue) ? moment.tz(_this.ngModel.$modelValue, timezone) : moment.tz(new Date(), timezone);
                     _this._updatePickerData();
                     _this.pickerVisible = true;
+                    if (!_this.documentClickHandler) {
+                        $timeout(function () {
+                            BehavioralFixes_1.BehavioralFixes.registerDocumentBindings($element, _this);
+                        });
+                    }
                 };
                 /**
                  * goes the the previous month
@@ -346,6 +356,8 @@ var DatePicker = (function () {
                  * @private
                  */
                 this._close = function () {
+                    _this.view = "DATE";
+                    _this.viewStack = [];
                     _this.pickerVisible = false;
                 };
                 this._switchToMonthView = function () {
@@ -367,6 +379,12 @@ var DatePicker = (function () {
                     }
                 });
                 this.$postLink = function () {
+                    /**
+                     * we change the key handling a little bit
+                     * an enter should trigger a form submit
+                     * and a keydown should open the picker
+                     */
+                    BehavioralFixes_1.BehavioralFixes.registerKeyBindings($element);
                     //with this trick we are able to traverse the outer ngModel view value into the inner ngModel
                     _this.ngModel.$render = function () {
                         _this.innerSelection = _this.ngModel.$viewValue;
@@ -429,6 +447,9 @@ var DatePicker = (function () {
                         return moment.tz(data, timezone).format(_getDateFormat());
                     });
                 };
+                this.$onDestroy = function () {
+                    BehavioralFixes_1.BehavioralFixes.unregisterDocumentBindings(_this.documentClickHandler, _this);
+                };
             }
         ];
     }
@@ -436,7 +457,7 @@ var DatePicker = (function () {
 }());
 angular.module('werpu.bootstrap.picker', []).component("datePicker", new DatePicker());
 
-},{"./DatePickerTypes":2}],2:[function(require,module,exports){
+},{"./BehavioralFixes":1,"./ViewModelBuilder":4}],3:[function(require,module,exports){
 /*
  Copyright (c) 2016 Werner Punz
 
@@ -459,6 +480,9 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
+/*
+ Picker types internally used for the view representation
+ */
 var BaseDate = (function () {
     function BaseDate(invalid, momentDate) {
         this.invalid = invalid;
@@ -549,4 +573,131 @@ var YearPickerPage = (function () {
 }());
 exports.YearPickerPage = YearPickerPage;
 
-},{}]},{},[1]);
+},{}],4:[function(require,module,exports){
+/*
+ Copyright (c) 2016 Werner Punz
+
+ Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
+ (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
+ modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the
+ Software is furnished to do so, subject to the following conditions:
+
+ The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+ WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+ */
+"use strict";
+var DatePickerTypes_1 = require("./DatePickerTypes");
+/**
+ * utils class to build the various view models
+ */
+var ViewModelBuilder = (function () {
+    function ViewModelBuilder() {
+    }
+    ViewModelBuilder.calculateYearView = function (newValue, startDate, endDate, timezone) {
+        if (!newValue) {
+            newValue = new Date();
+        }
+        var current = moment.tz(newValue, timezone);
+        var offset = current.get("year") % 20 - 1;
+        var nextDecadeOffset = 20 - offset - 1;
+        var start = moment.tz(newValue, timezone).startOf("year").startOf("month").startOf("day").subtract("year", offset);
+        var end = moment.tz(newValue, timezone).endOf("year").endOf("month").endOf("day").add("year", nextDecadeOffset);
+        var momentStartDate = (startDate) ? moment.tz(startDate, timezone).startOf("year").startOf("month").startOf("day") : null;
+        var momentEndDate = (endDate) ? moment.tz(endDate, timezone).endOf("year").endOf("month").endOf("day") : null;
+        var cnt = 0;
+        var pickerPage = new DatePickerTypes_1.YearPickerPage();
+        var range1 = moment.range(start, end);
+        range1.by("year", function (date) {
+            if (cnt % 5 == 0) {
+                pickerPage.row.push([]);
+            }
+            var isInvalid = false;
+            if (momentStartDate) {
+                isInvalid = isInvalid || date.isBefore(momentStartDate);
+            }
+            if (!isInvalid && momentEndDate) {
+                isInvalid = isInvalid || date.isAfter(momentEndDate);
+            }
+            pickerPage.row[pickerPage.row.length - 1].push(new DatePickerTypes_1.PickerYear(isInvalid, date, parseInt(date.tz(timezone).format("YYYY"))));
+            cnt++;
+        });
+        return pickerPage;
+    };
+    ViewModelBuilder.calculateMonthView = function (newValue, startDate, endDate, timezone) {
+        if (!newValue) {
+            newValue = new Date();
+        }
+        var momentDate = moment.tz(newValue, timezone);
+        var start = moment.tz(newValue, timezone).startOf("year").startOf("month").startOf("day");
+        var end = moment.tz(newValue, timezone).endOf("year").endOf("month").endOf("day");
+        var momentStartDate = (startDate) ? moment.tz(startDate, timezone).startOf("month").startOf("day") : null;
+        var momentEndDate = (endDate) ? moment.tz(endDate, timezone).endOf("month").endOf("day") : null;
+        var range1 = moment.range(start, end);
+        var cnt = 0;
+        var pickerPage = new DatePickerTypes_1.MonthPickerPage(momentDate.get("year"));
+        range1.by("month", function (date) {
+            if (cnt % 3 == 0) {
+                pickerPage.row.push([]);
+            }
+            var isInvalid = false;
+            if (momentStartDate) {
+                isInvalid = isInvalid || date.isBefore(momentStartDate);
+            }
+            if (!isInvalid && momentEndDate) {
+                isInvalid = isInvalid || date.isAfter(momentEndDate);
+            }
+            pickerPage.row[pickerPage.row.length - 1].push(new DatePickerTypes_1.PickerMonth(isInvalid, date, date.tz(timezone).format("MMMM"), date.tz(timezone).isSame(momentDate, "year")));
+            cnt++;
+        });
+        return pickerPage;
+    };
+    /**
+     * calculates the current page for a given date
+     * this is the main layout calculation function for the date view
+     * for
+     * @param newValue
+     * @private
+     */
+    ViewModelBuilder.calculateDateView = function (newValue, startDate, endDate, timezone) {
+        if (!newValue) {
+            newValue = new Date();
+        }
+        var momentDate = moment.tz(newValue, timezone);
+        var start = moment.tz(newValue, timezone).startOf("month").startOf("week");
+        var end = moment.tz(newValue, timezone).endOf("month").endOf("week");
+        var momentStartDate = (startDate) ? moment.tz(startDate, timezone).startOf("day") : null;
+        var momentEndDate = (endDate) ? moment.tz(endDate, timezone).endOf("day") : null;
+        var range1 = moment.range(start, end);
+        var weeks = [];
+        var dayOfWeek = [];
+        var cnt = 0;
+        range1.by("day", function (date) {
+            if (cnt % 7 == 0) {
+                weeks.push(new DatePickerTypes_1.PickerWeek(date.tz(timezone).get("week")));
+            }
+            var isInvalid = false;
+            if (momentStartDate) {
+                isInvalid = isInvalid || date.isBefore(momentStartDate);
+            }
+            if (!isInvalid && momentEndDate) {
+                isInvalid = isInvalid || date.isAfter(momentEndDate);
+            }
+            weeks[weeks.length - 1].days.push(new DatePickerTypes_1.PickerDate(isInvalid, date, date.tz(timezone).get("date"), date.tz(timezone).isSame(momentDate, "month")));
+            //We also need to display the work days
+            if (dayOfWeek.length < 7) {
+                dayOfWeek.push(date.tz(timezone).format("ddd"));
+            }
+            cnt++;
+        });
+        return new DatePickerTypes_1.DatePickerPage(momentDate.get("year"), dayOfWeek, weeks);
+    };
+    return ViewModelBuilder;
+}());
+exports.ViewModelBuilder = ViewModelBuilder;
+
+},{"./DatePickerTypes":3}]},{},[2]);
