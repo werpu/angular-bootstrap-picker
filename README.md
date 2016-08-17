@@ -21,7 +21,7 @@ If it fits your use cases then feel free to use my date picker, it is under the 
 If it does not fit then feel free to extend it and send a patch. However bare in mind. I do not intend to
 cover every corner case on earth with this picker. I prefer to do one thing and do it correctly. Which is date picking
 with timezone support. For now I have no plans to isolate the picker itself into its own component or to add time picking
-unless the need arises. Also expect additonal refactorings in the near future to make the code even cleaner than it is today.
+unless the need arises. Also expect additional refactorings in the near future to make the code even cleaner than it is today.
 
 ## Installation
 
