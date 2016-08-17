@@ -25,16 +25,18 @@
     <form name="submitForm">
         <p>Small Datepicker example</p>
         UTC Date: {{currentDate}}
-
+        <p>
         Europe GMT+1
         <date-picker name="europe" ng-model="currentDate" start-date="minDate" end-date="maxDate" timezone="Europe/Zurich"></date-picker>
-
+        </p>
+        <p>
         Asia/Tokyo
         <date-picker name="asia" ng-model="currentDate" start-date="minDate" end-date="maxDate" timezone="Asia/Tokyo"></date-picker>
-
+        </p>
+        <p>
         America/Los Angeles
         <date-picker name="america" ng-model="currentDate" start-date="minDate" end-date="maxDate" timezone="America/Los_Angeles"></date-picker>
-
+        </p>
 
         <input type="submit" style="visibility: hidden" />
     </form>
