@@ -223,15 +223,7 @@ var DatePicker = (function () {
                  */
                 this._selectDate = function (selectedDate) {
                     if (!selectedDate.invalid) {
-                        if (_this.startDate && selectedDate.momentDate.isBefore(moment.tz(_this.startDate, _getTimezone()))) {
-                            _this.ngModel.$setViewValue(_this.startDate);
-                        }
-                        else if (_this.endDate && selectedDate.momentDate.isAfter(moment.tz(_this.endDate, _getTimezone()))) {
-                            _this.ngModel.$setViewValue(_this.endDate);
-                        }
-                        else {
-                            _format(selectedDate.momentDate.toDate());
-                        }
+                        _format(selectedDate.momentDate.toDate());
                         _this.pickerVisible = false;
                     }
                 };

@@ -239,14 +239,7 @@ class DatePicker implements IComponentOptions {
              */
             this._selectDate = (selectedDate: PickerDate) => {
                 if (!selectedDate.invalid) {
-                    if (this.startDate && selectedDate.momentDate.isBefore(moment.tz(this.startDate, _getTimezone()))) {
-                        this.ngModel.$setViewValue(this.startDate);
-                    } else if (this.endDate && selectedDate.momentDate.isAfter(moment.tz(this.endDate, _getTimezone()))) {
-                        this.ngModel.$setViewValue(this.endDate);
-                    } else {
-                        _format(selectedDate.momentDate.toDate());
-                    }
-
+                    _format(selectedDate.momentDate.toDate());
 
                     this.pickerVisible = false;
                 }
