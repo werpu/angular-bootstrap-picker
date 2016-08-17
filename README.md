@@ -71,7 +71,7 @@ Following attributes are available:
 * date-format {optional} the moment date format for the dates, if not set DD.MM.YYYY is used per default
 * placeholder {optional} placeholder for the input
 * name {optional} form name
-* buttonLabel {optional} label for the button
+* buttonLabel {optional} label for the picker button
 
 
 
