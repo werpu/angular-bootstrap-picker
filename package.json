@@ -1,0 +1,29 @@
+{
+  "name": "angular-bootstrap-picker",
+  "version": "1.0.0",
+  "description": "a date picker for angularjs 1.5.x and bootstrap with working timezone handling, it uses moment moment-timezone and moment-range",
+  "main": "./index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npm run build-ts && npm run build-js",
+    "build-ts": "echo \"compiling typescript\" && tsc --project src/typescript/tsconfig.json",
+    "build-dev": "echo \"building final file for development\" && browserify build/DatePicker.js > dist/DatePickerFinal.js && ncp src/css/DatePicker.css dist/DatePicker.css",
+    "build-compress" : "uglifyjs --compress --mangle --source-map DatePickerFinal-compressed.js.map -- dist/DatePickerFinal.js > dist/DatePickerFinal-compressed.js",
+    "build-js": "echo \"building final file\" && npm run build-ts && npm run build-dev && npm run build-compress"
+  },
+  "author": "Werner Punz",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "angular": "^1.5.8",
+    "browserify": "^13.1.0",
+    "copy": "^0.3.0",
+    "jquery": "^3.1.0",
+    "moment": "^2.14.1",
+    "moment-range": "^2.2.0",
+    "moment-timezone": "^0.5.5",
+    "ncp": "^2.0.0",
+    "typescript": "^1.8.10",
+    "uglify-js": "^2.7.2"
+  }
+}
