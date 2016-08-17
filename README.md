@@ -6,8 +6,8 @@ Bootstrap date picker with timezone support for angular 1.5.x
 Why another date picker? There are myriads of date pickers on the net, so why another one?
 The answer is simple, I could not find any which was able to handle timezones in a decent manner, and also
 had maintainable code. At least not for Angularjs. My main requirement was to be able to nail down a date picker
-to a certain timezone and allow input and output within the parameters of this zone independend of the browser timezone.
-So I tried various pickers and while they did have timezone support it often was buggy and the code often was
+to a certain timezone and allow input and output within the parameters of this zone independent of the browser timezone.
+So I tried various pickers, and while they did have timezone support, it often was buggy and the code often was
 in a state that it was more work to try to fix the issue instead of writing my own picker.
 
 Most of the time this was due to various facts
