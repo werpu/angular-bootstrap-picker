@@ -35,9 +35,9 @@ class DatePicker implements IComponentOptions {
                    <button class="picker-open btn btn-default" ng-click="ctrl._openPicker()">
                          <span class="glyphicon glyphicon-align-right glyph-icon glyphicon-calendar"> {{ctrl.buttonLabel}} </span>
                    </button>
-               </span>
-               <input type="button" class="picker-close" ng-click="ctrl._close()" value="Close" ng-show="false"/>
+               </span> 
            </div>
+           <input type="button" class="picker-close" ng-click="ctrl._close()" value="Close" ng-show="false"/>
            <!-- date view - default view -->
            <div class="picker-popup date-picker" ng-show="ctrl.pickerVisible && ctrl.view == 'DATE'">                
                 <table>
