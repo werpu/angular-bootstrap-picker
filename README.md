@@ -33,8 +33,8 @@ bower install werpu/angular-bootstrap-picker --save
 
 ## Demo
 
-You can find a working demo for the date picker in the demo folder of this application.
-A live online demo will come soon.
+A live demo can be found in the demo folder or on
+https://werpu.github.io/angular-bootstrap-picker/demo/
 
 ## Usage
 
