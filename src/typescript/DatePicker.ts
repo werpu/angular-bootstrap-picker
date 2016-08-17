@@ -427,6 +427,15 @@ class DatePicker implements IComponentOptions {
             this.$postLink = () => {
 
                 /**
+                 * we turn off event propagation
+                 * for the popup so that a click within the popup
+                 * does not propagate to its parent elements
+                 * (we only want to have the popup closed when we click on the outside)
+                 *
+                 */
+                BehavioralFixes.registerPopupBindings($element);
+
+                /**
                  * we change the key handling a little bit
                  * an enter should trigger a form submit
                  * and a keydown should open the picker

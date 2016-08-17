@@ -55,6 +55,11 @@ date-picker .picker-popup td.dayOfWeek {
     text-decoration: inherit !important;
 }
 
+date-picker .picker-popup td.outside {
+    background-color: #cfcfcf;
+}
+
+
 date-picker table {
     margin-bottom: 5px;
 }

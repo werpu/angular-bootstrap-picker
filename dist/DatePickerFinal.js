@@ -64,19 +64,8 @@ var BehavioralFixes = (function () {
     BehavioralFixes.registerDocumentBindings = function ($element, controller) {
         if (!controller.documentClickHandler) {
             var clickHandler = function () {
-                //if event target not child of element we close
-                var target = event.target;
-                var isChild = false;
-                $element.find(".picker-popup, .picker-popup *").each(function (cnt, element) {
-                    isChild = isChild || element == target;
-                    if (isChild) {
-                        return false;
-                    }
-                });
-                if (!isChild) {
-                    BehavioralFixes.unregisterDocumentBindings(controller);
-                    $element.find(".picker-close").click();
-                }
+                BehavioralFixes.unregisterDocumentBindings(controller);
+                $element.find(".picker-close").click();
             };
             angular.element(document).bind("click", clickHandler);
             controller.documentClickHandler = clickHandler;
@@ -93,6 +82,12 @@ var BehavioralFixes = (function () {
             angular.element(document).unbind("click", controller.documentClickHandler);
             controller.documentClickHandler = null;
         }
+    };
+    BehavioralFixes.registerPopupBindings = function ($element) {
+        $element.find(".picker-popup").on("click", function (event) {
+            event.stopImmediatePropagation();
+            event.stopPropagation();
+        });
     };
     return BehavioralFixes;
 }());
@@ -380,6 +375,14 @@ var DatePicker = (function () {
                     }
                 });
                 this.$postLink = function () {
+                    /**
+                     * we turn off event propagation
+                     * for the popup so that a click within the popup
+                     * does not propagate to its parent elements
+                     * (we only want to have the popup closed when we click on the outside)
+                     *
+                     */
+                    BehavioralFixes_1.BehavioralFixes.registerPopupBindings($element);
                     /**
                      * we change the key handling a little bit
                      * an enter should trigger a form submit
