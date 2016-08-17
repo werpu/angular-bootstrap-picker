@@ -44,7 +44,9 @@ You simply can use the date picker like every other angular module. Once importe
 
 
 ```html
-    <date-picker name="europe" ng-model="currentDate" start-date="minDate" end-date="maxDate" timezone="Europe/Zurich"></date-picker>
+    <date-picker name="europe" ng-model="currentDate"
+                 start-date="minDate" end-date="maxDate" timezone="Europe/Zurich">
+    </date-picker>
 ```
 
 The date picker has following dependencies which must be loaded upfront
