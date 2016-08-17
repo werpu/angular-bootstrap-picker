@@ -241,7 +241,7 @@ class DatePicker implements IComponentOptions {
                 if (!selectedDate.invalid) {
                     _format(selectedDate.momentDate.toDate());
 
-                    this.pickerVisible = false;
+                    this._close();
                 }
             };
 
@@ -311,6 +311,7 @@ class DatePicker implements IComponentOptions {
 
                 this._updatePickerData();
                 this.pickerVisible = true;
+
                 if (!this.documentClickHandler) {
                     $timeout(() => {
                         BehavioralFixes.registerDocumentBindings($element, this);
@@ -398,6 +399,7 @@ class DatePicker implements IComponentOptions {
                 this.view = "DATE";
                 this.viewStack = [];
                 this.pickerVisible = false;
+                BehavioralFixes.unregisterDocumentBindings(this);
             };
 
             this._switchToMonthView = () => {
@@ -509,7 +511,7 @@ class DatePicker implements IComponentOptions {
             };
 
             this.$onDestroy = () => {
-                BehavioralFixes.unregisterDocumentBindings(this.documentClickHandler, this);
+                BehavioralFixes.unregisterDocumentBindings(this);
             }
         }
 

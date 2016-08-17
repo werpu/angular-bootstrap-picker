@@ -67,14 +67,14 @@ var BehavioralFixes = (function () {
                 //if event target not child of element we close
                 var target = event.target;
                 var isChild = false;
-                $element.find("*").each(function (cnt, element) {
+                $element.find(".picker-popup, .picker-popup *").each(function (cnt, element) {
                     isChild = isChild || element == target;
                     if (isChild) {
                         return false;
                     }
                 });
                 if (!isChild) {
-                    BehavioralFixes.unregisterDocumentBindings(clickHandler, controller);
+                    BehavioralFixes.unregisterDocumentBindings(controller);
                     $element.find(".picker-close").click();
                 }
             };
@@ -88,9 +88,9 @@ var BehavioralFixes = (function () {
      * @param clickHandler
      * @param controller
      */
-    BehavioralFixes.unregisterDocumentBindings = function (clickHandler, controller) {
+    BehavioralFixes.unregisterDocumentBindings = function (controller) {
         if (controller.documentClickHandler) {
-            angular.element(document).unbind("click", clickHandler);
+            angular.element(document).unbind("click", controller.documentClickHandler);
             controller.documentClickHandler = null;
         }
     };
@@ -224,7 +224,7 @@ var DatePicker = (function () {
                 this._selectDate = function (selectedDate) {
                     if (!selectedDate.invalid) {
                         _format(selectedDate.momentDate.toDate());
-                        _this.pickerVisible = false;
+                        _this._close();
                     }
                 };
                 /**
@@ -359,6 +359,7 @@ var DatePicker = (function () {
                     _this.view = "DATE";
                     _this.viewStack = [];
                     _this.pickerVisible = false;
+                    BehavioralFixes_1.BehavioralFixes.unregisterDocumentBindings(_this);
                 };
                 this._switchToMonthView = function () {
                     _this.viewStack.unshift(_this.view);
@@ -455,7 +456,7 @@ var DatePicker = (function () {
                     });
                 };
                 this.$onDestroy = function () {
-                    BehavioralFixes_1.BehavioralFixes.unregisterDocumentBindings(_this.documentClickHandler, _this);
+                    BehavioralFixes_1.BehavioralFixes.unregisterDocumentBindings(_this);
                 };
             }
         ];
