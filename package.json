@@ -1,6 +1,6 @@
 {
   "name": "angular-bootstrap-picker",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "a date picker for angularjs 1.5.x and bootstrap with working timezone handling, it uses moment moment-timezone and moment-range",
   "main": "./index.js",
   "scripts": {
