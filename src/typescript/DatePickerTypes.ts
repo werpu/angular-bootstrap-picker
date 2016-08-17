@@ -15,6 +15,9 @@
 
  */
 
+/*
+ Picker types internally used for the view representation
+ */
 
 class BaseDate {
     invalid:boolean;
