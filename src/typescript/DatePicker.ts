@@ -629,6 +629,6 @@ class DatePicker implements IComponentOptions {
 }
 
 
-(<any>angular).module('bootstrap.picker', []).component("datePicker", new DatePicker());
+(<any>angular).module('werpu.bootstrap.picker', []).component("datePicker", new DatePicker());
 
 

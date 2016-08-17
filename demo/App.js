@@ -1,4 +1,4 @@
-angular.module('App', ['bootstrap.picker'])
+angular.module('App', ['werpu.bootstrap.picker'])
     .controller('AppController', function($scope) {
         $scope.greeting = "Hello World";
         $scope.currentDate = moment.tz(new Date(), "Europe/Zurich").startOf("day").toDate();

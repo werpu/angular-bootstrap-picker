@@ -434,7 +434,7 @@ var DatePicker = (function () {
     }
     return DatePicker;
 }());
-angular.module('bootstrap.picker', []).component("datePicker", new DatePicker());
+angular.module('werpu.bootstrap.picker', []).component("datePicker", new DatePicker());
 
 },{"./DatePickerTypes":2}],2:[function(require,module,exports){
 /*
