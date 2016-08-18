@@ -323,6 +323,22 @@ var DatePicker = (function () {
                     }
                 });
                 /**
+                 * helper function to push the current date into its max min range
+                 * bo
+                 * @private
+                 */
+                this._fixCurrentDate = function () {
+                    var parsedData = _this._currentDate;
+                    var startDate = (_this.startDate) ? moment.tz(_this.startDate, _getTimezone()) : null;
+                    var endDate = (_this.endDate) ? moment.tz(_this.endDate, _getTimezone()) : null;
+                    if (startDate && moment.tz(parsedData, _getTimezone()).isBefore(startDate)) {
+                        _this._currentDate = startDate;
+                    }
+                    if (endDate && moment.tz(parsedData, _getTimezone()).isAfter(endDate)) {
+                        _this._currentDate = endDate;
+                    }
+                };
+                /**
                  * select a date from the outside
                  * @param selectedDate
                  * @private
@@ -330,7 +346,7 @@ var DatePicker = (function () {
                 this._selectDate = function (selectedDate) {
                     if (!selectedDate.invalid) {
                         if (!_this.ngModel.$modelValue) {
-                            _this._currentDate = selectedDate;
+                            _this._currentDate = selectedDate.momentDate;
                         }
                         //we also have to update our currently selected date
                         _this._currentDate.set("date", selectedDate.momentDate.get("date"));
@@ -347,6 +363,7 @@ var DatePicker = (function () {
                         if (endDate && _this._currentDate.isAfter(endDate)) {
                             _this._currentDate = endDate;
                         }
+                        _this._fixCurrentDate();
                         _format(_this._currentDate.toDate());
                         /*in case of a date mode we are done*/
                         if (_this.pickerMode === "DATE") {
@@ -369,6 +386,10 @@ var DatePicker = (function () {
                             _this._currentDate.set("month", selectedDate.momentDate.get("month"));
                             _this._currentDate.set("year", selectedDate.momentDate.get("year"));
                         }
+                        _this._fixCurrentDate();
+                        if (_this.pickerMode != "DATE") {
+                            _format(_this._currentDate.toDate());
+                        }
                         _this._goBackInView();
                     }
                 };
@@ -385,6 +406,10 @@ var DatePicker = (function () {
                         else {
                             var value = moment.tz(_this.ngModel.$modelValue, _getTimezone());
                             _this._currentDate.set("year", selectedDate.momentDate.get("year"));
+                        }
+                        _this._fixCurrentDate();
+                        if (_this.pickerMode != "DATE") {
+                            _format(_this._currentDate.toDate());
                         }
                         _this._goBackInView();
                     }

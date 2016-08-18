@@ -430,6 +430,24 @@ class DatePicker implements IComponentOptions {
                 }
             });
 
+            /**
+             * helper function to push the current date into its max min range
+             * bo
+             * @private
+             */
+            this._fixCurrentDate = () => {
+                var parsedData = this._currentDate;
+                var startDate: moment.Moment = (this.startDate) ? moment.tz(this.startDate, _getTimezone()) : null;
+                var endDate: moment.Moment = (this.endDate) ? moment.tz(this.endDate, _getTimezone()) : null;
+
+                if (startDate && moment.tz(parsedData, _getTimezone()).isBefore(startDate)) {
+                    this._currentDate  = startDate;
+                }
+                if (endDate && moment.tz(parsedData, _getTimezone()).isAfter(endDate)) {
+                    this._currentDate  = endDate;
+                }
+
+            };
 
             /**
              * select a date from the outside
@@ -439,7 +457,7 @@ class DatePicker implements IComponentOptions {
             this._selectDate = (selectedDate: PickerDate) => {
                 if (!selectedDate.invalid) {
                     if (!this.ngModel.$modelValue) {
-                        this._currentDate = selectedDate;
+                        this._currentDate = selectedDate.momentDate;
                     }
 
                     //we also have to update our currently selected date
@@ -460,7 +478,7 @@ class DatePicker implements IComponentOptions {
                     if(endDate && this._currentDate.isAfter(endDate)) {
                         this._currentDate = endDate;
                     }
-
+                    this._fixCurrentDate();
                     _format(this._currentDate.toDate());
                     /*in case of a date mode we are done*/
                     if (this.pickerMode === "DATE") {
@@ -484,8 +502,13 @@ class DatePicker implements IComponentOptions {
                         this._currentDate.set("month", selectedDate.momentDate.get("month"));
                         this._currentDate.set("year", selectedDate.momentDate.get("year"));
                     }
+                    this._fixCurrentDate();
+                    if(this.pickerMode != "DATE") {
+                        _format(this._currentDate.toDate());
+                    }
                     this._goBackInView();
                 }
+
             };
 
             /**
@@ -500,8 +523,12 @@ class DatePicker implements IComponentOptions {
                     } else {
                         var value = moment.tz(this.ngModel.$modelValue, _getTimezone());
                         this._currentDate.set("year", selectedDate.momentDate.get("year"));
-                    }
 
+                    }
+                    this._fixCurrentDate();
+                    if(this.pickerMode != "DATE") {
+                        _format(this._currentDate.toDate());
+                    }
                     this._goBackInView();
                 }
             };
