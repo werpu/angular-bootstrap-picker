@@ -208,15 +208,17 @@ var DatePicker = (function () {
                         modelDate.isSame(selectedDate.momentDate, "year");
                 };
                 this._isSameMonth = function (selectedMonth) {
-                    return _this._currentDate.isSame(selectedMonth.momentDate, "month") &&
-                        _this._currentDate.isSame(selectedMonth.momentDate, "year");
+                    var modelDate = moment.tz(_this.ngModel.$modelValue, _getTimezone());
+                    return modelDate.isSame(selectedMonth.momentDate, "month") &&
+                        modelDate.isSame(selectedMonth.momentDate, "year");
                 };
                 this._isTodayYear = function (selectedDate) {
                     var modelDate = moment.tz(new Date(), _getTimezone());
                     return modelDate.isSame(selectedDate.momentDate, "year");
                 };
                 this._isSameYear = function (selectedMonth) {
-                    return _this._currentDate.isSame(selectedMonth.momentDate, "year");
+                    var modelDate = moment.tz(_this.ngModel.$modelValue, _getTimezone());
+                    return modelDate.isSame(selectedMonth.momentDate, "year");
                 };
                 /**
                  * checks if the time given is valid in the scope of the date selected

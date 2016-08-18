@@ -294,8 +294,9 @@ class DatePicker implements IComponentOptions {
             };
 
             this._isSameMonth = (selectedMonth: PickerMonth) => {
-                return this._currentDate.isSame(selectedMonth.momentDate, "month") &&
-                    this._currentDate.isSame(selectedMonth.momentDate, "year");
+                var modelDate = moment.tz(this.ngModel.$modelValue, _getTimezone());
+                return modelDate.isSame(selectedMonth.momentDate, "month") &&
+                    modelDate.isSame(selectedMonth.momentDate, "year");
             };
 
 
@@ -307,7 +308,8 @@ class DatePicker implements IComponentOptions {
             };
 
             this._isSameYear = (selectedMonth: PickerYear) => {
-                return this._currentDate.isSame(selectedMonth.momentDate, "year");
+                var modelDate = moment.tz(this.ngModel.$modelValue, _getTimezone());
+                return modelDate.isSame(selectedMonth.momentDate, "year");
             };
 
             /**
