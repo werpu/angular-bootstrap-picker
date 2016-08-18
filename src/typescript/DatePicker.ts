@@ -243,7 +243,7 @@ class DatePicker implements IComponentOptions {
              * @param value
              * @private
              */
-            var _format = (value: Date) => {
+            var _updateModel = (value: Date) => {
                 var innerSelection = value;
                 for (var cnt = 0; this.ngModel.$formatters && cnt < this.ngModel.$formatters.length; cnt++) {
                     innerSelection = this.ngModel.$formatters[cnt](innerSelection);
@@ -372,7 +372,7 @@ class DatePicker implements IComponentOptions {
                     return;
                 }
                 this._currentDate.add("hour", 1);
-                _format(this._currentDate.toDate());
+                _updateModel(this._currentDate.toDate());
             };
 
             this._prevHour = () => {
@@ -380,7 +380,7 @@ class DatePicker implements IComponentOptions {
                     return;
                 }
                 this._currentDate.subtract("hour", 1);
-                _format(this._currentDate.toDate());
+                _updateModel(this._currentDate.toDate());
             };
 
             this._nextMinute = () => {
@@ -388,7 +388,7 @@ class DatePicker implements IComponentOptions {
                     return;
                 }
                 this._currentDate.add("minute", 1);
-                _format(this._currentDate.toDate());
+                _updateModel(this._currentDate.toDate());
             };
 
             this._prevMinute = () => {
@@ -396,7 +396,7 @@ class DatePicker implements IComponentOptions {
                     return;
                 }
                 this._currentDate.subtract("minute", 1);
-                _format(this._currentDate.toDate());
+                _updateModel(this._currentDate.toDate());
             };
 
             /*we do the proper max min date validity checks over our setters*/
@@ -409,7 +409,7 @@ class DatePicker implements IComponentOptions {
                         return;
                     }
                     this._currentDate.set("hour", val);
-                    _format(this._currentDate.toDate());
+                    _updateModel(this._currentDate.toDate());
                 }
             });
 
@@ -422,7 +422,7 @@ class DatePicker implements IComponentOptions {
                         return;
                     }
                     this._currentDate.set("minute", val);
-                    _format(this._currentDate.toDate());
+                    _updateModel(this._currentDate.toDate());
                 }
             });
 
@@ -475,7 +475,7 @@ class DatePicker implements IComponentOptions {
                         this._currentDate = endDate;
                     }
                     this._fixCurrentDate();
-                    _format(this._currentDate.toDate());
+                    _updateModel(this._currentDate.toDate());
                     /*in case of a date mode we are done*/
                     if (this.pickerMode === "DATE") {
                         this._close();
@@ -500,9 +500,8 @@ class DatePicker implements IComponentOptions {
                     }
                     this._fixCurrentDate();
                     if(this.pickerMode != "DATE") {
-                        _format(this._currentDate.toDate());
+                        _updateModel(this._currentDate.toDate());
                     }
-                    this._updatePickerData();
                     this._goBackInView();
                 }
 
@@ -524,9 +523,8 @@ class DatePicker implements IComponentOptions {
                     }
                     this._fixCurrentDate();
                     if(this.pickerMode != "DATE") {
-                        _format(this._currentDate.toDate());
+                        _updateModel(this._currentDate.toDate());
                     }
-                    this._updatePickerData();
                     this._goBackInView();
                 }
             };
@@ -638,7 +636,8 @@ class DatePicker implements IComponentOptions {
              * @private
              */
             this._today = () => {
-                this.innerSelection = this.ngModel.$formatters[0](new Date());
+                var today = moment.tz(new Date(), _getTimezone());
+                this._selectDate(new PickerDate(false, today, 0, false));
                 this._close();
             };
 

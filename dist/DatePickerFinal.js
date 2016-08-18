@@ -113,6 +113,7 @@ exports.BehavioralFixes = BehavioralFixes;
 "use strict";
 var BehavioralFixes_1 = require("./BehavioralFixes");
 var ViewModelBuilder_1 = require("./ViewModelBuilder");
+var DatePickerTypes_1 = require("./DatePickerTypes");
 var RangeInput_1 = require("./RangeInput");
 var DatePicker = (function () {
     function DatePicker() {
@@ -165,7 +166,7 @@ var DatePicker = (function () {
                  * @param value
                  * @private
                  */
-                var _format = function (value) {
+                var _updateModel = function (value) {
                     var innerSelection = value;
                     for (var cnt = 0; _this.ngModel.$formatters && cnt < _this.ngModel.$formatters.length; cnt++) {
                         innerSelection = _this.ngModel.$formatters[cnt](innerSelection);
@@ -272,28 +273,28 @@ var DatePicker = (function () {
                         return;
                     }
                     _this._currentDate.add("hour", 1);
-                    _format(_this._currentDate.toDate());
+                    _updateModel(_this._currentDate.toDate());
                 };
                 this._prevHour = function () {
                     if (!_this._isValidHour(_this._currentDate.get("hour") - 1)) {
                         return;
                     }
                     _this._currentDate.subtract("hour", 1);
-                    _format(_this._currentDate.toDate());
+                    _updateModel(_this._currentDate.toDate());
                 };
                 this._nextMinute = function () {
                     if (!_this._isValidMinute(_this._currentDate.get("minute") + 1)) {
                         return;
                     }
                     _this._currentDate.add("minute", 1);
-                    _format(_this._currentDate.toDate());
+                    _updateModel(_this._currentDate.toDate());
                 };
                 this._prevMinute = function () {
                     if (!_this._isValidMinute(_this._currentDate.get("minute") - 1)) {
                         return;
                     }
                     _this._currentDate.subtract("minute", 1);
-                    _format(_this._currentDate.toDate());
+                    _updateModel(_this._currentDate.toDate());
                 };
                 /*we do the proper max min date validity checks over our setters*/
                 Object.defineProperty(this, "currentHour", {
@@ -305,7 +306,7 @@ var DatePicker = (function () {
                             return;
                         }
                         _this._currentDate.set("hour", val);
-                        _format(_this._currentDate.toDate());
+                        _updateModel(_this._currentDate.toDate());
                     }
                 });
                 Object.defineProperty(this, "currentMinute", {
@@ -317,7 +318,7 @@ var DatePicker = (function () {
                             return;
                         }
                         _this._currentDate.set("minute", val);
-                        _format(_this._currentDate.toDate());
+                        _updateModel(_this._currentDate.toDate());
                     }
                 });
                 /**
@@ -362,7 +363,7 @@ var DatePicker = (function () {
                             _this._currentDate = endDate;
                         }
                         _this._fixCurrentDate();
-                        _format(_this._currentDate.toDate());
+                        _updateModel(_this._currentDate.toDate());
                         /*in case of a date mode we are done*/
                         if (_this.pickerMode === "DATE") {
                             _this._close();
@@ -386,9 +387,8 @@ var DatePicker = (function () {
                         }
                         _this._fixCurrentDate();
                         if (_this.pickerMode != "DATE") {
-                            _format(_this._currentDate.toDate());
+                            _updateModel(_this._currentDate.toDate());
                         }
-                        _this._updatePickerData();
                         _this._goBackInView();
                     }
                 };
@@ -408,9 +408,8 @@ var DatePicker = (function () {
                         }
                         _this._fixCurrentDate();
                         if (_this.pickerMode != "DATE") {
-                            _format(_this._currentDate.toDate());
+                            _updateModel(_this._currentDate.toDate());
                         }
-                        _this._updatePickerData();
                         _this._goBackInView();
                     }
                 };
@@ -500,7 +499,8 @@ var DatePicker = (function () {
                  * @private
                  */
                 this._today = function () {
-                    _this.innerSelection = _this.ngModel.$formatters[0](new Date());
+                    var today = moment.tz(new Date(), _getTimezone());
+                    _this._selectDate(new DatePickerTypes_1.PickerDate(false, today, 0, false));
                     _this._close();
                 };
                 /**
@@ -632,7 +632,7 @@ var DatePicker = (function () {
 }());
 angular.module('werpu.bootstrap.picker', []).component("datePicker", new DatePicker()).component("internalRangeInput", new RangeInput_1.RangeInput());
 
-},{"./BehavioralFixes":1,"./RangeInput":4,"./ViewModelBuilder":5}],3:[function(require,module,exports){
+},{"./BehavioralFixes":1,"./DatePickerTypes":3,"./RangeInput":4,"./ViewModelBuilder":5}],3:[function(require,module,exports){
 /*
  Copyright (c) 2016 Werner Punz
 
