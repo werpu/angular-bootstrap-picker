@@ -73,3 +73,17 @@ date-picker.ng-invalid input {
 date-picker .bottom-buttons {
     text-align: right;
 }
+
+
+date-picker .time-picker table {
+    width: 100%;
+}
+
+date-picker .time-picker td.glyphicon {
+    display:table-cell;
+}
+
+date-picker .time-picker input[type="text"] {
+    width: 30px;
+    text-align: center;
+}

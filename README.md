@@ -20,8 +20,7 @@ So my main goal is to keep the code in a clean maintainable state and to cover j
 If it fits your use cases then feel free to use my date picker, it is under the most liberal license there is (MIT license).
 If it does not fit then feel free to extend it and send a patch. However bare in mind. I do not intend to
 cover every corner case on earth with this picker. I prefer to do one thing and do it correctly. Which is date picking
-with timezone support. For now I have no plans to isolate the picker itself into its own component or to add time picking
-unless the need arises. Also expect additional refactorings in the near future to make the code even cleaner than it is today.
+with timezone support. 
 
 ## Installation
 
@@ -71,6 +70,7 @@ Following attributes are available:
 * date-format {optional} the moment date format for the dates, if not set DD.MM.YYYY is used per default
 * placeholder {optional} placeholder for the input
 * name {optional} form name
+* picker-mode {optional} allowed values DATE or DATE_TIME if no value is set DATE is used automatically
 * button-label {optional} label for the picker button
 
 

@@ -123,3 +123,21 @@ export class YearPickerPage {
         this.row = yearRow;
     }
 }
+
+
+/**
+ * time picker mode
+ */
+export class TimeModel {
+    /*range 0-23*/
+    hour: number;
+
+    /*range 0-59*/
+    minutes: number;
+
+
+    constructor(hour: number, minutes: number) {
+        this.hour = hour;
+        this.minutes = minutes;
+    }
+}

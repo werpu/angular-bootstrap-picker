@@ -22,6 +22,7 @@ import IScope = angular.IScope;
 import {BehavioralFixes} from "./BehavioralFixes";
 import {ViewModelBuilder} from "./ViewModelBuilder";
 import {PickerDate, PickerMonth, PickerYear} from "./DatePickerTypes";
+import {RangeInput} from "./RangeInput";
 
 
 class DatePicker implements IComponentOptions {
@@ -48,7 +49,7 @@ class DatePicker implements IComponentOptions {
                             <!-- TODO year forward and backward -->
                            
                             <tr>
-                                <td><a class="prev glyphicon glyphicon-menu-left" ng-click="ctrl._prevMonth()"></a><td colspan="2" ng-click="ctrl._switchToMonthView()">{{ctrl._currentDate.format("MMMM")}}</td><td><a class="next glyphicon glyphicon-menu-right" ng-click="ctrl._nextMonth()"></a></td>
+                                <td><a class="prev glyphicon glyphicon-menu-left" ng-click="ctrl._prevMonth()"></a></td><td colspan="2" ng-click="ctrl._switchToMonthView()">{{ctrl._currentDate.format("MMMM")}}</td><td><a class="next glyphicon glyphicon-menu-right" ng-click="ctrl._nextMonth()"></a></td>
                                 <td><a class="prev glyphicon glyphicon-menu-left" ng-click="ctrl._prevYear()"></a></td><td colspan="2" ng-click="ctrl._switchToYearView()">{{ctrl.monthPickerData.year}}</td><td><a class="next glyphicon glyphicon-menu-right" ng-click="ctrl._nextYear()"></a></td>
                             </tr>
                             <tr>
@@ -62,6 +63,19 @@ class DatePicker implements IComponentOptions {
                                 <td class="day" ng-repeat="day in week.days" ng-class="{'outside': !day.sameMonth, 'invalid': day.invalid, 'selected' : ctrl._isSelectedDate(day), 'today': ctrl._isToday(day)}" ng-click="ctrl._selectDate(day)">{{::day.day}}</td>
                             </tr>
                         </tbody>
+                        <tfoot ng-if="ctrl.pickerMode != 'DATE'">
+                            <tr>
+                                <td class="calendarWeek"></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <!-- colspan not working for strange kind of reasons -->
+                                <td class="glyphicon glyphicon-time" ng-click="ctrl._switchToTimeView()"></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
                     </table>
                     <div class="button-group bottom-buttons">
                         <input type="button" class="clear btn btn-default btn-sm" ng-click="ctrl._clear()" value="Clear" />
@@ -73,7 +87,7 @@ class DatePicker implements IComponentOptions {
 
         var monthPicker = `
             <!-- month view -->
-            <div class="month-picker" ng-show="ctrl.view == 'MONTH'">
+            <div class="month-picker" ng-if="ctrl.view == 'MONTH'">
                  <table>
                     <thead>
                           <tr>
@@ -99,7 +113,7 @@ class DatePicker implements IComponentOptions {
 
         var yearPicker = `
             <!-- year view -->  
-            <div class="year-picker" ng-show="ctrl.view == 'YEAR'">
+            <div class="year-picker" ng-if="ctrl.view == 'YEAR'">
                   <table>
                     <thead>
                     <tr>
@@ -115,14 +129,51 @@ class DatePicker implements IComponentOptions {
                              ng-click="ctrl._selectYear(year)"
                             >{{::year.year}}</td></td>
                         </tr>
-                  </table>
+                    </table>
                   <div class="button-group bottom-buttons">
                     <input type="button" class="btn btn-default btn-sm" ng-click="ctrl._goBackInView()" value="Back" />
                   </div>
             </div>   
         `;
 
-        
+        var timePickerSpinning = `
+            <div class="time-picker" ng-if="ctrl.view == 'TIME'">
+                <table>
+                    <thead>
+                        <tr>
+                            <td colspan="8" ng-click="ctrl._goBackInView()">{{ctrl.innerSelection}}</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                         <tr>
+                            <td class="glyphicon glyphicon-chevron-up" ng-class="{'invalid' : !ctrl._isValidHour(ctrl._currentDate.get('hour') + 1)}" ng-click="ctrl._nextHour()">
+                            </td>
+                            <td class="glyphicon glyphicon-chevron-up" ng-class="{'invalid' : !ctrl._isValidMinute(ctrl._currentDate.get('minute') + 1)}" ng-click="ctrl._nextMinute()">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="selected-hour">
+                                <internal-range-input class="hour-input" from="0" to="23" ng-model="ctrl.currentHour"/>    
+                            </td>
+                            <td class="selected-minute">
+                                <internal-range-input class="minute-input" from="0" to="59" ng-model="ctrl.currentMinute"/> 
+                            </td>
+                        </tr>
+                         <tr>
+                            <td class="glyphicon glyphicon-chevron-down" ng-class="{'invalid' : !ctrl._isValidHour(ctrl._currentDate.get('hour') - 1)}" ng-click="ctrl._prevHour()">
+                            </td>
+                            <td class="glyphicon glyphicon-chevron-down" ng-class="{'invalid' : !ctrl._isValidMinute(ctrl._currentDate.get('minute') - 1)}" ng-click="ctrl._prevMinute()">
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="button-group bottom-buttons">
+                  <input type="button" class="btn btn-default btn-sm" ng-click="ctrl._goBackInView()" value="Back" />
+                </div>
+            </div>
+        `;
+
+
         return `
            <div class="dropdown"> 
                 ${inputArea}
@@ -132,6 +183,8 @@ class DatePicker implements IComponentOptions {
                    ${monthPicker}                   
                          
                    ${yearPicker}
+                   
+                   ${timePickerSpinning}
                 </div>
             </div>   
                  
@@ -147,7 +200,8 @@ class DatePicker implements IComponentOptions {
         endDate: "<",
         dateFormat: "@",
         placeholder: "@",
-        buttonLabel: "@"
+        buttonLabel: "@",
+        pickerMode: "@"
     };
 
     require: any = {
@@ -158,6 +212,8 @@ class DatePicker implements IComponentOptions {
         function ($scope: IScope, $element: JQuery, $timeout: ITimeoutService) {
 
             this.buttonLabel = ("undefined" == typeof  this.buttonLabel || null == this.buttonLabel) ? "Date" : this.buttonLabel;
+
+            this.pickerMode = ("undefined" == typeof  this.pickerMode || null == this.pickerMode) ? "DATE" : this.pickerMode;
 
             this.visibleDays = [];
 
@@ -175,7 +231,7 @@ class DatePicker implements IComponentOptions {
             };
 
             var _getDateFormat = (): string => {
-                return this.dateFormat || "DD.MM.YYYY";
+                return this.dateFormat || ((this.pickerMode === "DATE") ? "DD.MM.YYYY" : "DD.MM.YYYY HH:mm");
             };
 
 
@@ -258,6 +314,122 @@ class DatePicker implements IComponentOptions {
                 return modelDate.isSame(selectedMonth.momentDate, "year");
             };
 
+            /**
+             * checks if the time given is valid in the scope of the date selected
+             *
+             * @param hour
+             * @param minute
+             * @returns {boolean}
+             * @private
+             */
+            this._isValidTime = (hour: number, minute: number): boolean => {
+
+                if(hour < 0 || hour > 23 || minute < 0 || minute > 59) {
+                    return false;
+                }
+
+                var temporaryDate = moment.tz(this._currentDate.momentDate.toDate(), _getTimezone());
+                var momentStartDate = (this.startDate) ? moment.tz(this.startDate, _getTimezone()).startOf("day") : null;
+                var momentEndDate = (this.endDate) ? moment.tz(this.endDate, _getTimezone()).endOf("day") : null;
+
+                temporaryDate.set("hour", hour).set("minute", minute);
+                return !temporaryDate.isBefore(momentStartDate) && !temporaryDate.isAfter(momentEndDate);
+            };
+
+            /**
+             * checks for a valid hour
+             * @param hour
+             * @returns {boolean}
+             * @private
+             */
+            this._isValidHour = (hour: number): boolean => {
+                if(hour < 0 || hour > 23) {
+                    return false;
+                }
+                var temporaryDate = moment.tz(this._currentDate.toDate(), _getTimezone());
+                var momentStartDate = (this.startDate) ? moment.tz(this.startDate, _getTimezone()) : null;
+                var momentEndDate = (this.endDate) ? moment.tz(this.endDate, _getTimezone()) : null;
+                temporaryDate.set("hour", hour);
+
+                return !temporaryDate.isBefore(momentStartDate) && !temporaryDate.isAfter(momentEndDate);
+            };
+
+            /**
+             * checks for a valid minute
+             * @param minute
+             * @returns {boolean}
+             * @private
+             */
+            this._isValidMinute = (minute: number): boolean => {
+                if(minute < 0 || minute > 59) {
+                    return false;
+                }
+                var temporaryDate = moment.tz(this._currentDate.toDate(), _getTimezone());
+                var momentStartDate = (this.startDate) ? moment.tz(this.startDate, _getTimezone()) : null;
+                var momentEndDate = (this.endDate) ? moment.tz(this.endDate, _getTimezone()) : null;
+                temporaryDate.set("minute", minute);
+                return !temporaryDate.isBefore(momentStartDate) && !temporaryDate.isAfter(momentEndDate);
+            };
+
+            this._nextHour = () => {
+                if(!this._isValidHour(this._currentDate.get("hour") + 1)) {
+                    return;
+                }
+                this._currentDate.add("hour", 1);
+                _format(this._currentDate.toDate());
+            };
+
+            this._prevHour = () => {
+                if(!this._isValidHour(this._currentDate.get("hour") - 1)) {
+                    return;
+                }
+                this._currentDate.subtract("hour", 1);
+                _format(this._currentDate.toDate());
+            };
+
+            this._nextMinute = () => {
+                if(!this._isValidMinute(this._currentDate.get("minute") + 1)) {
+                    return;
+                }
+                this._currentDate.add("minute", 1);
+                _format(this._currentDate.toDate());
+            };
+
+            this._prevMinute = () => {
+                if(!this._isValidMinute(this._currentDate.get("minute") - 1)) {
+                    return;
+                }
+                this._currentDate.subtract("minute", 1);
+                _format(this._currentDate.toDate());
+            };
+
+            /*we do the proper max min date validity checks over our setters*/
+            Object.defineProperty(this, "currentHour", {
+                get: (): number => {
+                    return this._currentDate.get("hour");
+                },
+                set: (val: number) => {
+                    if(!this._isValidHour(val)) {
+                        return;
+                    }
+                    this._currentDate.set("hour", val);
+                    _format(this._currentDate.toDate());
+                }
+            });
+
+            Object.defineProperty(this, "currentMinute", {
+                get: (): number => {
+                    return this._currentDate.get("minute");
+                },
+                set: (val: number) => {
+                    if(!this._isValidMinute(val)) {
+                        return;
+                    }
+                    this._currentDate.set("minute", val);
+                    _format(this._currentDate.toDate());
+                }
+            });
+
 
             /**
              * select a date from the outside
@@ -266,9 +438,35 @@ class DatePicker implements IComponentOptions {
              */
             this._selectDate = (selectedDate: PickerDate) => {
                 if (!selectedDate.invalid) {
-                    _format(selectedDate.momentDate.toDate());
+                    if (!this.ngModel.$modelValue) {
+                        this._currentDate = selectedDate;
+                    }
 
-                    this._close();
+                    //we also have to update our currently selected date
+                    this._currentDate.set("date", selectedDate.momentDate.get("date"));
+                    this._currentDate.set("month", selectedDate.momentDate.get("month"));
+                    this._currentDate.set("year", selectedDate.momentDate.get("year"));
+                    if (this.pickerMode === "DATE") {
+                        this._currentDate = this._currentDate.startOf("day");
+                    }
+
+                    var startDate: moment.Moment = (this.startDate) ? moment.tz(this.startDate, _getTimezone()) : null;
+                    var endDate: moment.Moment = (this.endDate) ? moment.tz(this.endDate, _getTimezone()) : null;
+
+                    if(startDate && this._currentDate.isBefore(startDate)) {
+                        this._currentDate = startDate;
+                    }
+
+                    if(endDate && this._currentDate.isAfter(endDate)) {
+                        this._currentDate = endDate;
+                    }
+
+                    _format(this._currentDate.toDate());
+                    /*in case of a date mode we are done*/
+                    if (this.pickerMode === "DATE") {
+                        this._close();
+                    }
+
                 }
             };
 
@@ -298,11 +496,10 @@ class DatePicker implements IComponentOptions {
             this._selectYear = (selectedDate: PickerYear) => {
                 if (!selectedDate.invalid) {
                     if (!this.ngModel.$modelValue) {
-                        _format(selectedDate.momentDate.toDate());
+                        this._currentDate = selectedDate;
                     } else {
                         var value = moment.tz(this.ngModel.$modelValue, _getTimezone());
-                        value.set("year", selectedDate.momentDate.get("year"));
-                        _format(value.toDate());
+                        this._currentDate.set("year", selectedDate.momentDate.get("year"));
                     }
 
                     this._goBackInView();
@@ -442,6 +639,12 @@ class DatePicker implements IComponentOptions {
                 this.view = "YEAR";
             };
 
+
+            this._switchToTimeView = () => {
+                this.viewStack.unshift(this.view);
+                this.view = "TIME";
+            };
+
             this._goBackInView = () => {
                 this._updatePickerData();
                 this.view = this.viewStack.shift();
@@ -485,14 +688,18 @@ class DatePicker implements IComponentOptions {
                     if (data == "") {
                         return null;
                     }
-                    //TODO move this into the formatting loop
-                    if (this.startDate && data === moment.tz(this.startDate, _getTimezone()).format(_getDateFormat())) {
+
+                    var parsedData = moment.tz(data, _getDateFormat(), _getTimezone()).toDate();
+                    var startDate: moment.Moment = (this.startDate) ? moment.tz(this.startDate, _getTimezone()) : null;
+                    var endDate: moment.Moment = (this.endDate) ? moment.tz(this.endDate, _getTimezone()) : null;
+
+                    if (startDate && moment.tz(parsedData, _getTimezone()).isBefore(startDate) && startDate.isSame(parsedData, "day") && startDate.isSame(parsedData, "month") && startDate.isSame(parsedData, "year")) {
                         return this.startDate;
                     }
-                    if (this.endDate && data === moment.tz(this.endDate, _getTimezone()).format(_getDateFormat())) {
+                    if (endDate && moment.tz(parsedData, _getTimezone()).isAfter(endDate) && endDate.isSame(parsedData, "day") && endDate.isSame(parsedData, "month") && endDate.isSame(parsedData, "year")) {
                         return this.endDate;
                     }
-                    return moment.tz(data, _getDateFormat(), _getTimezone()).toDate();
+                    return parsedData;
                 });
 
                 /**
@@ -558,6 +765,6 @@ class DatePicker implements IComponentOptions {
 }
 
 
-(<any>angular).module('werpu.bootstrap.picker', []).component("datePicker", new DatePicker());
+(<any>angular).module('werpu.bootstrap.picker', []).component("datePicker", new DatePicker()).component("internalRangeInput", new RangeInput());
 
 
