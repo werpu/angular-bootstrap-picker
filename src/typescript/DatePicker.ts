@@ -27,45 +27,51 @@ import {PickerDate, PickerMonth, PickerYear} from "./DatePickerTypes";
 class DatePicker implements IComponentOptions {
 
     template = () => {
-        return `
-           <div class="input-group">
-               <input type="text" placeholder="{{ctrl.placeholder}}" class="form-control" name="{{ctrl.name}}" ng-model="ctrl.innerSelection"></input>
-               <span class="input-group-btn">
-                   <button class="picker-open btn btn-default" ng-click="ctrl._openPicker()">
-                         <span class="glyphicon glyphicon-align-right glyph-icon glyphicon-calendar"> {{ctrl.buttonLabel}} </span>
-                   </button>
-               </span> 
-           </div>
-           <input type="button" class="picker-close" ng-click="ctrl._close()" value="Close" ng-show="false"/>
-           <!-- date view - default view -->
-           <div class="picker-popup date-picker" ng-show="ctrl.pickerVisible && ctrl.view == 'DATE'">                
-                <table>
-                    <thead>
-                        <!-- TODO year forward and backward -->
-                       
-                        <tr>
-                            <td><a class="prev glyphicon glyphicon-menu-left" ng-click="ctrl._prevMonth()"></a><td colspan="2" ng-click="ctrl._switchToMonthView()">{{ctrl._currentDate.format("MMMM")}}</td><td><a class="next glyphicon glyphicon-menu-right" ng-click="ctrl._nextMonth()"></a></td>
-                            <td><a class="prev glyphicon glyphicon-menu-left" ng-click="ctrl._prevYear()"></a></td><td colspan="2" ng-click="ctrl._switchToYearView()">{{ctrl.monthPickerData.year}}</td><td><a class="next glyphicon glyphicon-menu-right" ng-click="ctrl._nextYear()"></a></td>
-                        </tr>
-                        <tr>
-                            <td class="calendarWeek"><!-- week of year --></td>
-                            <td class="dayOfWeek" ng-repeat="dayOfWeek in ctrl.monthPickerData.dayOfWeek" ng-click="ctrl._selectDate(dayOfWeek)">{{::dayOfWeek}}</td>    
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr ng-repeat="week in ctrl.monthPickerData.weeks">
-                            <td class="calendarWeek">{{::week.calendarWeek}}</td>
-                            <td class="day" ng-repeat="day in week.days" ng-class="{'outside': !day.sameMonth, 'invalid': day.invalid, 'selected' : ctrl._isSelectedDate(day), 'today': ctrl._isToday(day)}" ng-click="ctrl._selectDate(day)">{{::day.day}}</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <input type="button" class="clear btn btn-default btn-sm" ng-click="ctrl._clear()" value="Clear" />
-                <input type="button" class="today btn btn-default btn-sm" ng-click="ctrl._today()" value="Today" />
-                <input type="button" class="picker-close btn btn-default btn-sm" ng-click="ctrl._close()" value="Close" />
-           </div>
-           
-           <!-- month view -->
-            <div class="picker-popup month-picker" ng-show="ctrl.pickerVisible && ctrl.view == 'MONTH'">
+
+        var inputArea = `
+             <div class="input-group">
+                   <input type="text" placeholder="{{ctrl.placeholder}}" class="form-control" name="{{ctrl.name}}" ng-model="ctrl.innerSelection"></input>
+                   <span class="input-group-btn">
+                       <button class="picker-open btn btn-default" ng-click="ctrl._openPicker()">
+                             <span class="glyphicon glyphicon-align-right glyph-icon glyphicon-calendar"> {{ctrl.buttonLabel}} </span>
+                       </button>
+                   </span> 
+               </div>
+               <input type="button" class="picker-close" ng-click="ctrl._close()" value="Close" ng-show="false"/>
+        `;
+
+        var datePicker = `
+               <!-- date view - default view -->
+               <div class="date-picker" ng-show="ctrl.view == 'DATE'">                
+                    <table>
+                        <thead>
+                            <!-- TODO year forward and backward -->
+                           
+                            <tr>
+                                <td><a class="prev glyphicon glyphicon-menu-left" ng-click="ctrl._prevMonth()"></a><td colspan="2" ng-click="ctrl._switchToMonthView()">{{ctrl._currentDate.format("MMMM")}}</td><td><a class="next glyphicon glyphicon-menu-right" ng-click="ctrl._nextMonth()"></a></td>
+                                <td><a class="prev glyphicon glyphicon-menu-left" ng-click="ctrl._prevYear()"></a></td><td colspan="2" ng-click="ctrl._switchToYearView()">{{ctrl.monthPickerData.year}}</td><td><a class="next glyphicon glyphicon-menu-right" ng-click="ctrl._nextYear()"></a></td>
+                            </tr>
+                            <tr>
+                                <td class="calendarWeek"><!-- week of year --></td>
+                                <td class="dayOfWeek" ng-repeat="dayOfWeek in ctrl.monthPickerData.dayOfWeek" ng-click="ctrl._selectDate(dayOfWeek)">{{::dayOfWeek}}</td>    
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="week in ctrl.monthPickerData.weeks">
+                                <td class="calendarWeek">{{::week.calendarWeek}}</td>
+                                <td class="day" ng-repeat="day in week.days" ng-class="{'outside': !day.sameMonth, 'invalid': day.invalid, 'selected' : ctrl._isSelectedDate(day), 'today': ctrl._isToday(day)}" ng-click="ctrl._selectDate(day)">{{::day.day}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <input type="button" class="clear btn btn-default btn-sm" ng-click="ctrl._clear()" value="Clear" />
+                    <input type="button" class="today btn btn-default btn-sm" ng-click="ctrl._today()" value="Today" />
+                    <input type="button" class="picker-close btn btn-default btn-sm" ng-click="ctrl._close()" value="Close" />
+               </div> 
+        `;
+
+        var monthPicker = `
+            <!-- month view -->
+            <div class="month-picker" ng-show="ctrl.view == 'MONTH'">
                  <table>
                     <thead>
                           <tr>
@@ -86,9 +92,11 @@ class DatePicker implements IComponentOptions {
             
                 <input type="button" class="btn btn-default btn-sm" ng-click="ctrl._goBackInView()" value="Back" />
             </div>    
-                 
+        `;
+
+        var yearPicker = `
             <!-- year view -->  
-            <div class="picker-popup year-picker" ng-show="ctrl.pickerVisible && ctrl.view == 'YEAR'">
+            <div class="year-picker" ng-show="ctrl.view == 'YEAR'">
                   <table>
                     <thead>
                     <tr>
@@ -106,7 +114,21 @@ class DatePicker implements IComponentOptions {
                         </tr>
                   </table>
                 <input type="button" class="btn btn-default btn-sm" ng-click="ctrl._goBackInView()" value="Back" />
-            </div>      
+            </div>   
+        `;
+
+        
+        return `
+           <div class="dropdown"> 
+                ${inputArea}
+               <div class="dropdown-menu picker-popup ">
+                   ${datePicker}
+                   
+                   ${monthPicker}                   
+                         
+                   ${yearPicker}
+                </div>
+            </div>   
                  
         `;
     };
@@ -310,7 +332,9 @@ class DatePicker implements IComponentOptions {
                 this._currentDate = (this.ngModel.$modelValue) ? moment.tz(this.ngModel.$modelValue, timezone) : moment.tz(new Date(), timezone);
 
                 this._updatePickerData();
-                this.pickerVisible = true;
+                //this.pickerVisible = true;
+                $element.find(".dropdown").addClass("open");
+
 
                 if (!this.documentClickHandler) {
                     $timeout(() => {
@@ -400,6 +424,7 @@ class DatePicker implements IComponentOptions {
                 this.viewStack = [];
                 this.pickerVisible = false;
                 BehavioralFixes.unregisterDocumentBindings(this);
+                $element.find(".dropdown").removeClass("open");
             };
 
             this._switchToMonthView = () => {

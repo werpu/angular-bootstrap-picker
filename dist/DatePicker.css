@@ -4,10 +4,12 @@ date-picker {
 }
 
 date-picker .picker-popup {
-    position: absolute;
+    /*position: absolute;
     right: 0px;
     z-index: 10;
-    display: block;
+    display: block;*/
+    left: auto;
+    right: 0px;
     padding: 5px;
 
     border: 1px solid silver;
