@@ -95,4 +95,13 @@ export class BehavioralFixes {
             event.stopPropagation();
         });
     }
+
+    static openDropDown($element: JQuery) {
+        $element.find(".dropdown").addClass("open");
+    }
+
+    static closeDropDown($element: JQuery) {
+        $element.find(".dropdown").removeClass("open");
+    }
+
 }

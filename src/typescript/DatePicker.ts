@@ -25,6 +25,18 @@ import {PickerDate, PickerMonth, PickerYear} from "./DatePickerTypes";
 import {RangeInput} from "./RangeInput";
 
 
+class PickerConstants {
+    static DEFAULT_DATE_FORMAT = "DD.MM.YYYY";
+    static DEFAULT_DATE_TIME_FORMAT = "DD.MM.YYYY HH:mm";
+    static DEFAULT_PICKER_MODE = "DATE";
+    static PICKER_VIEW_DATE = "DATE";
+    static PICKER_VIEW_TIME = "TIME";
+    static PICKER_VIEW_MONTH = "MONTH";
+    static PICKER_VIEW_YEAR = "YEAR";
+    static DEFAULT_PICKER_LABEL = "Date";
+
+}
+
 class DatePicker implements IComponentOptions {
 
     template = () => {
@@ -211,14 +223,12 @@ class DatePicker implements IComponentOptions {
     controller: any = ["$scope", "$element", "$timeout",
         function ($scope: IScope, $element: JQuery, $timeout: ITimeoutService) {
 
-            this.buttonLabel = ("undefined" == typeof  this.buttonLabel || null == this.buttonLabel) ? "Date" : this.buttonLabel;
-
-            this.pickerMode = ("undefined" == typeof  this.pickerMode || null == this.pickerMode) ? "DATE" : this.pickerMode;
-
+            this.buttonLabel = ("undefined" == typeof  this.buttonLabel || null == this.buttonLabel) ?
+                PickerConstants.DEFAULT_PICKER_LABEL : this.buttonLabel;
+            this.pickerMode = ("undefined" == typeof  this.pickerMode || null == this.pickerMode) ?
+                PickerConstants.DEFAULT_PICKER_MODE : this.pickerMode;
             this.visibleDays = [];
-
-            this.view = "DATE";
-
+            this.view = PickerConstants.PICKER_VIEW_DATE;
             this.viewStack = [];
 
             /**
@@ -230,8 +240,15 @@ class DatePicker implements IComponentOptions {
                 return this.timezone || moment.tz.guess();
             };
 
+            /**
+             * fetches the date format set in the component either from outside or by its defaults
+             * @returns {string}
+             * @private
+             */
             var _getDateFormat = (): string => {
-                return this.dateFormat || ((this.pickerMode === "DATE") ? "DD.MM.YYYY" : "DD.MM.YYYY HH:mm");
+                return this.dateFormat || ((this.pickerMode === PickerConstants.DEFAULT_PICKER_MODE) ?
+                        PickerConstants.DEFAULT_DATE_FORMAT :
+                        PickerConstants.DEFAULT_DATE_TIME_FORMAT);
             };
 
 
@@ -335,7 +352,7 @@ class DatePicker implements IComponentOptions {
             };
 
             /**
-             * checks for a valid hour
+             * checks for a valid hour, valid means the model date
              * @param hour
              * @returns {boolean}
              * @private
@@ -374,7 +391,7 @@ class DatePicker implements IComponentOptions {
                     return;
                 }
                 this._currentDate.add("hour", 1);
-                _updateModel(this._currentDate.toDate());
+                this._selectDate(new PickerDate(false, this._currentDate, 1, true));
             };
 
             this._prevHour = () => {
@@ -382,7 +399,7 @@ class DatePicker implements IComponentOptions {
                     return;
                 }
                 this._currentDate.subtract("hour", 1);
-                _updateModel(this._currentDate.toDate());
+                this._selectDate(new PickerDate(false, this._currentDate, 1, true));
             };
 
             this._nextMinute = () => {
@@ -390,7 +407,7 @@ class DatePicker implements IComponentOptions {
                     return;
                 }
                 this._currentDate.add("minute", 1);
-                _updateModel(this._currentDate.toDate());
+                this._selectDate(new PickerDate(false, this._currentDate, 1, true));
             };
 
             this._prevMinute = () => {
@@ -398,7 +415,7 @@ class DatePicker implements IComponentOptions {
                     return;
                 }
                 this._currentDate.subtract("minute", 1);
-                _updateModel(this._currentDate.toDate());
+                this._selectDate(new PickerDate(false, this._currentDate, 1, true));
             };
 
             /*we do the proper max min date validity checks over our setters*/
@@ -411,7 +428,7 @@ class DatePicker implements IComponentOptions {
                         return;
                     }
                     this._currentDate.set("hour", val);
-                    _updateModel(this._currentDate.toDate());
+                    this._selectDate(new PickerDate(false, this._currentDate, 1, true));
                 }
             });
 
@@ -424,13 +441,13 @@ class DatePicker implements IComponentOptions {
                         return;
                     }
                     this._currentDate.set("minute", val);
-                    _updateModel(this._currentDate.toDate());
+                    this._selectDate(new PickerDate(false, this._currentDate, 1, true));
                 }
             });
 
             /**
              * helper function to push the current date into its max min range
-             * bo
+             *
              * @private
              */
             this._fixCurrentDate = () => {
@@ -458,28 +475,22 @@ class DatePicker implements IComponentOptions {
                         this._currentDate = selectedDate.momentDate;
                     }
 
-                    //we also have to update our currently selected date
-                    this._currentDate.set("date", selectedDate.momentDate.get("date"));
-                    this._currentDate.set("month", selectedDate.momentDate.get("month"));
-                    this._currentDate.set("year", selectedDate.momentDate.get("year"));
-                    if (this.pickerMode === "DATE") {
-                        this._currentDate = this._currentDate.startOf("day");
+                    //sometimes we pass the current date in, in this case no
+                    //Value traversal needs to be performed
+                    if(this._currentDate != selectedDate) {
+                        this._currentDate.set("date", selectedDate.momentDate.get("date"));
+                        this._currentDate.set("month", selectedDate.momentDate.get("month"));
+                        this._currentDate.set("year", selectedDate.momentDate.get("year"));
                     }
 
-                    var startDate: moment.Moment = (this.startDate) ? moment.tz(this.startDate, _getTimezone()) : null;
-                    var endDate: moment.Moment = (this.endDate) ? moment.tz(this.endDate, _getTimezone()) : null;
-
-                    if(startDate && this._currentDate.isBefore(startDate)) {
-                        this._currentDate = startDate;
+                    if (this.pickerMode === PickerConstants.DEFAULT_PICKER_MODE) {
+                        this._currentDate.startOf("day");
                     }
 
-                    if(endDate && this._currentDate.isAfter(endDate)) {
-                        this._currentDate = endDate;
-                    }
                     this._fixCurrentDate();
                     _updateModel(this._currentDate.toDate());
                     /*in case of a date mode we are done*/
-                    if (this.pickerMode === "DATE") {
+                    if (this.pickerMode === PickerConstants.DEFAULT_PICKER_MODE) {
                         this._close();
                     }
 
@@ -501,8 +512,8 @@ class DatePicker implements IComponentOptions {
                         this._currentDate.set("year", selectedDate.momentDate.get("year"));
                     }
                     this._fixCurrentDate();
-                    if(this.pickerMode != "DATE") {
-                        _updateModel(this._currentDate.toDate());
+                    if(this.pickerMode != PickerConstants.DEFAULT_PICKER_MODE) {
+                        this._selectDate(new PickerDate(false, this._currentDate, 1, true));
                     }
                     this._goBackInView();
                 }
@@ -524,14 +535,21 @@ class DatePicker implements IComponentOptions {
 
                     }
                     this._fixCurrentDate();
-                    if(this.pickerMode != "DATE") {
-                        _updateModel(this._currentDate.toDate());
+                    if(this.pickerMode != PickerConstants.DEFAULT_PICKER_MODE) {
+                        this._selectDate(new PickerDate(false, this._currentDate, 1, true));
                     }
                     this._goBackInView();
                 }
             };
 
-
+            /**
+             * updates the picker views from the _currentDate
+             * the _currentDate is a positional placeholder for the pickers
+             * it is used to store also temporary selections until
+             * they are traversed into the model via pickDate
+             *
+             * @private
+             */
             this._updatePickerData = () => {
                 this.monthPickerData = ViewModelBuilder.calculateDateView(this._currentDate.toDate(), this.startDate, this.endDate, _getTimezone());
                 this.yearPickerData = ViewModelBuilder.calculateMonthView(this._currentDate.toDate(), this.startDate, this.endDate, _getTimezone());
@@ -549,6 +567,7 @@ class DatePicker implements IComponentOptions {
 
             /**
              * opens the date picker
+             *
              * @private
              */
             this._openPicker = () => {
@@ -560,7 +579,7 @@ class DatePicker implements IComponentOptions {
 
                 this._updatePickerData();
                 //this.pickerVisible = true;
-                $element.find(".dropdown").addClass("open");
+                BehavioralFixes.openDropDown($element);
 
 
                 if (!this.documentClickHandler) {
@@ -638,8 +657,12 @@ class DatePicker implements IComponentOptions {
              * @private
              */
             this._today = () => {
-                var today = moment.tz(new Date(), _getTimezone());
-                this._selectDate(new PickerDate(false, today, 0, false));
+                this._currentDate = moment.tz(new Date(), _getTimezone());
+                if(this.pickerMode == PickerConstants.DEFAULT_PICKER_MODE) {
+                    this._currentDate.startOf("day");
+                }
+                this._fixCurrentDate();
+                _updateModel(this._currentDate.toDate());
                 this._close();
             };
 
@@ -648,29 +671,44 @@ class DatePicker implements IComponentOptions {
              * @private
              */
             this._close = () => {
-                this.view = "DATE";
+                this.view = PickerConstants.DEFAULT_PICKER_MODE;
                 this.viewStack = [];
                 this.pickerVisible = false;
                 BehavioralFixes.unregisterDocumentBindings(this);
-                $element.find(".dropdown").removeClass("open");
+                BehavioralFixes.closeDropDown($element);
             };
 
+            /**
+             * switches to the month view
+             * @private
+             */
             this._switchToMonthView = () => {
                 this.viewStack.unshift(this.view);
-                this.view = "MONTH";
+                this.view = PickerConstants.PICKER_VIEW_MONTH;
             };
 
+            /**
+             * switches to the year view
+             * @private
+             */
             this._switchToYearView = () => {
                 this.viewStack.unshift(this.view);
-                this.view = "YEAR";
+                this.view = PickerConstants.PICKER_VIEW_YEAR;
             };
 
-
+            /**
+             * switches to the time view
+             * @private
+             */
             this._switchToTimeView = () => {
                 this.viewStack.unshift(this.view);
-                this.view = "TIME";
+                this.view = PickerConstants.PICKER_VIEW_TIME;
             };
 
+            /**
+             * goes back one view
+             * @private
+             */
             this._goBackInView = () => {
                 this._updatePickerData();
                 this.view = this.viewStack.shift();

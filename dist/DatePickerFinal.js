@@ -89,6 +89,12 @@ var BehavioralFixes = (function () {
             event.stopPropagation();
         });
     };
+    BehavioralFixes.openDropDown = function ($element) {
+        $element.find(".dropdown").addClass("open");
+    };
+    BehavioralFixes.closeDropDown = function ($element) {
+        $element.find(".dropdown").removeClass("open");
+    };
     return BehavioralFixes;
 }());
 exports.BehavioralFixes = BehavioralFixes;
@@ -115,6 +121,19 @@ var BehavioralFixes_1 = require("./BehavioralFixes");
 var ViewModelBuilder_1 = require("./ViewModelBuilder");
 var DatePickerTypes_1 = require("./DatePickerTypes");
 var RangeInput_1 = require("./RangeInput");
+var PickerConstants = (function () {
+    function PickerConstants() {
+    }
+    PickerConstants.DEFAULT_DATE_FORMAT = "DD.MM.YYYY";
+    PickerConstants.DEFAULT_DATE_TIME_FORMAT = "DD.MM.YYYY HH:mm";
+    PickerConstants.DEFAULT_PICKER_MODE = "DATE";
+    PickerConstants.PICKER_VIEW_DATE = "DATE";
+    PickerConstants.PICKER_VIEW_TIME = "TIME";
+    PickerConstants.PICKER_VIEW_MONTH = "MONTH";
+    PickerConstants.PICKER_VIEW_YEAR = "YEAR";
+    PickerConstants.DEFAULT_PICKER_LABEL = "Date";
+    return PickerConstants;
+}());
 var DatePicker = (function () {
     function DatePicker() {
         this.template = function () {
@@ -142,10 +161,12 @@ var DatePicker = (function () {
         this.controller = ["$scope", "$element", "$timeout",
             function ($scope, $element, $timeout) {
                 var _this = this;
-                this.buttonLabel = ("undefined" == typeof this.buttonLabel || null == this.buttonLabel) ? "Date" : this.buttonLabel;
-                this.pickerMode = ("undefined" == typeof this.pickerMode || null == this.pickerMode) ? "DATE" : this.pickerMode;
+                this.buttonLabel = ("undefined" == typeof this.buttonLabel || null == this.buttonLabel) ?
+                    PickerConstants.DEFAULT_PICKER_LABEL : this.buttonLabel;
+                this.pickerMode = ("undefined" == typeof this.pickerMode || null == this.pickerMode) ?
+                    PickerConstants.DEFAULT_PICKER_MODE : this.pickerMode;
                 this.visibleDays = [];
-                this.view = "DATE";
+                this.view = PickerConstants.PICKER_VIEW_DATE;
                 this.viewStack = [];
                 /**
                  * fetches the current or default timezone
@@ -155,8 +176,15 @@ var DatePicker = (function () {
                 var _getTimezone = function () {
                     return _this.timezone || moment.tz.guess();
                 };
+                /**
+                 * fetches the date format set in the component either from outside or by its defaults
+                 * @returns {string}
+                 * @private
+                 */
                 var _getDateFormat = function () {
-                    return _this.dateFormat || ((_this.pickerMode === "DATE") ? "DD.MM.YYYY" : "DD.MM.YYYY HH:mm");
+                    return _this.dateFormat || ((_this.pickerMode === PickerConstants.DEFAULT_PICKER_MODE) ?
+                        PickerConstants.DEFAULT_DATE_FORMAT :
+                        PickerConstants.DEFAULT_DATE_TIME_FORMAT);
                 };
                 /**
                  * formats a date by using the controls appended parsers
@@ -239,7 +267,7 @@ var DatePicker = (function () {
                     return !temporaryDate.isBefore(momentStartDate) && !temporaryDate.isAfter(momentEndDate);
                 };
                 /**
-                 * checks for a valid hour
+                 * checks for a valid hour, valid means the model date
                  * @param hour
                  * @returns {boolean}
                  * @private
@@ -275,28 +303,28 @@ var DatePicker = (function () {
                         return;
                     }
                     _this._currentDate.add("hour", 1);
-                    _updateModel(_this._currentDate.toDate());
+                    _this._selectDate(new DatePickerTypes_1.PickerDate(false, _this._currentDate, 1, true));
                 };
                 this._prevHour = function () {
                     if (!_this._isValidHour(_this._currentDate.get("hour") - 1)) {
                         return;
                     }
                     _this._currentDate.subtract("hour", 1);
-                    _updateModel(_this._currentDate.toDate());
+                    _this._selectDate(new DatePickerTypes_1.PickerDate(false, _this._currentDate, 1, true));
                 };
                 this._nextMinute = function () {
                     if (!_this._isValidMinute(_this._currentDate.get("minute") + 1)) {
                         return;
                     }
                     _this._currentDate.add("minute", 1);
-                    _updateModel(_this._currentDate.toDate());
+                    _this._selectDate(new DatePickerTypes_1.PickerDate(false, _this._currentDate, 1, true));
                 };
                 this._prevMinute = function () {
                     if (!_this._isValidMinute(_this._currentDate.get("minute") - 1)) {
                         return;
                     }
                     _this._currentDate.subtract("minute", 1);
-                    _updateModel(_this._currentDate.toDate());
+                    _this._selectDate(new DatePickerTypes_1.PickerDate(false, _this._currentDate, 1, true));
                 };
                 /*we do the proper max min date validity checks over our setters*/
                 Object.defineProperty(this, "currentHour", {
@@ -308,7 +336,7 @@ var DatePicker = (function () {
                             return;
                         }
                         _this._currentDate.set("hour", val);
-                        _updateModel(_this._currentDate.toDate());
+                        _this._selectDate(new DatePickerTypes_1.PickerDate(false, _this._currentDate, 1, true));
                     }
                 });
                 Object.defineProperty(this, "currentMinute", {
@@ -320,12 +348,12 @@ var DatePicker = (function () {
                             return;
                         }
                         _this._currentDate.set("minute", val);
-                        _updateModel(_this._currentDate.toDate());
+                        _this._selectDate(new DatePickerTypes_1.PickerDate(false, _this._currentDate, 1, true));
                     }
                 });
                 /**
                  * helper function to push the current date into its max min range
-                 * bo
+                 *
                  * @private
                  */
                 this._fixCurrentDate = function () {
@@ -349,25 +377,20 @@ var DatePicker = (function () {
                         if (!_this.ngModel.$modelValue) {
                             _this._currentDate = selectedDate.momentDate;
                         }
-                        //we also have to update our currently selected date
-                        _this._currentDate.set("date", selectedDate.momentDate.get("date"));
-                        _this._currentDate.set("month", selectedDate.momentDate.get("month"));
-                        _this._currentDate.set("year", selectedDate.momentDate.get("year"));
-                        if (_this.pickerMode === "DATE") {
-                            _this._currentDate = _this._currentDate.startOf("day");
+                        //sometimes we pass the current date in, in this case no
+                        //Value traversal needs to be performed
+                        if (_this._currentDate != selectedDate) {
+                            _this._currentDate.set("date", selectedDate.momentDate.get("date"));
+                            _this._currentDate.set("month", selectedDate.momentDate.get("month"));
+                            _this._currentDate.set("year", selectedDate.momentDate.get("year"));
                         }
-                        var startDate = (_this.startDate) ? moment.tz(_this.startDate, _getTimezone()) : null;
-                        var endDate = (_this.endDate) ? moment.tz(_this.endDate, _getTimezone()) : null;
-                        if (startDate && _this._currentDate.isBefore(startDate)) {
-                            _this._currentDate = startDate;
-                        }
-                        if (endDate && _this._currentDate.isAfter(endDate)) {
-                            _this._currentDate = endDate;
+                        if (_this.pickerMode === PickerConstants.DEFAULT_PICKER_MODE) {
+                            _this._currentDate.startOf("day");
                         }
                         _this._fixCurrentDate();
                         _updateModel(_this._currentDate.toDate());
                         /*in case of a date mode we are done*/
-                        if (_this.pickerMode === "DATE") {
+                        if (_this.pickerMode === PickerConstants.DEFAULT_PICKER_MODE) {
                             _this._close();
                         }
                     }
@@ -388,8 +411,8 @@ var DatePicker = (function () {
                             _this._currentDate.set("year", selectedDate.momentDate.get("year"));
                         }
                         _this._fixCurrentDate();
-                        if (_this.pickerMode != "DATE") {
-                            _updateModel(_this._currentDate.toDate());
+                        if (_this.pickerMode != PickerConstants.DEFAULT_PICKER_MODE) {
+                            _this._selectDate(new DatePickerTypes_1.PickerDate(false, _this._currentDate, 1, true));
                         }
                         _this._goBackInView();
                     }
@@ -409,12 +432,20 @@ var DatePicker = (function () {
                             _this._currentDate.set("year", selectedDate.momentDate.get("year"));
                         }
                         _this._fixCurrentDate();
-                        if (_this.pickerMode != "DATE") {
-                            _updateModel(_this._currentDate.toDate());
+                        if (_this.pickerMode != PickerConstants.DEFAULT_PICKER_MODE) {
+                            _this._selectDate(new DatePickerTypes_1.PickerDate(false, _this._currentDate, 1, true));
                         }
                         _this._goBackInView();
                     }
                 };
+                /**
+                 * updates the picker views from the _currentDate
+                 * the _currentDate is a positional placeholder for the pickers
+                 * it is used to store also temporary selections until
+                 * they are traversed into the model via pickDate
+                 *
+                 * @private
+                 */
                 this._updatePickerData = function () {
                     _this.monthPickerData = ViewModelBuilder_1.ViewModelBuilder.calculateDateView(_this._currentDate.toDate(), _this.startDate, _this.endDate, _getTimezone());
                     _this.yearPickerData = ViewModelBuilder_1.ViewModelBuilder.calculateMonthView(_this._currentDate.toDate(), _this.startDate, _this.endDate, _getTimezone());
@@ -427,6 +458,7 @@ var DatePicker = (function () {
                 };
                 /**
                  * opens the date picker
+                 *
                  * @private
                  */
                 this._openPicker = function () {
@@ -434,7 +466,7 @@ var DatePicker = (function () {
                     _this._currentDate = (_this.ngModel.$modelValue) ? moment.tz(_this.ngModel.$modelValue, timezone) : moment.tz(new Date(), timezone);
                     _this._updatePickerData();
                     //this.pickerVisible = true;
-                    $element.find(".dropdown").addClass("open");
+                    BehavioralFixes_1.BehavioralFixes.openDropDown($element);
                     if (!_this.documentClickHandler) {
                         $timeout(function () {
                             BehavioralFixes_1.BehavioralFixes.registerDocumentBindings($element, _this);
@@ -501,8 +533,12 @@ var DatePicker = (function () {
                  * @private
                  */
                 this._today = function () {
-                    var today = moment.tz(new Date(), _getTimezone());
-                    _this._selectDate(new DatePickerTypes_1.PickerDate(false, today, 0, false));
+                    _this._currentDate = moment.tz(new Date(), _getTimezone());
+                    if (_this.pickerMode == PickerConstants.DEFAULT_PICKER_MODE) {
+                        _this._currentDate.startOf("day");
+                    }
+                    _this._fixCurrentDate();
+                    _updateModel(_this._currentDate.toDate());
                     _this._close();
                 };
                 /**
@@ -510,24 +546,40 @@ var DatePicker = (function () {
                  * @private
                  */
                 this._close = function () {
-                    _this.view = "DATE";
+                    _this.view = PickerConstants.DEFAULT_PICKER_MODE;
                     _this.viewStack = [];
                     _this.pickerVisible = false;
                     BehavioralFixes_1.BehavioralFixes.unregisterDocumentBindings(_this);
-                    $element.find(".dropdown").removeClass("open");
+                    BehavioralFixes_1.BehavioralFixes.closeDropDown($element);
                 };
+                /**
+                 * switches to the month view
+                 * @private
+                 */
                 this._switchToMonthView = function () {
                     _this.viewStack.unshift(_this.view);
-                    _this.view = "MONTH";
+                    _this.view = PickerConstants.PICKER_VIEW_MONTH;
                 };
+                /**
+                 * switches to the year view
+                 * @private
+                 */
                 this._switchToYearView = function () {
                     _this.viewStack.unshift(_this.view);
-                    _this.view = "YEAR";
+                    _this.view = PickerConstants.PICKER_VIEW_YEAR;
                 };
+                /**
+                 * switches to the time view
+                 * @private
+                 */
                 this._switchToTimeView = function () {
                     _this.viewStack.unshift(_this.view);
-                    _this.view = "TIME";
+                    _this.view = PickerConstants.PICKER_VIEW_TIME;
                 };
+                /**
+                 * goes back one view
+                 * @private
+                 */
                 this._goBackInView = function () {
                     _this._updatePickerData();
                     _this.view = _this.viewStack.shift();
