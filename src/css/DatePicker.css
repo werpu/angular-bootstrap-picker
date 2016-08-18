@@ -69,3 +69,7 @@ date-picker table {
 date-picker.ng-invalid input {
     border-color: red !important;
 }
+
+date-picker .bottom-buttons {
+    text-align: right;
+}

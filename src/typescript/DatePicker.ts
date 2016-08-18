@@ -63,9 +63,11 @@ class DatePicker implements IComponentOptions {
                             </tr>
                         </tbody>
                     </table>
-                    <input type="button" class="clear btn btn-default btn-sm" ng-click="ctrl._clear()" value="Clear" />
-                    <input type="button" class="today btn btn-default btn-sm" ng-click="ctrl._today()" value="Today" />
-                    <input type="button" class="picker-close btn btn-default btn-sm" ng-click="ctrl._close()" value="Close" />
+                    <div class="button-group bottom-buttons">
+                        <input type="button" class="clear btn btn-default btn-sm" ng-click="ctrl._clear()" value="Clear" />
+                        <input type="button" class="today btn btn-default btn-sm" ng-click="ctrl._today()" value="Today" />
+                        <input type="button" class="picker-close btn btn-default btn-sm" ng-click="ctrl._close()" value="Close" />
+                    </div>
                </div> 
         `;
 
@@ -89,8 +91,9 @@ class DatePicker implements IComponentOptions {
                     </tbody>
                  </table>   
             
-            
-                <input type="button" class="btn btn-default btn-sm" ng-click="ctrl._goBackInView()" value="Back" />
+                <div class="button-group bottom-buttons">
+                    <input type="button" class="btn btn-default btn-sm" ng-click="ctrl._goBackInView()" value="Back" />
+                </div>
             </div>    
         `;
 
@@ -113,7 +116,9 @@ class DatePicker implements IComponentOptions {
                             >{{::year.year}}</td></td>
                         </tr>
                   </table>
-                <input type="button" class="btn btn-default btn-sm" ng-click="ctrl._goBackInView()" value="Back" />
+                  <div class="button-group bottom-buttons">
+                    <input type="button" class="btn btn-default btn-sm" ng-click="ctrl._goBackInView()" value="Back" />
+                  </div>
             </div>   
         `;
 
