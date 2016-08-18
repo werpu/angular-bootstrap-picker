@@ -98,7 +98,7 @@ class DatePicker implements IComponentOptions {
                     </thead>
                     <tbody>
                         <tr ng-repeat="monthRow in ctrl.yearPickerData.row">
-                            <td ng-repeat="month in monthRow" ng-class="{'invalid': month.invalid, 'selected' : ctrl._isSameMonth(month), 'today': ctrl._isSameMonth(month)}"
+                            <td ng-repeat="month in monthRow" ng-class="{'invalid': month.invalid, 'selected' : ctrl._isSameMonth(month), 'today': ctrl._isTodayMonth(month)}"
                             ng-click="ctrl._selectMonth(month)"
                             >{{::month.month}}</td>
                         </tr>
@@ -125,7 +125,7 @@ class DatePicker implements IComponentOptions {
                     <tbody>
                         <tr ng-repeat="yearrow in ctrl.decadePickerData.row">
                             <td ng-repeat="year in yearrow"
-                            ng-class="{'invalid': year.invalid, 'selected' : ctrl._isSameYear(year), 'today': ctrl._isSameYear(year)}"
+                            ng-class="{'invalid': year.invalid, 'selected' : ctrl._isSameYear(year), 'today': ctrl._isTodayYear(year)}"
                              ng-click="ctrl._selectYear(year)"
                             >{{::year.year}}</td></td>
                         </tr>
@@ -294,10 +294,8 @@ class DatePicker implements IComponentOptions {
             };
 
             this._isSameMonth = (selectedMonth: PickerMonth) => {
-                var modelDate = moment.tz(new Date(), _getTimezone());
-
-                return modelDate.isSame(selectedMonth.momentDate, "month") &&
-                    modelDate.isSame(selectedMonth.momentDate, "year");
+                return this._currentDate.isSame(selectedMonth.momentDate, "month") &&
+                    this._currentDate.isSame(selectedMonth.momentDate, "year");
             };
 
 
@@ -309,9 +307,7 @@ class DatePicker implements IComponentOptions {
             };
 
             this._isSameYear = (selectedMonth: PickerYear) => {
-                var modelDate = moment.tz(new Date(), _getTimezone());
-
-                return modelDate.isSame(selectedMonth.momentDate, "year");
+                return this._currentDate.isSame(selectedMonth.momentDate, "year");
             };
 
             /**
@@ -328,7 +324,7 @@ class DatePicker implements IComponentOptions {
                     return false;
                 }
 
-                var temporaryDate = moment.tz(this._currentDate.momentDate.toDate(), _getTimezone());
+                var temporaryDate = moment.tz(this._currentDate.toDate(), _getTimezone());
                 var momentStartDate = (this.startDate) ? moment.tz(this.startDate, _getTimezone()).startOf("day") : null;
                 var momentEndDate = (this.endDate) ? moment.tz(this.endDate, _getTimezone()).endOf("day") : null;
 
@@ -506,6 +502,7 @@ class DatePicker implements IComponentOptions {
                     if(this.pickerMode != "DATE") {
                         _format(this._currentDate.toDate());
                     }
+                    this._updatePickerData();
                     this._goBackInView();
                 }
 
@@ -529,6 +526,7 @@ class DatePicker implements IComponentOptions {
                     if(this.pickerMode != "DATE") {
                         _format(this._currentDate.toDate());
                     }
+                    this._updatePickerData();
                     this._goBackInView();
                 }
             };
