@@ -89,5 +89,26 @@ Following attributes are available:
 * picker-mode {optional} allowed values DATE or DATE_TIME if no value is set DATE is used automatically
 * button-label {optional} label for the picker button
 
+#Building
+
+The picker was programmed to 100% in typescript, to generate the javascripts following tasks have to be performed
+
+## before the first build
+
+```
+npm install
+```
+
+Installs all your needed modules for building the picker
+
+## building
+```
+npm run build
+```
+
+
+Generates the js and css files in the dist folder out of the typescript sources.
+
+The typescript sources are located in src/typescript.
 
 
