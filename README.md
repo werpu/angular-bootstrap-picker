@@ -1,6 +1,11 @@
 # angular-bootstrap-picker
 Bootstrap date picker with timezone support for angular 1.5.x
 
+<img src="./doc/images/datepicker1.jpg" alt="Picker Image 1" style="width: 400px;"/>
+
+<img src="./doc/images/datepicker2.jpg" alt="Picker Image 1" style="width: 400px;"/>
+
+
 ## Introduction
 
 Why another date picker? There are myriads of date pickers on the net, so why another one?
@@ -21,6 +26,24 @@ If it fits your use cases then feel free to use my date picker, it is under the 
 If it does not fit then feel free to extend it and send a patch. However bare in mind. I do not intend to
 cover every corner case on earth with this picker. I prefer to do one thing and do it correctly. Which is date picking
 with timezone support. 
+
+So what does the component exactly do?
+
+* It allows you to pick time and dates with javascript Date objects.
+* It allows you to set the component to a timezone and pattern no matter where you are located.
+* The component is optimized for clean code and easy navigation to make the selection progress as easy as possible.
+* You can set upper and lower DateTime boundaries, which are reflected in the correct time and date of the timezone selected.
+
+
+What it does not do (at the moment)
+
+* Localisation (you can localize to some degree via moment which is used internally however)
+* AM/PM timeformat at the moment the component allows only the 24 hours timeformat
+
+Both things might be added in the future if the need arises or someone provides a proper patch.
+(Patches and collaboration are always welcome)
+
+
 
 ## Installation
 
