@@ -93,7 +93,7 @@ Following attributes are available:
 
 The picker was programmed to 100% in typescript, to generate the javascripts following tasks have to be performed
 
-## before the first build
+## Before the first build
 
 ```
 npm install
@@ -101,7 +101,7 @@ npm install
 
 Installs all your needed modules for building the picker
 
-## building
+## Building the javascript files
 ```
 npm run build
 ```
