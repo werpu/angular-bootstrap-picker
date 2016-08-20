@@ -96,11 +96,13 @@ export class BehavioralFixes {
         });
     }
 
-    static openDropDown($element: JQuery) {
+    static openDropDown($element: JQuery, controller: any) {
+        controller.isOpen = true;
         $element.find(".dropdown").addClass("open");
     }
 
-    static closeDropDown($element: JQuery) {
+    static closeDropDown($element: JQuery, controller: any) {
+        controller.isOpen = false;
         $element.find(".dropdown").removeClass("open");
     }
 

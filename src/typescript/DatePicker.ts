@@ -53,13 +53,57 @@ class DatePicker implements IComponentOptions {
                <input type="button" class="picker-close" ng-click="ctrl._close()" value="Close" ng-show="false"/>
         `;
 
+
+        var timePickerSpinning = `
+            <div class="time-picker" ng-if="ctrl.view == 'DATE' && ctrl.pickerMode == 'DATE_TIME'" >
+                <table>
+                   <thead>
+                        
+                    </thead>
+                    <tbody>
+                        
+                         <tr>
+                            <td class="glyphicon glyphicon-chevron-up" ng-class="{'invalid' : !ctrl._isValidHour(ctrl._currentDate.get('hour') + 1)}" ng-click="ctrl._nextHour()">
+                            </td>
+                            <td></td>
+                            <td class="glyphicon glyphicon-chevron-up" ng-class="{'invalid' : !ctrl._isValidMinute(ctrl._currentDate.get('minute') + 1)}" ng-click="ctrl._nextMinute()">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="selected-hour">
+                                <internal-range-input class="hour-input" from="0" to="23" ng-model="ctrl.currentHour"/>    
+                            </td>
+                            <td class="invalid">:</td>
+                            <td class="selected-minute">
+                                <internal-range-input class="minute-input" from="0" to="59" ng-model="ctrl.currentMinute"/> 
+                            </td>
+                        </tr>
+                         <tr>
+                            <td class="glyphicon glyphicon-chevron-down" ng-class="{'invalid' : !ctrl._isValidHour(ctrl._currentDate.get('hour') - 1)}" ng-click="ctrl._prevHour()">
+                            </td>
+                            <td></td>
+                            <td class="glyphicon glyphicon-chevron-down" ng-class="{'invalid' : !ctrl._isValidMinute(ctrl._currentDate.get('minute') - 1)}" ng-click="ctrl._prevMinute()">
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="button-group bottom-buttons" ng-if="ctrl.view == 'TIME'">
+                  <input type="button" class="btn btn-default btn-sm" ng-click="ctrl._goBackInView()" value="Back" />
+                </div>
+            </div>
+        `;
+
         var datePicker = `
                <!-- date view - default view -->
-               <div class="date-picker" ng-show="ctrl.view == 'DATE'">                
+               <div class="date-picker" ng-if="ctrl.view == 'DATE'">                
                     <table>
                         <thead>
                             <!-- TODO year forward and backward -->
-                           
+                        
+                            <tr ng-if="ctrl.pickerMode == 'DATE_TIME'">
+                                <td colspan="8" class="invalid picker-title" >{{ctrl.innerSelection}}</td>
+                            </tr>
+                            
                             <tr>
                                 <td><a class="prev glyphicon glyphicon-menu-left" ng-click="ctrl._prevMonth()"></a></td><td colspan="2" ng-click="ctrl._switchToMonthView()">{{ctrl._currentDate.format("MMMM")}}</td><td><a class="next glyphicon glyphicon-menu-right" ng-click="ctrl._nextMonth()"></a></td>
                                 <td><a class="prev glyphicon glyphicon-menu-left" ng-click="ctrl._prevYear()"></a></td><td colspan="2" ng-click="ctrl._switchToYearView()">{{ctrl.monthPickerData.year}}</td><td><a class="next glyphicon glyphicon-menu-right" ng-click="ctrl._nextYear()"></a></td>
@@ -75,21 +119,12 @@ class DatePicker implements IComponentOptions {
                                 <td class="day" ng-repeat="day in week.days" ng-class="{'outside': !day.sameMonth, 'invalid': day.invalid, 'selected' : ctrl._isSelectedDate(day), 'today': ctrl._isToday(day)}" ng-click="ctrl._selectDate(day)">{{::day.day}}</td>
                             </tr>
                         </tbody>
-                        <tfoot ng-if="ctrl.pickerMode != 'DATE'">
-                            <tr>
-                                <td class="calendarWeek"></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <!-- colspan not working for strange kind of reasons -->
-                                <td class="glyphicon glyphicon-time" ng-click="ctrl._switchToTimeView()"></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                        </tfoot>
+                        
                     </table>
-                    <div class="button-group bottom-buttons">
+                
+                    ${timePickerSpinning}
+                    
+                    <div class="button-group bottom-buttons col-md-12">
                         <input type="button" class="clear btn btn-default btn-sm" ng-click="ctrl._clear()" value="Clear" />
                         <input type="button" class="today btn btn-default btn-sm" ng-click="ctrl._today()" value="Today" />
                         <input type="button" class="picker-close btn btn-default btn-sm" ng-click="ctrl._close()" value="Close" />
@@ -148,55 +183,21 @@ class DatePicker implements IComponentOptions {
             </div>   
         `;
 
-        var timePickerSpinning = `
-            <div class="time-picker" ng-if="ctrl.view == 'TIME'">
-                <table>
-                    <thead>
-                        <tr>
-                            <td colspan="8" ng-click="ctrl._goBackInView()">{{ctrl.innerSelection}}</td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                         <tr>
-                            <td class="glyphicon glyphicon-chevron-up" ng-class="{'invalid' : !ctrl._isValidHour(ctrl._currentDate.get('hour') + 1)}" ng-click="ctrl._nextHour()">
-                            </td>
-                            <td class="glyphicon glyphicon-chevron-up" ng-class="{'invalid' : !ctrl._isValidMinute(ctrl._currentDate.get('minute') + 1)}" ng-click="ctrl._nextMinute()">
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="selected-hour">
-                                <internal-range-input class="hour-input" from="0" to="23" ng-model="ctrl.currentHour"/>    
-                            </td>
-                            <td class="selected-minute">
-                                <internal-range-input class="minute-input" from="0" to="59" ng-model="ctrl.currentMinute"/> 
-                            </td>
-                        </tr>
-                         <tr>
-                            <td class="glyphicon glyphicon-chevron-down" ng-class="{'invalid' : !ctrl._isValidHour(ctrl._currentDate.get('hour') - 1)}" ng-click="ctrl._prevHour()">
-                            </td>
-                            <td class="glyphicon glyphicon-chevron-down" ng-class="{'invalid' : !ctrl._isValidMinute(ctrl._currentDate.get('minute') - 1)}" ng-click="ctrl._prevMinute()">
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div class="button-group bottom-buttons">
-                  <input type="button" class="btn btn-default btn-sm" ng-click="ctrl._goBackInView()" value="Back" />
-                </div>
-            </div>
-        `;
+
 
 
         return `
-           <div class="dropdown"> 
-                ${inputArea}
-               <div class="dropdown-menu picker-popup ">
-                   ${datePicker}
-                   
-                   ${monthPicker}                   
-                         
-                   ${yearPicker}
-                   
-                   ${timePickerSpinning}
+           <div class="dropdown" > 
+                ${inputArea} 
+               <div class="dropdown-menu picker-popup">
+                    <div class="content" ng-if="ctrl.isOpen">
+                       ${datePicker}
+                       
+                       ${monthPicker}                   
+                             
+                       ${yearPicker}
+                   </div>
+               
                 </div>
             </div>   
                  
@@ -421,6 +422,9 @@ class DatePicker implements IComponentOptions {
             /*we do the proper max min date validity checks over our setters*/
             Object.defineProperty(this, "currentHour", {
                 get: (): number => {
+                    if(!this._currentDate) {
+                        return 0;
+                    }
                     return this._currentDate.get("hour");
                 },
                 set: (val: number) => {
@@ -434,6 +438,9 @@ class DatePicker implements IComponentOptions {
 
             Object.defineProperty(this, "currentMinute", {
                 get: (): number => {
+                    if(!this._currentDate) {
+                        return 0;
+                    }
                     return this._currentDate.get("minute");
                 },
                 set: (val: number) => {
@@ -579,7 +586,7 @@ class DatePicker implements IComponentOptions {
 
                 this._updatePickerData();
                 //this.pickerVisible = true;
-                BehavioralFixes.openDropDown($element);
+                BehavioralFixes.openDropDown($element, this);
 
 
                 if (!this.documentClickHandler) {
@@ -675,7 +682,7 @@ class DatePicker implements IComponentOptions {
                 this.viewStack = [];
                 this.pickerVisible = false;
                 BehavioralFixes.unregisterDocumentBindings(this);
-                BehavioralFixes.closeDropDown($element);
+                BehavioralFixes.closeDropDown($element, this);
             };
 
             /**

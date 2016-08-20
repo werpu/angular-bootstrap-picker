@@ -87,3 +87,9 @@ date-picker .time-picker input[type="text"] {
     width: 30px;
     text-align: center;
 }
+
+date-picker .picker-popup td.invalid.picker-title {
+    color: inherit;
+    border-bottom: 1px solid #5F82D9;
+    font-size: 15px;
+}
