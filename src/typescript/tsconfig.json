@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "outDir": "../../build",
-    "module": "commonjs",
+    "module": "umd",
     "target": "es5",
     "noImplicitAny": true,
     "removeComments": false,
