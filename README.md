@@ -3,8 +3,11 @@ Bootstrap date picker with timezone support for angular 1.5.x
 
 <img src="./doc/images/datepicker1.jpg" alt="Picker Image 1" style="width: 400px; float: left; margin-right: 10px;"/>
 
-<img src="./doc/images/datepicker2.jpg" alt="Picker Image 1" style="width: 400px;"/>
+<img src="./doc/images/datepicker2.jpg" alt="Picker Image 1" style="width: 400px; float: left; margin-right: 10px;"/>
 
+<img src="./doc/images/picker3.jpg" alt="Picker Image 3" style="width: 400px; float: left; margin-right: 10px;"/>
+
+<img src="./doc/images/picker4.jpg" alt="Picker Image 4" style="width: 400px; float: left; margin-right: 10px;"/>
 
 ## Introduction
 
@@ -15,19 +18,13 @@ to a certain timezone and allow input and output within the parameters of this z
 So I tried various pickers, and while they did have timezone support, they often were buggy and the code most of the times was
 in a state that it was more work to try to fix the issue instead of writing my own picker.
 
-Most of the time this was due to various facts
-
-* The code base was really old and relied on old outdated angular APIs
-* The code base often was to generic for what it did just to cover every corner case there is
-* The code relied on its own buggy reimplementation of what momentjs and its plugins can provide
-
 So my main goal is to keep the code in a clean maintainable state and to cover just my corner case.
 If it fits your use cases then feel free to use my date picker, it is under the most liberal license there is (MIT license).
 If it does not fit then feel free to extend it and send a patch. However bare in mind. I do not intend to
 cover every corner case on earth with this picker. I prefer to do one thing and do it correctly. Which is date picking
 with timezone support. 
 
-So what does the component exactly do?
+### So what does the component exactly do?
 
 * It allows you to pick time and dates with javascript Date objects.
 * It allows you to set the component to a timezone and pattern no matter where you are located.
@@ -35,14 +32,13 @@ So what does the component exactly do?
 * You can set upper and lower DateTime boundaries, which are reflected in the correct time and date of the timezone selected.
 
 
-What it does not do (at the moment)
+### What it does not do (at the moment)
 
 * Localisation (you can localize to some degree via moment which is used internally however)
 * AM/PM timeformat at the moment the component allows only the 24 hours timeformat
 
 Both things might be added in the future if the need arises or someone provides a proper patch.
 (Patches and collaboration are always welcome)
-
 
 
 ## Installation
