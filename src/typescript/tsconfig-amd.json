@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "outFile": "../../dist/DatePickerFinal-amd.js",
+    "module": "amd",
+    "target": "es5",
+    "noImplicitAny": true,
+    "removeComments": false,
+    "preserveConstEnums": true,
+    "sourceMap": true
+  },
+  "exclude": [
+    "../../node_modules"
+  ]
+}

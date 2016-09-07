@@ -43,9 +43,9 @@ class DatePicker implements IComponentOptions {
 
         var inputArea = `
              <div class="input-group">
-                   <input type="text" placeholder="{{ctrl.placeholder}}" class="form-control" name="{{ctrl.name}}" ng-model="ctrl.innerSelection"></input>
+                   <input type="text" placeholder="{{ctrl.placeholder}}" class="form-control" name="{{ctrl.name}}_inner" ng-model="ctrl.innerSelection"></input>
                    <span class="input-group-btn">
-                       <button class="picker-open btn btn-default" ng-click="ctrl._openPicker()">
+                       <button type="button" class="picker-open btn btn-default" ng-click="ctrl._openPicker()">
                              <span class="glyphicon glyphicon-align-right glyph-icon glyphicon-calendar"> {{ctrl.buttonLabel}} </span>
                        </button>
                    </span> 
@@ -835,7 +835,7 @@ class DatePicker implements IComponentOptions {
     ];
 }
 
-
+//note this code is ported from github please do not change it here
 (<any>angular).module('werpu.bootstrap.picker', []).component("datePicker", new DatePicker()).component("internalRangeInput", new RangeInput());
 
 

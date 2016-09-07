@@ -5,11 +5,15 @@
   "main": "./index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "npm run build-js && npm run build-compress",
+    "build": "npm run build-js && npm run build-compress && npm run build-compress-amd",
     "build-ts": "echo \"compiling typescript\" && tsc --project src/typescript/tsconfig.json",
+    "build-ts-amd": "echo \"compiling typescript\" && tsc --project src/typescript/tsconfig-amd.json",
+
     "build-dev": "echo \"building final file for development\" && browserify build/DatePicker.js > dist/DatePickerFinal.js && ncp src/css/DatePicker.css dist/DatePicker.css",
     "build-compress" : "uglifyjs --compress --mangle --source-map ./dist/DatePickerFinal-compressed.js.map -- dist/DatePickerFinal.js > dist/DatePickerFinal-compressed.js",
-    "build-js": "echo \"building final file\" && npm run build-ts && npm run build-dev"
+    "build-compress-amd" : "uglifyjs --compress --mangle --source-map ./dist/DatePickerFinal-compressed-amd.js.map -- dist/DatePickerFinal-amd.js > dist/DatePickerFinal-compressed-amd.js",
+
+    "build-js": "echo \"building final file\" && npm run build-ts && npm run build-ts-amd && npm run build-dev"
   },
   "author": "Werner Punz",
   "license": "MIT",

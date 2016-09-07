@@ -1,4 +1,8 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
 /*
  Copyright (c) 2016 Werner Punz
 
@@ -15,14 +19,7 @@
  ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
  */
-(function (factory) {
-    if (typeof module === 'object' && typeof module.exports === 'object') {
-        var v = factory(require, exports); if (v !== undefined) module.exports = v;
-    }
-    else if (typeof define === 'function' && define.amd) {
-        define(["require", "exports"], factory);
-    }
-})(function (require, exports) {
+define("BehavioralFixes", ["require", "exports"], function (require, exports) {
     "use strict";
     /**
      * Some bootstrtrap behavioral fixes
@@ -109,8 +106,6 @@
     }());
     exports.BehavioralFixes = BehavioralFixes;
 });
-
-},{}],2:[function(require,module,exports){
 /*
  Copyright (c) 2016 Werner Punz
 
@@ -127,19 +122,310 @@
  ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
  */
-(function (factory) {
-    if (typeof module === 'object' && typeof module.exports === 'object') {
-        var v = factory(require, exports); if (v !== undefined) module.exports = v;
-    }
-    else if (typeof define === 'function' && define.amd) {
-        define(["require", "exports", "./BehavioralFixes", "./ViewModelBuilder", "./DatePickerTypes", "./RangeInput"], factory);
-    }
-})(function (require, exports) {
+define("DatePickerTypes", ["require", "exports"], function (require, exports) {
     "use strict";
-    var BehavioralFixes_1 = require("./BehavioralFixes");
-    var ViewModelBuilder_1 = require("./ViewModelBuilder");
-    var DatePickerTypes_1 = require("./DatePickerTypes");
-    var RangeInput_1 = require("./RangeInput");
+    /*
+     Picker types internally used for the view representation
+     */
+    var BaseDate = (function () {
+        function BaseDate(invalid, momentDate) {
+            this.invalid = invalid;
+            this.momentDate = momentDate;
+        }
+        return BaseDate;
+    }());
+    /**
+     * internal model class for a single date picker date
+     * for the date view
+     */
+    var PickerDate = (function (_super) {
+        __extends(PickerDate, _super);
+        function PickerDate(invalid, momentDate, day, sameMonth) {
+            _super.call(this, invalid, momentDate);
+            this.day = day;
+            this.sameMonth = sameMonth;
+        }
+        return PickerDate;
+    }(BaseDate));
+    exports.PickerDate = PickerDate;
+    /**
+     * Simple picker month data structure for the month view
+     */
+    var PickerMonth = (function (_super) {
+        __extends(PickerMonth, _super);
+        function PickerMonth(invalid, momentDate, month, sameYear) {
+            _super.call(this, invalid, momentDate);
+            this.month = month;
+            this.sameYear = sameYear;
+        }
+        return PickerMonth;
+    }(BaseDate));
+    exports.PickerMonth = PickerMonth;
+    /**
+     * simple picker year data structure for the year view
+     */
+    var PickerYear = (function (_super) {
+        __extends(PickerYear, _super);
+        function PickerYear(invalid, momentDate, year) {
+            _super.call(this, invalid, momentDate);
+            this.year = year;
+        }
+        return PickerYear;
+    }(BaseDate));
+    exports.PickerYear = PickerYear;
+    var PickerWeek = (function () {
+        function PickerWeek(calendarWeek, days) {
+            if (days === void 0) { days = []; }
+            this.calendarWeek = calendarWeek;
+            this.days = days;
+        }
+        return PickerWeek;
+    }());
+    exports.PickerWeek = PickerWeek;
+    /**
+     * page model for the date picker page
+     */
+    var DatePickerPage = (function () {
+        function DatePickerPage(year, dayOfWeek, weeks) {
+            if (dayOfWeek === void 0) { dayOfWeek = []; }
+            if (weeks === void 0) { weeks = []; }
+            this.dayOfWeek = dayOfWeek;
+            this.weeks = weeks;
+            this.year = year;
+        }
+        return DatePickerPage;
+    }());
+    exports.DatePickerPage = DatePickerPage;
+    /**
+     * we have a 3x4 row for the months of the year
+     */
+    var MonthPickerPage = (function () {
+        function MonthPickerPage(year, monthRow) {
+            if (monthRow === void 0) { monthRow = []; }
+            this.row = monthRow;
+            this.year = year;
+        }
+        return MonthPickerPage;
+    }());
+    exports.MonthPickerPage = MonthPickerPage;
+    var YearPickerPage = (function () {
+        function YearPickerPage(yearRow) {
+            if (yearRow === void 0) { yearRow = []; }
+            this.row = yearRow;
+        }
+        return YearPickerPage;
+    }());
+    exports.YearPickerPage = YearPickerPage;
+    /**
+     * time picker mode
+     */
+    var TimeModel = (function () {
+        function TimeModel(hour, minutes) {
+            this.hour = hour;
+            this.minutes = minutes;
+        }
+        return TimeModel;
+    }());
+    exports.TimeModel = TimeModel;
+});
+/*
+ Copyright (c) 2016 Werner Punz
+
+ Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
+ (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
+ modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the
+ Software is furnished to do so, subject to the following conditions:
+
+ The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+ WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+ */
+define("ViewModelBuilder", ["require", "exports", "DatePickerTypes"], function (require, exports, DatePickerTypes_1) {
+    "use strict";
+    /**
+     * utils class to build the various view models
+     */
+    var ViewModelBuilder = (function () {
+        function ViewModelBuilder() {
+        }
+        ViewModelBuilder.calculateYearView = function (newValue, startDate, endDate, timezone) {
+            if (!newValue) {
+                newValue = new Date();
+            }
+            var current = moment.tz(newValue, timezone);
+            var offset = current.get("year") % 20 - 1;
+            var nextDecadeOffset = 20 - offset - 1;
+            var start = moment.tz(newValue, timezone).startOf("year").startOf("month").startOf("day").subtract("year", offset);
+            var end = moment.tz(newValue, timezone).endOf("year").endOf("month").endOf("day").add("year", nextDecadeOffset);
+            var momentStartDate = (startDate) ? moment.tz(startDate, timezone).startOf("year").startOf("month").startOf("day") : null;
+            var momentEndDate = (endDate) ? moment.tz(endDate, timezone).endOf("year").endOf("month").endOf("day") : null;
+            var cnt = 0;
+            var pickerPage = new DatePickerTypes_1.YearPickerPage();
+            var range1 = moment.range(start, end);
+            range1.by("year", function (date) {
+                if (cnt % 5 == 0) {
+                    pickerPage.row.push([]);
+                }
+                var isInvalid = false;
+                if (momentStartDate) {
+                    isInvalid = isInvalid || (date.startOf("day").isBefore(momentStartDate) && date.endOf("day").isBefore(momentStartDate));
+                }
+                if (!isInvalid && momentEndDate) {
+                    isInvalid = isInvalid || (date.startOf("day").isAfter(momentEndDate) && date.endOf("day").isAfter(momentEndDate));
+                }
+                pickerPage.row[pickerPage.row.length - 1].push(new DatePickerTypes_1.PickerYear(isInvalid, date, parseInt(date.tz(timezone).format("YYYY"))));
+                cnt++;
+            });
+            return pickerPage;
+        };
+        ViewModelBuilder.calculateMonthView = function (newValue, startDate, endDate, timezone) {
+            if (!newValue) {
+                newValue = new Date();
+            }
+            var momentDate = moment.tz(newValue, timezone);
+            var start = moment.tz(newValue, timezone).startOf("year").startOf("month").startOf("day");
+            var end = moment.tz(newValue, timezone).endOf("year").endOf("month").endOf("day");
+            var momentStartDate = (startDate) ? moment.tz(startDate, timezone).startOf("month").startOf("day") : null;
+            var momentEndDate = (endDate) ? moment.tz(endDate, timezone).endOf("month").endOf("day") : null;
+            var range1 = moment.range(start, end);
+            var cnt = 0;
+            var pickerPage = new DatePickerTypes_1.MonthPickerPage(momentDate.get("year"));
+            range1.by("month", function (date) {
+                if (cnt % 3 == 0) {
+                    pickerPage.row.push([]);
+                }
+                var isInvalid = false;
+                if (momentStartDate) {
+                    isInvalid = isInvalid || (date.startOf("day").isBefore(momentStartDate) && date.endOf("day").isBefore(momentStartDate));
+                }
+                if (!isInvalid && momentEndDate) {
+                    isInvalid = isInvalid || (date.startOf("day").isAfter(momentEndDate) && date.endOf("day").isAfter(momentEndDate));
+                }
+                pickerPage.row[pickerPage.row.length - 1].push(new DatePickerTypes_1.PickerMonth(isInvalid, date, date.tz(timezone).format("MMMM"), date.tz(timezone).isSame(momentDate, "year")));
+                cnt++;
+            });
+            return pickerPage;
+        };
+        /**
+         * calculates the current page for a given date
+         * this is the main layout calculation function for the date view
+         * for
+         * @param newValue
+         * @private
+         */
+        ViewModelBuilder.calculateDateView = function (newValue, startDate, endDate, timezone) {
+            if (!newValue) {
+                newValue = new Date();
+            }
+            var momentDate = moment.tz(newValue, timezone);
+            var start = moment.tz(newValue, timezone).startOf("month").startOf("week");
+            var end = moment.tz(newValue, timezone).endOf("month").endOf("week");
+            var momentStartDate = (startDate) ? startDate : null;
+            var momentEndDate = (endDate) ? endDate : null;
+            var range1 = moment.range(start, end);
+            var weeks = [];
+            var dayOfWeek = [];
+            var cnt = 0;
+            range1.by("day", function (date) {
+                if (cnt % 7 == 0) {
+                    weeks.push(new DatePickerTypes_1.PickerWeek(date.tz(timezone).get("week")));
+                }
+                var isInvalid = false;
+                if (momentStartDate) {
+                    isInvalid = isInvalid || (date.startOf("day").isBefore(momentStartDate) && date.endOf("day").isBefore(momentStartDate));
+                }
+                if (!isInvalid && momentEndDate) {
+                    isInvalid = isInvalid || (date.startOf("day").isAfter(momentEndDate) && date.endOf("day").isAfter(momentEndDate));
+                }
+                weeks[weeks.length - 1].days.push(new DatePickerTypes_1.PickerDate(isInvalid, date, date.tz(timezone).get("date"), date.tz(timezone).isSame(momentDate, "month")));
+                //We also need to display the work days
+                if (dayOfWeek.length < 7) {
+                    dayOfWeek.push(date.tz(timezone).format("ddd"));
+                }
+                cnt++;
+            });
+            return new DatePickerTypes_1.DatePickerPage(momentDate.get("year"), dayOfWeek, weeks);
+        };
+        return ViewModelBuilder;
+    }());
+    exports.ViewModelBuilder = ViewModelBuilder;
+});
+define("RangeInput", ["require", "exports"], function (require, exports) {
+    "use strict";
+    /**
+     * A simple range input which allows a numeric input within a certain range
+     */
+    var RangeInput = (function () {
+        function RangeInput() {
+            this.template = function () {
+                return "\n           <input type=\"text\" ng-model=\"ctrl.inputText\" />\n        ";
+            };
+            this.controllerAs = "ctrl";
+            this.bindings = {
+                from: "<",
+                to: "<"
+            };
+            this.require = {
+                "ngModel": 'ngModel',
+            };
+            this.controller = ["$scope", "$element", "$timeout",
+                function ($scope, $element, $timeout) {
+                    var _this = this;
+                    $scope.$watch('ctrl.inputText', function (newval, oldval) {
+                        if (newval != oldval) {
+                            _this.ngModel.$setViewValue(newval);
+                        }
+                    });
+                    this.$postLink = function () {
+                        //with this trick we are able to traverse the outer ngModel view value into the inner ngModel
+                        _this.ngModel.$render = function () {
+                            _this.inputText = _this.ngModel.$viewValue;
+                        };
+                        $element.find("input").on("keydown", function (event) {
+                            var keyCode = event.keyCode;
+                            if (keyCode > 57) {
+                                event.preventDefault();
+                                return false;
+                            }
+                            if (keyCode >= 48 && keyCode <= 57) {
+                                var finalValue = angular.element(event.target).val() + String.fromCharCode(keyCode);
+                                if ((('undefined' != typeof _this.from) && _this.from > finalValue) ||
+                                    (('undefined' != typeof _this.to && _this.to < finalValue))) {
+                                    event.preventDefault();
+                                    return false;
+                                }
+                            }
+                        });
+                    };
+                }
+            ];
+        }
+        return RangeInput;
+    }());
+    exports.RangeInput = RangeInput;
+});
+/*
+ Copyright (c) 2016 Werner Punz
+
+ Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
+ (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
+ modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the
+ Software is furnished to do so, subject to the following conditions:
+
+ The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+ WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+ */
+define("DatePicker", ["require", "exports", "BehavioralFixes", "ViewModelBuilder", "DatePickerTypes", "RangeInput"], function (require, exports, BehavioralFixes_1, ViewModelBuilder_1, DatePickerTypes_2, RangeInput_1) {
+    "use strict";
     var PickerConstants = (function () {
         function PickerConstants() {
         }
@@ -322,28 +608,28 @@
                             return;
                         }
                         _this._currentDate.add("hour", 1);
-                        _this._selectDate(new DatePickerTypes_1.PickerDate(false, _this._currentDate, 1, true));
+                        _this._selectDate(new DatePickerTypes_2.PickerDate(false, _this._currentDate, 1, true));
                     };
                     this._prevHour = function () {
                         if (!_this._isValidHour(_this._currentDate.get("hour") - 1)) {
                             return;
                         }
                         _this._currentDate.subtract("hour", 1);
-                        _this._selectDate(new DatePickerTypes_1.PickerDate(false, _this._currentDate, 1, true));
+                        _this._selectDate(new DatePickerTypes_2.PickerDate(false, _this._currentDate, 1, true));
                     };
                     this._nextMinute = function () {
                         if (!_this._isValidMinute(_this._currentDate.get("minute") + 1)) {
                             return;
                         }
                         _this._currentDate.add("minute", 1);
-                        _this._selectDate(new DatePickerTypes_1.PickerDate(false, _this._currentDate, 1, true));
+                        _this._selectDate(new DatePickerTypes_2.PickerDate(false, _this._currentDate, 1, true));
                     };
                     this._prevMinute = function () {
                         if (!_this._isValidMinute(_this._currentDate.get("minute") - 1)) {
                             return;
                         }
                         _this._currentDate.subtract("minute", 1);
-                        _this._selectDate(new DatePickerTypes_1.PickerDate(false, _this._currentDate, 1, true));
+                        _this._selectDate(new DatePickerTypes_2.PickerDate(false, _this._currentDate, 1, true));
                     };
                     /*we do the proper max min date validity checks over our setters*/
                     Object.defineProperty(this, "currentHour", {
@@ -358,7 +644,7 @@
                                 return;
                             }
                             _this._currentDate.set("hour", val);
-                            _this._selectDate(new DatePickerTypes_1.PickerDate(false, _this._currentDate, 1, true));
+                            _this._selectDate(new DatePickerTypes_2.PickerDate(false, _this._currentDate, 1, true));
                         }
                     });
                     Object.defineProperty(this, "currentMinute", {
@@ -373,7 +659,7 @@
                                 return;
                             }
                             _this._currentDate.set("minute", val);
-                            _this._selectDate(new DatePickerTypes_1.PickerDate(false, _this._currentDate, 1, true));
+                            _this._selectDate(new DatePickerTypes_2.PickerDate(false, _this._currentDate, 1, true));
                         }
                     });
                     /**
@@ -437,7 +723,7 @@
                             }
                             _this._fixCurrentDate();
                             if (_this.pickerMode != PickerConstants.DEFAULT_PICKER_MODE) {
-                                _this._selectDate(new DatePickerTypes_1.PickerDate(false, _this._currentDate, 1, true));
+                                _this._selectDate(new DatePickerTypes_2.PickerDate(false, _this._currentDate, 1, true));
                             }
                             _this._goBackInView();
                         }
@@ -458,7 +744,7 @@
                             }
                             _this._fixCurrentDate();
                             if (_this.pickerMode != PickerConstants.DEFAULT_PICKER_MODE) {
-                                _this._selectDate(new DatePickerTypes_1.PickerDate(false, _this._currentDate, 1, true));
+                                _this._selectDate(new DatePickerTypes_2.PickerDate(false, _this._currentDate, 1, true));
                             }
                             _this._goBackInView();
                         }
@@ -712,340 +998,4 @@
     //note this code is ported from github please do not change it here
     angular.module('werpu.bootstrap.picker', []).component("datePicker", new DatePicker()).component("internalRangeInput", new RangeInput_1.RangeInput());
 });
-
-},{"./BehavioralFixes":1,"./DatePickerTypes":3,"./RangeInput":4,"./ViewModelBuilder":5}],3:[function(require,module,exports){
-/*
- Copyright (c) 2016 Werner Punz
-
- Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
- (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
- modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the
- Software is furnished to do so, subject to the following conditions:
-
- The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
- WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
- ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
- */
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
-(function (factory) {
-    if (typeof module === 'object' && typeof module.exports === 'object') {
-        var v = factory(require, exports); if (v !== undefined) module.exports = v;
-    }
-    else if (typeof define === 'function' && define.amd) {
-        define(["require", "exports"], factory);
-    }
-})(function (require, exports) {
-    "use strict";
-    /*
-     Picker types internally used for the view representation
-     */
-    var BaseDate = (function () {
-        function BaseDate(invalid, momentDate) {
-            this.invalid = invalid;
-            this.momentDate = momentDate;
-        }
-        return BaseDate;
-    }());
-    /**
-     * internal model class for a single date picker date
-     * for the date view
-     */
-    var PickerDate = (function (_super) {
-        __extends(PickerDate, _super);
-        function PickerDate(invalid, momentDate, day, sameMonth) {
-            _super.call(this, invalid, momentDate);
-            this.day = day;
-            this.sameMonth = sameMonth;
-        }
-        return PickerDate;
-    }(BaseDate));
-    exports.PickerDate = PickerDate;
-    /**
-     * Simple picker month data structure for the month view
-     */
-    var PickerMonth = (function (_super) {
-        __extends(PickerMonth, _super);
-        function PickerMonth(invalid, momentDate, month, sameYear) {
-            _super.call(this, invalid, momentDate);
-            this.month = month;
-            this.sameYear = sameYear;
-        }
-        return PickerMonth;
-    }(BaseDate));
-    exports.PickerMonth = PickerMonth;
-    /**
-     * simple picker year data structure for the year view
-     */
-    var PickerYear = (function (_super) {
-        __extends(PickerYear, _super);
-        function PickerYear(invalid, momentDate, year) {
-            _super.call(this, invalid, momentDate);
-            this.year = year;
-        }
-        return PickerYear;
-    }(BaseDate));
-    exports.PickerYear = PickerYear;
-    var PickerWeek = (function () {
-        function PickerWeek(calendarWeek, days) {
-            if (days === void 0) { days = []; }
-            this.calendarWeek = calendarWeek;
-            this.days = days;
-        }
-        return PickerWeek;
-    }());
-    exports.PickerWeek = PickerWeek;
-    /**
-     * page model for the date picker page
-     */
-    var DatePickerPage = (function () {
-        function DatePickerPage(year, dayOfWeek, weeks) {
-            if (dayOfWeek === void 0) { dayOfWeek = []; }
-            if (weeks === void 0) { weeks = []; }
-            this.dayOfWeek = dayOfWeek;
-            this.weeks = weeks;
-            this.year = year;
-        }
-        return DatePickerPage;
-    }());
-    exports.DatePickerPage = DatePickerPage;
-    /**
-     * we have a 3x4 row for the months of the year
-     */
-    var MonthPickerPage = (function () {
-        function MonthPickerPage(year, monthRow) {
-            if (monthRow === void 0) { monthRow = []; }
-            this.row = monthRow;
-            this.year = year;
-        }
-        return MonthPickerPage;
-    }());
-    exports.MonthPickerPage = MonthPickerPage;
-    var YearPickerPage = (function () {
-        function YearPickerPage(yearRow) {
-            if (yearRow === void 0) { yearRow = []; }
-            this.row = yearRow;
-        }
-        return YearPickerPage;
-    }());
-    exports.YearPickerPage = YearPickerPage;
-    /**
-     * time picker mode
-     */
-    var TimeModel = (function () {
-        function TimeModel(hour, minutes) {
-            this.hour = hour;
-            this.minutes = minutes;
-        }
-        return TimeModel;
-    }());
-    exports.TimeModel = TimeModel;
-});
-
-},{}],4:[function(require,module,exports){
-(function (factory) {
-    if (typeof module === 'object' && typeof module.exports === 'object') {
-        var v = factory(require, exports); if (v !== undefined) module.exports = v;
-    }
-    else if (typeof define === 'function' && define.amd) {
-        define(["require", "exports"], factory);
-    }
-})(function (require, exports) {
-    "use strict";
-    /**
-     * A simple range input which allows a numeric input within a certain range
-     */
-    var RangeInput = (function () {
-        function RangeInput() {
-            this.template = function () {
-                return "\n           <input type=\"text\" ng-model=\"ctrl.inputText\" />\n        ";
-            };
-            this.controllerAs = "ctrl";
-            this.bindings = {
-                from: "<",
-                to: "<"
-            };
-            this.require = {
-                "ngModel": 'ngModel',
-            };
-            this.controller = ["$scope", "$element", "$timeout",
-                function ($scope, $element, $timeout) {
-                    var _this = this;
-                    $scope.$watch('ctrl.inputText', function (newval, oldval) {
-                        if (newval != oldval) {
-                            _this.ngModel.$setViewValue(newval);
-                        }
-                    });
-                    this.$postLink = function () {
-                        //with this trick we are able to traverse the outer ngModel view value into the inner ngModel
-                        _this.ngModel.$render = function () {
-                            _this.inputText = _this.ngModel.$viewValue;
-                        };
-                        $element.find("input").on("keydown", function (event) {
-                            var keyCode = event.keyCode;
-                            if (keyCode > 57) {
-                                event.preventDefault();
-                                return false;
-                            }
-                            if (keyCode >= 48 && keyCode <= 57) {
-                                var finalValue = angular.element(event.target).val() + String.fromCharCode(keyCode);
-                                if ((('undefined' != typeof _this.from) && _this.from > finalValue) ||
-                                    (('undefined' != typeof _this.to && _this.to < finalValue))) {
-                                    event.preventDefault();
-                                    return false;
-                                }
-                            }
-                        });
-                    };
-                }
-            ];
-        }
-        return RangeInput;
-    }());
-    exports.RangeInput = RangeInput;
-});
-
-},{}],5:[function(require,module,exports){
-/*
- Copyright (c) 2016 Werner Punz
-
- Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
- (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
- modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the
- Software is furnished to do so, subject to the following conditions:
-
- The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
- WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
- ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
- */
-(function (factory) {
-    if (typeof module === 'object' && typeof module.exports === 'object') {
-        var v = factory(require, exports); if (v !== undefined) module.exports = v;
-    }
-    else if (typeof define === 'function' && define.amd) {
-        define(["require", "exports", "./DatePickerTypes"], factory);
-    }
-})(function (require, exports) {
-    "use strict";
-    var DatePickerTypes_1 = require("./DatePickerTypes");
-    /**
-     * utils class to build the various view models
-     */
-    var ViewModelBuilder = (function () {
-        function ViewModelBuilder() {
-        }
-        ViewModelBuilder.calculateYearView = function (newValue, startDate, endDate, timezone) {
-            if (!newValue) {
-                newValue = new Date();
-            }
-            var current = moment.tz(newValue, timezone);
-            var offset = current.get("year") % 20 - 1;
-            var nextDecadeOffset = 20 - offset - 1;
-            var start = moment.tz(newValue, timezone).startOf("year").startOf("month").startOf("day").subtract("year", offset);
-            var end = moment.tz(newValue, timezone).endOf("year").endOf("month").endOf("day").add("year", nextDecadeOffset);
-            var momentStartDate = (startDate) ? moment.tz(startDate, timezone).startOf("year").startOf("month").startOf("day") : null;
-            var momentEndDate = (endDate) ? moment.tz(endDate, timezone).endOf("year").endOf("month").endOf("day") : null;
-            var cnt = 0;
-            var pickerPage = new DatePickerTypes_1.YearPickerPage();
-            var range1 = moment.range(start, end);
-            range1.by("year", function (date) {
-                if (cnt % 5 == 0) {
-                    pickerPage.row.push([]);
-                }
-                var isInvalid = false;
-                if (momentStartDate) {
-                    isInvalid = isInvalid || (date.startOf("day").isBefore(momentStartDate) && date.endOf("day").isBefore(momentStartDate));
-                }
-                if (!isInvalid && momentEndDate) {
-                    isInvalid = isInvalid || (date.startOf("day").isAfter(momentEndDate) && date.endOf("day").isAfter(momentEndDate));
-                }
-                pickerPage.row[pickerPage.row.length - 1].push(new DatePickerTypes_1.PickerYear(isInvalid, date, parseInt(date.tz(timezone).format("YYYY"))));
-                cnt++;
-            });
-            return pickerPage;
-        };
-        ViewModelBuilder.calculateMonthView = function (newValue, startDate, endDate, timezone) {
-            if (!newValue) {
-                newValue = new Date();
-            }
-            var momentDate = moment.tz(newValue, timezone);
-            var start = moment.tz(newValue, timezone).startOf("year").startOf("month").startOf("day");
-            var end = moment.tz(newValue, timezone).endOf("year").endOf("month").endOf("day");
-            var momentStartDate = (startDate) ? moment.tz(startDate, timezone).startOf("month").startOf("day") : null;
-            var momentEndDate = (endDate) ? moment.tz(endDate, timezone).endOf("month").endOf("day") : null;
-            var range1 = moment.range(start, end);
-            var cnt = 0;
-            var pickerPage = new DatePickerTypes_1.MonthPickerPage(momentDate.get("year"));
-            range1.by("month", function (date) {
-                if (cnt % 3 == 0) {
-                    pickerPage.row.push([]);
-                }
-                var isInvalid = false;
-                if (momentStartDate) {
-                    isInvalid = isInvalid || (date.startOf("day").isBefore(momentStartDate) && date.endOf("day").isBefore(momentStartDate));
-                }
-                if (!isInvalid && momentEndDate) {
-                    isInvalid = isInvalid || (date.startOf("day").isAfter(momentEndDate) && date.endOf("day").isAfter(momentEndDate));
-                }
-                pickerPage.row[pickerPage.row.length - 1].push(new DatePickerTypes_1.PickerMonth(isInvalid, date, date.tz(timezone).format("MMMM"), date.tz(timezone).isSame(momentDate, "year")));
-                cnt++;
-            });
-            return pickerPage;
-        };
-        /**
-         * calculates the current page for a given date
-         * this is the main layout calculation function for the date view
-         * for
-         * @param newValue
-         * @private
-         */
-        ViewModelBuilder.calculateDateView = function (newValue, startDate, endDate, timezone) {
-            if (!newValue) {
-                newValue = new Date();
-            }
-            var momentDate = moment.tz(newValue, timezone);
-            var start = moment.tz(newValue, timezone).startOf("month").startOf("week");
-            var end = moment.tz(newValue, timezone).endOf("month").endOf("week");
-            var momentStartDate = (startDate) ? startDate : null;
-            var momentEndDate = (endDate) ? endDate : null;
-            var range1 = moment.range(start, end);
-            var weeks = [];
-            var dayOfWeek = [];
-            var cnt = 0;
-            range1.by("day", function (date) {
-                if (cnt % 7 == 0) {
-                    weeks.push(new DatePickerTypes_1.PickerWeek(date.tz(timezone).get("week")));
-                }
-                var isInvalid = false;
-                if (momentStartDate) {
-                    isInvalid = isInvalid || (date.startOf("day").isBefore(momentStartDate) && date.endOf("day").isBefore(momentStartDate));
-                }
-                if (!isInvalid && momentEndDate) {
-                    isInvalid = isInvalid || (date.startOf("day").isAfter(momentEndDate) && date.endOf("day").isAfter(momentEndDate));
-                }
-                weeks[weeks.length - 1].days.push(new DatePickerTypes_1.PickerDate(isInvalid, date, date.tz(timezone).get("date"), date.tz(timezone).isSame(momentDate, "month")));
-                //We also need to display the work days
-                if (dayOfWeek.length < 7) {
-                    dayOfWeek.push(date.tz(timezone).format("ddd"));
-                }
-                cnt++;
-            });
-            return new DatePickerTypes_1.DatePickerPage(momentDate.get("year"), dayOfWeek, weeks);
-        };
-        return ViewModelBuilder;
-    }());
-    exports.ViewModelBuilder = ViewModelBuilder;
-});
-
-},{"./DatePickerTypes":3}]},{},[2]);
+//# sourceMappingURL=DatePickerFinal-amd.js.map
