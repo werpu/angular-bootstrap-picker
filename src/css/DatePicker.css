@@ -16,6 +16,11 @@ date-picker .picker-popup {
     background-color: #f2f2f2;
 }
 
+date-picker .picker-standalone {
+    display: table;
+    padding: 5px;
+}
+
 date-picker .picker-popup thead,
 date-picker .picker-popup table {
     border-bottom: 1px solid #5F82D9;

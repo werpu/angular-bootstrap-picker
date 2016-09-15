@@ -204,7 +204,7 @@ class DatePicker implements IComponentOptions {
                
                 </div>
             </div> 
-            <div class="dropdown" ng-if="ctrl.pickerOnly">
+            <div class="dropdown picker-standalone" ng-if="ctrl.pickerOnly">
                  ${inputAreaHidden}
                  <div class="picker-popup">
                   <div class="content"> 
@@ -747,11 +747,16 @@ class DatePicker implements IComponentOptions {
                 }
             });
 
+            /**
+             * if the startDate shifts and the currentDate is smaller
+             * then the min date then we have to shift the date over
+             * to the new minDate
+             */
             $scope.$watch('ctrl.startDate', (newval:Date, oldval: Date) => {
-                //TODO Validate this code
                 if(newval && this._currentDate) {
                     var newMinDate = moment.tz(newval, _getTimezone());
-                    //booga
+                    //no date change or mindate < than the currentDate in the min date, we safely can skip
+                    //the rest of the date processing
                     if(newMinDate.isSameOrBefore(this._currentDate)) {
                         $timeout(() => {
                             this._updatePickerData();
@@ -759,11 +764,12 @@ class DatePicker implements IComponentOptions {
                         return;
                     }
 
-                    this._currentDate = (PickerConstants.DEFAULT_PICKER_MODE ) ? newMinDate.startOf("day") :  newMinDate;
+                    //otherwise we set the currentDate to the newMinDate
+                    this._currentDate = (this.endOfDay) ? newMinDate.endOf("day") :  newMinDate;
 
-                    //this._fixCurrentDate();
+                    //currentDate != modelValue?
                     var currentModel = moment.tz(this.ngModel.$modelValue, _getTimezone());
-
+                    //if there is a discrepancy we also update the model
                     if(this.pickerMode != PickerConstants.DEFAULT_PICKER_MODE || this.pickerOnly) {
                         if(!currentModel || currentModel.get("day") != this._currentDate.get("day") ||
                             currentModel.get("month") != this._currentDate.get("month") ||
@@ -773,8 +779,6 @@ class DatePicker implements IComponentOptions {
 
                         }
                     }
-
-
                 }
                 if(this._currentDate) {
                     $timeout(() => {
