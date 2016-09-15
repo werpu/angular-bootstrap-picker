@@ -717,7 +717,8 @@ define("DatePicker", ["require", "exports", "BehavioralFixes", "ViewModelBuilder
                     this._selectMonth = function (selectedDate) {
                         if (!selectedDate.invalid) {
                             if (!_this.ngModel.$modelValue) {
-                                _this._currentDate = selectedDate;
+                                _this._currentDate = moment.tz(new Date(), _getTimezone());
+                                _this._currentDate.set("month", selectedDate.momentDate.get("month"));
                             }
                             else {
                                 //we also have to update our currently selected date
@@ -725,7 +726,7 @@ define("DatePicker", ["require", "exports", "BehavioralFixes", "ViewModelBuilder
                                 _this._currentDate.set("year", selectedDate.momentDate.get("year"));
                             }
                             _this._fixCurrentDate();
-                            if (_this.pickerMode != PickerConstants.DEFAULT_PICKER_MODE) {
+                            if (_this.pickerMode != PickerConstants.DEFAULT_PICKER_MODE || _this.pickerOnly) {
                                 _this._selectDate(new DatePickerTypes_2.PickerDate(false, _this._currentDate, 1, true));
                             }
                             _this._goBackInView();
@@ -739,14 +740,15 @@ define("DatePicker", ["require", "exports", "BehavioralFixes", "ViewModelBuilder
                     this._selectYear = function (selectedDate) {
                         if (!selectedDate.invalid) {
                             if (!_this.ngModel.$modelValue) {
-                                _this._currentDate = selectedDate;
+                                _this._currentDate = moment.tz(new Date(), _getTimezone());
+                                _this._currentDate.set("year", selectedDate.momentDate.get("year"));
                             }
                             else {
                                 var value = moment.tz(_this.ngModel.$modelValue, _getTimezone());
                                 _this._currentDate.set("year", selectedDate.momentDate.get("year"));
                             }
                             _this._fixCurrentDate();
-                            if (_this.pickerMode != PickerConstants.DEFAULT_PICKER_MODE) {
+                            if (_this.pickerMode != PickerConstants.DEFAULT_PICKER_MODE || _this.pickerOnly) {
                                 _this._selectDate(new DatePickerTypes_2.PickerDate(false, _this._currentDate, 1, true));
                             }
                             _this._goBackInView();
@@ -940,20 +942,22 @@ define("DatePicker", ["require", "exports", "BehavioralFixes", "ViewModelBuilder
                         }
                     });
                     this.$postLink = function () {
-                        /**
-                         * we turn off event propagation
-                         * for the popup so that a click within the popup
-                         * does not propagate to its parent elements
-                         * (we only want to have the popup closed when we click on the outside)
-                         *
-                         */
-                        BehavioralFixes_1.BehavioralFixes.registerPopupBindings($element);
-                        /**
-                         * we change the key handling a little bit
-                         * an enter should trigger a form submit
-                         * and a keydown should open the picker
-                         */
-                        BehavioralFixes_1.BehavioralFixes.registerKeyBindings($element);
+                        $timeout(function () {
+                            /**
+                             * we turn off event propagation
+                             * for the popup so that a click within the popup
+                             * does not propagate to its parent elements
+                             * (we only want to have the popup closed when we click on the outside)
+                             *
+                             */
+                            BehavioralFixes_1.BehavioralFixes.registerPopupBindings($element);
+                            /**
+                             * we change the key handling a little bit
+                             * an enter should trigger a form submit
+                             * and a keydown should open the picker
+                             */
+                            BehavioralFixes_1.BehavioralFixes.registerKeyBindings($element);
+                        });
                         //with this trick we are able to traverse the outer ngModel view value into the inner ngModel
                         _this.ngModel.$render = function () {
                             _this.innerSelection = _this.ngModel.$viewValue;

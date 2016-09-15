@@ -531,14 +531,16 @@ class DatePicker implements IComponentOptions {
             this._selectMonth = (selectedDate: PickerMonth) => {
                 if (!selectedDate.invalid) {
                     if (!this.ngModel.$modelValue) {
-                        this._currentDate = selectedDate;
+                        this._currentDate = moment.tz(new Date(), _getTimezone());
+                        this._currentDate.set("month", selectedDate.momentDate.get("month"));
+                        
                     } else {
                         //we also have to update our currently selected date
                         this._currentDate.set("month", selectedDate.momentDate.get("month"));
                         this._currentDate.set("year", selectedDate.momentDate.get("year"));
                     }
                     this._fixCurrentDate();
-                    if(this.pickerMode != PickerConstants.DEFAULT_PICKER_MODE) {
+                    if(this.pickerMode != PickerConstants.DEFAULT_PICKER_MODE || this.pickerOnly) {
                         this._selectDate(new PickerDate(false, this._currentDate, 1, true));
                     }
                     this._goBackInView();
@@ -554,14 +556,16 @@ class DatePicker implements IComponentOptions {
             this._selectYear = (selectedDate: PickerYear) => {
                 if (!selectedDate.invalid) {
                     if (!this.ngModel.$modelValue) {
-                        this._currentDate = selectedDate;
+                        this._currentDate = moment.tz(new Date(), _getTimezone());
+                        this._currentDate.set("year", selectedDate.momentDate.get("year"));
+
                     } else {
                         var value = moment.tz(this.ngModel.$modelValue, _getTimezone());
                         this._currentDate.set("year", selectedDate.momentDate.get("year"));
 
                     }
                     this._fixCurrentDate();
-                    if(this.pickerMode != PickerConstants.DEFAULT_PICKER_MODE) {
+                    if(this.pickerMode != PickerConstants.DEFAULT_PICKER_MODE || this.pickerOnly) {
                         this._selectDate(new PickerDate(false, this._currentDate, 1, true));
                     }
                     this._goBackInView();
@@ -788,22 +792,24 @@ class DatePicker implements IComponentOptions {
             });
 
             this.$postLink = () => {
+                $timeout(() => {
+                    /**
+                     * we turn off event propagation
+                     * for the popup so that a click within the popup
+                     * does not propagate to its parent elements
+                     * (we only want to have the popup closed when we click on the outside)
+                     *
+                     */
+                    BehavioralFixes.registerPopupBindings($element);
 
-                /**
-                 * we turn off event propagation
-                 * for the popup so that a click within the popup
-                 * does not propagate to its parent elements
-                 * (we only want to have the popup closed when we click on the outside)
-                 *
-                 */
-                BehavioralFixes.registerPopupBindings($element);
+                    /**
+                     * we change the key handling a little bit
+                     * an enter should trigger a form submit
+                     * and a keydown should open the picker
+                     */
+                    BehavioralFixes.registerKeyBindings($element);
+                });
 
-                /**
-                 * we change the key handling a little bit
-                 * an enter should trigger a form submit
-                 * and a keydown should open the picker
-                 */
-                BehavioralFixes.registerKeyBindings($element);
 
                 //with this trick we are able to traverse the outer ngModel view value into the inner ngModel
                 this.ngModel.$render = () => {
