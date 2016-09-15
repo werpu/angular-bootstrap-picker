@@ -33,7 +33,7 @@ date-picker .picker-popup td {
 }
 
 date-picker .picker-popup td.no-link {
-    color: grey;
+    color: inherit;
     cursor: inherit;
 }
 
@@ -81,6 +81,7 @@ date-picker.ng-invalid input {
 
 date-picker .bottom-buttons {
     text-align: right;
+    padding-right: 0px;
 }
 
 

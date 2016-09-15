@@ -128,7 +128,7 @@ class DatePicker implements IComponentOptions {
                 
                     ${timePickerSpinning}
                     
-                    <div class="button-group bottom-buttons col-md-12">
+                    <div class="button-group bottom-buttons col-xs-12 col-sm-12 col-md-12 col-lg-12">
                         <input type="button" class="clear btn btn-default btn-sm" ng-click="ctrl._clear()" value="Clear" />
                         <input type="button" class="today btn btn-default btn-sm" ng-click="ctrl._today()" value="Today" />
                         <input type="button" class="picker-close btn btn-default btn-sm" ng-click="ctrl._close()" value="Close" ng-if="!ctrl.pickerOnly" />
