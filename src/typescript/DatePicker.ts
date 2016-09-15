@@ -42,7 +42,7 @@ class DatePicker implements IComponentOptions {
     template = () => {
 
         var inputArea = `
-             <div class="input-group">
+                <div class="input-group">
                    <input type="text" placeholder="{{ctrl.placeholder}}" class="form-control" name="{{ctrl.name}}_inner" ng-model="ctrl.innerSelection"></input>
                    <span class="input-group-btn">
                        <button type="button" class="picker-open btn btn-default" ng-click="ctrl._openPicker()">
@@ -53,6 +53,10 @@ class DatePicker implements IComponentOptions {
                <input type="button" class="picker-close" ng-click="ctrl._close()" value="Close" ng-show="false"/>
         `;
 
+
+        var inputAreaHidden = `
+           <input type="text" style="display: none;" placeholder="{{ctrl.placeholder}}" class="form-control" name="{{ctrl.name}}_inner" ng-model="ctrl.innerSelection"></input>
+        `;
 
         var timePickerSpinning = `
             <div class="time-picker" ng-if="ctrl.view == 'DATE' && ctrl.pickerMode == 'DATE_TIME'" >
@@ -127,7 +131,7 @@ class DatePicker implements IComponentOptions {
                     <div class="button-group bottom-buttons col-md-12">
                         <input type="button" class="clear btn btn-default btn-sm" ng-click="ctrl._clear()" value="Clear" />
                         <input type="button" class="today btn btn-default btn-sm" ng-click="ctrl._today()" value="Today" />
-                        <input type="button" class="picker-close btn btn-default btn-sm" ng-click="ctrl._close()" value="Close" />
+                        <input type="button" class="picker-close btn btn-default btn-sm" ng-click="ctrl._close()" value="Close" ng-if="!ctrl.pickerOnly" />
                     </div>
                </div> 
         `;
@@ -187,7 +191,7 @@ class DatePicker implements IComponentOptions {
 
 
         return `
-           <div class="dropdown" > 
+           <div class="dropdown" ng-if="!ctrl.pickerOnly"> 
                 ${inputArea} 
                <div class="dropdown-menu picker-popup">
                     <div class="content" ng-if="ctrl.isOpen">
@@ -199,7 +203,19 @@ class DatePicker implements IComponentOptions {
                    </div>
                
                 </div>
-            </div>   
+            </div> 
+            <div class="dropdown" ng-if="ctrl.pickerOnly">
+                 ${inputAreaHidden}
+                 <div class="picker-popup">
+                  <div class="content"> 
+                     ${datePicker}
+                           
+                     ${monthPicker}                   
+                                 
+                     ${yearPicker}
+                 </div>
+                 </div>
+            </div>  
                  
         `;
     };
@@ -214,7 +230,9 @@ class DatePicker implements IComponentOptions {
         dateFormat: "@",
         placeholder: "@",
         buttonLabel: "@",
-        pickerMode: "@"
+        pickerMode: "@",
+        pickerOnly: "<",
+        endOfDay: "<"
     };
 
     require: any = {
@@ -491,13 +509,14 @@ class DatePicker implements IComponentOptions {
                     }
 
                     if (this.pickerMode === PickerConstants.DEFAULT_PICKER_MODE) {
-                        this._currentDate.startOf("day");
+
+                        (!this.endOfDay) ? this._currentDate.startOf("day") : this._currentDate.endOf("day");
                     }
 
                     this._fixCurrentDate();
                     _updateModel(this._currentDate.toDate());
                     /*in case of a date mode we are done*/
-                    if (this.pickerMode === PickerConstants.DEFAULT_PICKER_MODE) {
+                    if (this.pickerMode === PickerConstants.DEFAULT_PICKER_MODE && !this.pickerOnly) {
                         this._close();
                     }
 
@@ -728,6 +747,42 @@ class DatePicker implements IComponentOptions {
                 }
             });
 
+            $scope.$watch('ctrl.startDate', (newval:Date, oldval: Date) => {
+                //TODO Validate this code
+                if(newval && this._currentDate) {
+                    var newMinDate = moment.tz(newval, _getTimezone());
+                    //booga
+                    if(newMinDate.isSameOrBefore(this._currentDate)) {
+                        $timeout(() => {
+                            this._updatePickerData();
+                        });
+                        return;
+                    }
+
+                    this._currentDate = (PickerConstants.DEFAULT_PICKER_MODE ) ? newMinDate.startOf("day") :  newMinDate;
+
+                    //this._fixCurrentDate();
+                    var currentModel = moment.tz(this.ngModel.$modelValue, _getTimezone());
+
+                    if(this.pickerMode != PickerConstants.DEFAULT_PICKER_MODE || this.pickerOnly) {
+                        if(!currentModel || currentModel.get("day") != this._currentDate.get("day") ||
+                            currentModel.get("month") != this._currentDate.get("month") ||
+                            currentModel.get("year") != this._currentDate.get("year")
+                        ) {
+                            this._selectDate(new PickerDate(false, this._currentDate, 1, true));
+
+                        }
+                    }
+
+
+                }
+                if(this._currentDate) {
+                    $timeout(() => {
+                        this._updatePickerData();
+                    });
+                }
+            });
+
             this.$postLink = () => {
 
                 /**
@@ -751,6 +806,8 @@ class DatePicker implements IComponentOptions {
                     this.innerSelection = this.ngModel.$viewValue;
                 };
 
+
+
                 /*
                  * registers the internal parsers, validators and formatters
                  * into the ngModel for the date string conversion
@@ -760,9 +817,10 @@ class DatePicker implements IComponentOptions {
                         return null;
                     }
 
-                    var parsedData = moment.tz(data, _getDateFormat(), _getTimezone()).toDate();
+                    var parsedData = (this.endOfDay) ? moment.tz(data, _getDateFormat(), _getTimezone()).endOf("day").toDate() : moment.tz(data, _getDateFormat(), _getTimezone()).toDate();
                     var startDate: moment.Moment = (this.startDate) ? moment.tz(this.startDate, _getTimezone()) : null;
                     var endDate: moment.Moment = (this.endDate) ? moment.tz(this.endDate, _getTimezone()) : null;
+
 
                     if (startDate && moment.tz(parsedData, _getTimezone()).isBefore(startDate) && startDate.isSame(parsedData, "day") && startDate.isSame(parsedData, "month") && startDate.isSame(parsedData, "year")) {
                         return this.startDate;
@@ -825,6 +883,12 @@ class DatePicker implements IComponentOptions {
                     var timezone = this.timezone || moment.tz.guess();
                     return moment.tz(data, timezone).format(_getDateFormat());
                 });
+
+
+                //update the picker data if we are in popupOnly mode
+                if(this.pickerOnly) {
+                    this._openPicker();
+                }
             };
 
             this.$onDestroy = () => {

@@ -38,6 +38,24 @@
         <date-picker name="america" ng-model="currentDate" start-date="minDate" end-date="maxDate" timezone="America/Los_Angeles" picker-mode="DATE_TIME"></date-picker>
         </p>
 
+        <p>Picker Only</p>
+        {{currentDate}}
+        <date-picker name="pickerOnly" picker-only="true" ng-model="currentDate" start-date="minDate" end-date="maxDate" timezone="Europe/Zurich" ></date-picker>
+
+        <p>Range Selection</p>
+        {{currentDate}}{{currentDate2}}
+         <table>
+             <tr>
+                 <td>
+                     <date-picker name="pickerRangeFrom" picker-only="true" ng-model="currentDate" start-date="minDate" end-date="maxDate" timezone="Europe/Zurich" ></date-picker>
+                 </td>
+                 <td>
+                     <date-picker name="pickerRangeTo" picker-only="true" ng-model="currentDate2" start-date="currentDate" end-date="maxDate" end-of-day="true" timezone="Europe/Zurich" ></date-picker>
+                 </td>
+             </tr>
+         </table>
+
+
         <input type="submit" style="visibility: hidden" />
     </form>
 
