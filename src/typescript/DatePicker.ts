@@ -169,7 +169,7 @@ class DatePicker implements IComponentOptions {
                     <thead>
                     <tr>
                         <td><a ng-click="ctrl._prevDecade()" class="glyphicon glyphicon-menu-left"></a></td>
-                        <td colspan="3">{{ctrl.decadeFrom}} - {{ctrl.decadeTo}}</td>
+                        <td colspan="3" class="no-link">{{ctrl.decadeFrom}} - {{ctrl.decadeTo}}</td>
                         <td><a ng-click="ctrl._nextDecade()" class="glyphicon glyphicon-menu-right"></a></td>
                     </tr>
                     </thead>

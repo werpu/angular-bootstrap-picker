@@ -16,9 +16,8 @@ date-picker .picker-popup {
     background-color: #f2f2f2;
 }
 
-date-picker .picker-standalone {
+date-picker .picker-standalone .picker-popup .content {
     display: table;
-    padding: 5px;
 }
 
 date-picker .picker-popup thead,
@@ -33,8 +32,13 @@ date-picker .picker-popup td {
     color: #337ab7;
 }
 
-date-picker .picker-popup td:hover,
-date-picker .picker-popup td:focus {
+date-picker .picker-popup td.no-link {
+    color: grey;
+    cursor: inherit;
+}
+
+date-picker .picker-popup td:hover:not(.no-link),
+date-picker .picker-popup td:focus:not(.no-link) {
     color: #23527c;
     text-decoration: underline;
 }
