@@ -1,7 +1,7 @@
 # angular-bootstrap-picker
 Bootstrap date picker with timezone support for angular 1.5.x
 
-:-------------------------:|:-------------------------:
+
 <img src="./doc/images/datepicker1.jpg" alt="Picker Image 1" style="width: 400px; float: left; margin-right: 10px;"/>| <img src="./doc/images/datepicker2.jpg" alt="Picker Image 1" style="width: 400px; float: left; margin-right: 10px;"/>
 :-------------------------:|:-------------------------:
 <img src="./doc/images/picker3.jpg" alt="Picker Image 3" style="width: 400px; float: left; margin-right: 10px;"/>| <img src="./doc/images/picker4.jpg" alt="Picker Image 4" style="width: 400px; margin-right: 10px;"/>
