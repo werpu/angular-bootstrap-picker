@@ -323,7 +323,7 @@ define("ViewModelBuilder", ["require", "exports", "DatePickerTypes"], function (
             }
             var momentDate = moment.tz(newValue, timezone);
             var start = moment.tz(newValue, timezone).startOf("month").startOf("week");
-            var end = moment.tz(newValue, timezone).endOf("month").endOf("week");
+            var end = moment.tz(newValue, timezone).startOf("month").startOf("week").add("days", 41);
             var momentStartDate = (startDate) ? startDate : null;
             var momentEndDate = (endDate) ? endDate : null;
             var range1 = moment.range(start, end);
