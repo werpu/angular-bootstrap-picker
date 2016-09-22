@@ -287,6 +287,9 @@ class DatePicker implements IComponentOptions {
                 }
 
                 this.innerSelection = innerSelection;
+                $timeout(() => {
+                    this._updatePickerData();
+                });
             };
 
 

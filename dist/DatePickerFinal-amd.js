@@ -508,6 +508,9 @@ define("DatePicker", ["require", "exports", "BehavioralFixes", "ViewModelBuilder
                             innerSelection = _this.ngModel.$formatters[cnt](innerSelection);
                         }
                         _this.innerSelection = innerSelection;
+                        $timeout(function () {
+                            _this._updatePickerData();
+                        });
                     };
                     /**
                      * checks if the current picker date is the selected one
