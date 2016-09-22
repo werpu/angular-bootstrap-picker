@@ -183,6 +183,19 @@
             this.controller = ["$scope", "$element", "$timeout",
                 function ($scope, $element, $timeout) {
                     var _this = this;
+                    /**
+                     * current date viewed (aka navigational position=
+                     * @type {Moment}
+                     * @private
+                     */
+                    this._currentDate = null;
+                    /**
+                     * double buffer date in double buffer mode
+                     *
+                     * @type {Moment}
+                     * @private
+                     */
+                    this._doubleBufferDate = null;
                     this.buttonLabel = ("undefined" == typeof this.buttonLabel || null == this.buttonLabel) ?
                         PickerConstants.DEFAULT_PICKER_LABEL : this.buttonLabel;
                     this.pickerMode = ("undefined" == typeof this.pickerMode || null == this.pickerMode) ?
@@ -250,12 +263,12 @@
                      * @private
                      */
                     this._isChosenDate = function (selectedDate) {
-                        if (!_this._currentDate) {
+                        if (!_this._doubleBufferDate) {
                             return false;
                         }
                         else {
                             //booga
-                            var modelDate = _this._currentDate;
+                            var modelDate = _this._doubleBufferDate;
                             return modelDate.isSame(selectedDate.momentDate, "date") &&
                                 modelDate.isSame(selectedDate.momentDate, "month") &&
                                 modelDate.isSame(selectedDate.momentDate, "year");
@@ -284,7 +297,10 @@
                             modelDate.isSame(selectedMonth.momentDate, "year");
                     };
                     this._isChosenMonth = function (selectedMonth) {
-                        var modelDate = _this._currentDate;
+                        if (!_this._doubleBufferDate) {
+                            return false;
+                        }
+                        var modelDate = _this._doubleBufferDate;
                         return modelDate.isSame(selectedMonth.momentDate, "month") &&
                             modelDate.isSame(selectedMonth.momentDate, "year");
                     };
@@ -297,7 +313,10 @@
                         return modelDate.isSame(selectedMonth.momentDate, "year");
                     };
                     this._isChosenYear = function (selectedMonth) {
-                        var modelDate = _this._currentDate;
+                        if (!_this._doubleBufferDate) {
+                            return false;
+                        }
+                        var modelDate = _this._doubleBufferDate;
                         return modelDate.isSame(selectedMonth.momentDate, "year");
                     };
                     /**
@@ -434,10 +453,13 @@
                         if (!selectedDate.invalid) {
                             if (!_this.ngModel.$modelValue) {
                                 _this._currentDate = selectedDate.momentDate;
+                                if (_this.pickerOnlyMode == "DOUBLE_BUFFERED") {
+                                    _this._doubleBufferDate = moment.tz(_this._currentDate.toDate(), _getTimezone());
+                                }
                             }
                             //sometimes we pass the current date in, in this case no
                             //Value traversal needs to be performed
-                            if (_this._currentDate != selectedDate) {
+                            if (_this._currentDate != selectedDate.momentDate) {
                                 _this._currentDate.set("date", selectedDate.momentDate.get("date"));
                                 _this._currentDate.set("month", selectedDate.momentDate.get("month"));
                                 _this._currentDate.set("year", selectedDate.momentDate.get("year"));
@@ -446,6 +468,9 @@
                                 (!_this.endOfDay) ? _this._currentDate.startOf("day") : _this._currentDate.endOf("day");
                             }
                             _this._fixCurrentDate();
+                            if (_this.pickerOnlyMode == "DOUBLE_BUFFERED") {
+                                _this._doubleBufferDate = moment.tz(_this._currentDate.toDate(), _getTimezone());
+                            }
                             if (!_this.pickerOnlyMode || (_this.pickerOnlyMode && _this.pickerOnlyMode != "DOUBLE_BUFFERED")) {
                                 _updateModel(_this._currentDate.toDate());
                             }
@@ -620,6 +645,9 @@
                      * @private
                      */
                     this._set = function () {
+                        if (_this.pickerOnlyMode == "DOUBLE_BUFFERED") {
+                            _this._currentDate = moment.tz(_this._doubleBufferDate.toDate(), _getTimezone());
+                        }
                         _updateModel(_this._currentDate.toDate());
                     };
                     /**

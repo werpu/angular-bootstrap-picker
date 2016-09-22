@@ -23,6 +23,7 @@ import {BehavioralFixes} from "./BehavioralFixes";
 import {ViewModelBuilder} from "./ViewModelBuilder";
 import {PickerDate, PickerMonth, PickerYear} from "./DatePickerTypes";
 import {RangeInput} from "./RangeInput";
+import Moment = moment.Moment;
 
 
 class PickerConstants {
@@ -243,6 +244,21 @@ class DatePicker implements IComponentOptions {
     controller: any = ["$scope", "$element", "$timeout",
         function ($scope: IScope, $element: JQuery, $timeout: ITimeoutService) {
 
+            /**
+             * current date viewed (aka navigational position=
+             * @type {Moment}
+             * @private
+             */
+            this._currentDate = null;
+
+            /**
+             * double buffer date in double buffer mode
+             *
+             * @type {Moment}
+             * @private
+             */
+            this._doubleBufferDate = null;
+
             this.buttonLabel = ("undefined" == typeof  this.buttonLabel || null == this.buttonLabel) ?
                 PickerConstants.DEFAULT_PICKER_LABEL : this.buttonLabel;
             this.pickerMode = ("undefined" == typeof  this.pickerMode || null == this.pickerMode) ?
@@ -317,11 +333,11 @@ class DatePicker implements IComponentOptions {
              * @private
              */
             this._isChosenDate = (selectedDate: PickerDate) => {
-                if (!this._currentDate) {
+                if (!this._doubleBufferDate) {
                     return false;
                 } else {
                     //booga
-                    var modelDate = this._currentDate;
+                    var modelDate = this._doubleBufferDate;
                     return modelDate.isSame(selectedDate.momentDate, "date") &&
                         modelDate.isSame(selectedDate.momentDate, "month") &&
                         modelDate.isSame(selectedDate.momentDate, "year");
@@ -358,7 +374,10 @@ class DatePicker implements IComponentOptions {
             };
 
             this._isChosenMonth = (selectedMonth: PickerMonth) => {
-                var modelDate = this._currentDate;
+                if(!this._doubleBufferDate) {
+                    return false;
+                }
+                var modelDate = this._doubleBufferDate;
                 return modelDate.isSame(selectedMonth.momentDate, "month") &&
                     modelDate.isSame(selectedMonth.momentDate, "year");
             };
@@ -377,7 +396,10 @@ class DatePicker implements IComponentOptions {
             };
 
             this._isChosenYear = (selectedMonth: PickerYear) => {
-                var modelDate = this._currentDate;
+                if(!this._doubleBufferDate) {
+                    return false;
+                }
+                var modelDate = this._doubleBufferDate;
                 return modelDate.isSame(selectedMonth.momentDate, "year");
             };
 
@@ -531,11 +553,14 @@ class DatePicker implements IComponentOptions {
                 if (!selectedDate.invalid) {
                     if (!this.ngModel.$modelValue) {
                         this._currentDate = selectedDate.momentDate;
+                        if(this.pickerOnlyMode == "DOUBLE_BUFFERED") {
+                            this._doubleBufferDate = moment.tz(this._currentDate.toDate(), _getTimezone());
+                        }
                     }
 
                     //sometimes we pass the current date in, in this case no
                     //Value traversal needs to be performed
-                    if(this._currentDate != selectedDate) {
+                    if(this._currentDate != selectedDate.momentDate) {
                         this._currentDate.set("date", selectedDate.momentDate.get("date"));
                         this._currentDate.set("month", selectedDate.momentDate.get("month"));
                         this._currentDate.set("year", selectedDate.momentDate.get("year"));
@@ -548,9 +573,14 @@ class DatePicker implements IComponentOptions {
 
                     this._fixCurrentDate();
 
+                    if(this.pickerOnlyMode == "DOUBLE_BUFFERED") {
+                        this._doubleBufferDate = moment.tz(this._currentDate.toDate(), _getTimezone());
+                    }
+
                     if(!this.pickerOnlyMode || (this.pickerOnlyMode && this.pickerOnlyMode != "DOUBLE_BUFFERED")) {
                         _updateModel(this._currentDate.toDate());
                     }
+
 
 
                     /*in case of a date mode we are done*/
@@ -753,6 +783,9 @@ class DatePicker implements IComponentOptions {
              * @private
              */
             this._set = () => {
+                if(this.pickerOnlyMode == "DOUBLE_BUFFERED") {
+                    this._currentDate = moment.tz(this._doubleBufferDate.toDate(), _getTimezone());
+                }
                 _updateModel(this._currentDate.toDate());
             };
 
