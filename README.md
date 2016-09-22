@@ -1,24 +1,11 @@
 # angular-bootstrap-picker
 Bootstrap date picker with timezone support for angular 1.5.x
 
-<table>
-<tr>
-<td>
-<img src="./doc/images/datepicker1.jpg" alt="Picker Image 1" style="width: 400px; float: left; margin-right: 10px;"/>
-</td>
-<td>
-<img src="./doc/images/datepicker2.jpg" alt="Picker Image 1" style="width: 400px; float: left; margin-right: 10px;"/>
-</td>
-</tr>
-<tr>
-<td>
-<img src="./doc/images/picker3.jpg" alt="Picker Image 3" style="width: 400px; float: left; margin-right: 10px;"/>
-</td>
-<td>
-<img src="./doc/images/picker4.jpg" alt="Picker Image 4" style="width: 400px; margin-right: 10px;"/>
-</td>
-</tr>
-</table>
+:-------------------------:|:-------------------------:
+<img src="./doc/images/datepicker1.jpg" alt="Picker Image 1" style="width: 400px; float: left; margin-right: 10px;"/>| <img src="./doc/images/datepicker2.jpg" alt="Picker Image 1" style="width: 400px; float: left; margin-right: 10px;"/>
+:-------------------------:|:-------------------------:
+<img src="./doc/images/picker3.jpg" alt="Picker Image 3" style="width: 400px; float: left; margin-right: 10px;"/>| <img src="./doc/images/picker4.jpg" alt="Picker Image 4" style="width: 400px; margin-right: 10px;"/>
+
 ## Introduction
 
 Why another date picker? There are myriads of date pickers on the net, so why another one?
