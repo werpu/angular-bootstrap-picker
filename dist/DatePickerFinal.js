@@ -159,10 +159,10 @@
                 var inputArea = "\n                <div class=\"input-group\">\n                   <input type=\"text\" placeholder=\"{{ctrl.placeholder}}\" class=\"form-control\" name=\"{{ctrl.name}}_inner\" ng-model=\"ctrl.innerSelection\"></input>\n                   <span class=\"input-group-btn\">\n                       <button type=\"button\" class=\"picker-open btn btn-default\" ng-click=\"ctrl._openPicker()\">\n                             <span class=\"glyphicon glyphicon-align-right glyph-icon glyphicon-calendar\"> {{ctrl.buttonLabel}} </span>\n                       </button>\n                   </span> \n               </div>\n               <input type=\"button\" class=\"picker-close\" ng-click=\"ctrl._close()\" value=\"Close\" ng-show=\"false\"/>\n        ";
                 var inputAreaHidden = "\n           <input type=\"text\" style=\"display: none;\" placeholder=\"{{ctrl.placeholder}}\" class=\"form-control\" name=\"{{ctrl.name}}_inner\" ng-model=\"ctrl.innerSelection\"></input>\n        ";
                 var timePickerSpinning = "\n            <div class=\"time-picker\" ng-if=\"ctrl.view == 'DATE' && ctrl.pickerMode == 'DATE_TIME'\" >\n                <table>\n                   <thead>\n                        \n                    </thead>\n                    <tbody>\n                        \n                         <tr>\n                            <td class=\"glyphicon glyphicon-chevron-up\" ng-class=\"{'invalid' : !ctrl._isValidHour(ctrl._currentDate.get('hour') + 1)}\" ng-click=\"ctrl._nextHour()\">\n                            </td>\n                            <td></td>\n                            <td class=\"glyphicon glyphicon-chevron-up\" ng-class=\"{'invalid' : !ctrl._isValidMinute(ctrl._currentDate.get('minute') + 1)}\" ng-click=\"ctrl._nextMinute()\">\n                            </td>\n                        </tr>\n                        <tr>\n                            <td class=\"selected-hour\">\n                                <internal-range-input class=\"hour-input\" from=\"0\" to=\"23\" ng-model=\"ctrl.currentHour\"/>    \n                            </td>\n                            <td class=\"invalid\">:</td>\n                            <td class=\"selected-minute\">\n                                <internal-range-input class=\"minute-input\" from=\"0\" to=\"59\" ng-model=\"ctrl.currentMinute\"/> \n                            </td>\n                        </tr>\n                         <tr>\n                            <td class=\"glyphicon glyphicon-chevron-down\" ng-class=\"{'invalid' : !ctrl._isValidHour(ctrl._currentDate.get('hour') - 1)}\" ng-click=\"ctrl._prevHour()\">\n                            </td>\n                            <td></td>\n                            <td class=\"glyphicon glyphicon-chevron-down\" ng-class=\"{'invalid' : !ctrl._isValidMinute(ctrl._currentDate.get('minute') - 1)}\" ng-click=\"ctrl._prevMinute()\">\n                            </td>\n                        </tr>\n                    </tbody>\n                </table>\n                <div class=\"button-group bottom-buttons\" ng-if=\"ctrl.view == 'TIME'\">\n                  <input type=\"button\" class=\"btn btn-default btn-sm\" ng-click=\"ctrl._goBackInView()\" value=\"Back\" />\n                </div>\n            </div>\n        ";
-                var datePicker = "\n               <!-- date view - default view -->\n               <div class=\"date-picker\" ng-if=\"ctrl.view == 'DATE'\">                \n                    <table>\n                        <thead>\n                            <!-- TODO year forward and backward -->\n                        \n                            <tr ng-if=\"ctrl.pickerMode == 'DATE_TIME'\">\n                                <td colspan=\"8\" class=\"invalid picker-title\" >{{ctrl.innerSelection}}</td>\n                            </tr>\n                            \n                            <tr>\n                                <td><a class=\"prev glyphicon glyphicon-menu-left\" ng-click=\"ctrl._prevMonth()\"></a></td><td colspan=\"2\" ng-click=\"ctrl._switchToMonthView()\">{{ctrl._currentDate.format(\"MMMM\")}}</td><td><a class=\"next glyphicon glyphicon-menu-right\" ng-click=\"ctrl._nextMonth()\"></a></td>\n                                <td><a class=\"prev glyphicon glyphicon-menu-left\" ng-click=\"ctrl._prevYear()\"></a></td><td colspan=\"2\" ng-click=\"ctrl._switchToYearView()\">{{ctrl.monthPickerData.year}}</td><td><a class=\"next glyphicon glyphicon-menu-right\" ng-click=\"ctrl._nextYear()\"></a></td>\n                            </tr>\n                            <tr>\n                                <td class=\"calendarWeek\"><!-- week of year --></td>\n                                <td class=\"dayOfWeek\" ng-repeat=\"dayOfWeek in ctrl.monthPickerData.dayOfWeek\" ng-click=\"ctrl._selectDate(dayOfWeek)\">{{::dayOfWeek}}</td>    \n                            </tr>\n                        </thead>\n                        <tbody>\n                            <tr ng-repeat=\"week in ctrl.monthPickerData.weeks\">\n                                <td class=\"calendarWeek\">{{::week.calendarWeek}}</td>\n                                <td class=\"day\" ng-repeat=\"day in week.days\" ng-class=\"{'outside': !day.sameMonth, 'invalid': day.invalid, 'selected' : ctrl._isSelectedDate(day), 'today': ctrl._isToday(day)}\" ng-click=\"ctrl._selectDate(day)\">{{::day.day}}</td>\n                            </tr>\n                        </tbody>\n                        \n                    </table>\n                \n                    " + timePickerSpinning + "\n                    \n                    <div class=\"button-group bottom-buttons col-xs-12 col-sm-12 col-md-12 col-lg-12\">\n                        <input type=\"button\" class=\"clear btn btn-default btn-sm\" ng-click=\"ctrl._clear()\" value=\"Clear\" />\n                        <input type=\"button\" class=\"today btn btn-default btn-sm\" ng-click=\"ctrl._today()\" value=\"Today\" />\n                        <input type=\"button\" class=\"picker-close btn btn-default btn-sm\" ng-click=\"ctrl._close()\" value=\"Close\" ng-if=\"!ctrl.pickerOnly\" />\n                    </div>\n               </div> \n        ";
-                var monthPicker = "\n            <!-- month view -->\n            <div class=\"month-picker\" ng-if=\"ctrl.view == 'MONTH'\">\n                 <table>\n                    <thead>\n                          <tr>\n                          <td><a class=\"prev glyphicon glyphicon-menu-left\" ng-click=\"ctrl._prevYear()\" class=\"glyphicon glyphicon-menu-left\"></a></td>\n                          <td ng-click=\"ctrl._switchToYearView()\">{{ctrl.monthPickerData.year}}</td>\n                          <td><a class=\"next glyphicon glyphicon-menu-right\" ng-click=\"ctrl._nextYear()\"></a></td>\n                          </tr>\n                    </thead>\n                    <tbody>\n                        <tr ng-repeat=\"monthRow in ctrl.yearPickerData.row\">\n                            <td ng-repeat=\"month in monthRow\" ng-class=\"{'invalid': month.invalid, 'selected' : ctrl._isSameMonth(month), 'today': ctrl._isTodayMonth(month)}\"\n                            ng-click=\"ctrl._selectMonth(month)\"\n                            >{{::month.month}}</td>\n                        </tr>\n                    </tbody>\n                 </table>   \n            \n                <div class=\"button-group bottom-buttons\">\n                    <input type=\"button\" class=\"btn btn-default btn-sm\" ng-click=\"ctrl._goBackInView()\" value=\"Back\" />\n                </div>\n            </div>    \n        ";
-                var yearPicker = "\n            <!-- year view -->  \n            <div class=\"year-picker\" ng-if=\"ctrl.view == 'YEAR'\">\n                  <table>\n                    <thead>\n                    <tr>\n                        <td><a ng-click=\"ctrl._prevDecade()\" class=\"glyphicon glyphicon-menu-left\"></a></td>\n                        <td colspan=\"3\" class=\"no-link\">{{ctrl.decadeFrom}} - {{ctrl.decadeTo}}</td>\n                        <td><a ng-click=\"ctrl._nextDecade()\" class=\"glyphicon glyphicon-menu-right\"></a></td>\n                    </tr>\n                    </thead>\n                    <tbody>\n                        <tr ng-repeat=\"yearrow in ctrl.decadePickerData.row\">\n                            <td ng-repeat=\"year in yearrow\"\n                            ng-class=\"{'invalid': year.invalid, 'selected' : ctrl._isSameYear(year), 'today': ctrl._isTodayYear(year)}\"\n                             ng-click=\"ctrl._selectYear(year)\"\n                            >{{::year.year}}</td></td>\n                        </tr>\n                    </table>\n                  <div class=\"button-group bottom-buttons\">\n                    <input type=\"button\" class=\"btn btn-default btn-sm\" ng-click=\"ctrl._goBackInView()\" value=\"Back\" />\n                  </div>\n            </div>   \n        ";
-                return "\n           <div class=\"dropdown\" ng-if=\"!ctrl.pickerOnly\"> \n                " + inputArea + " \n               <div class=\"dropdown-menu picker-popup\">\n                    <div class=\"content\" ng-if=\"ctrl.isOpen\">\n                       " + datePicker + "\n                       \n                       " + monthPicker + "                   \n                             \n                       " + yearPicker + "\n                   </div>\n               \n                </div>\n            </div> \n            <div class=\"dropdown picker-standalone\" ng-if=\"ctrl.pickerOnly\">\n                 " + inputAreaHidden + "\n                 <div class=\"picker-popup\">\n                  <div class=\"content\"> \n                     " + datePicker + "\n                           \n                     " + monthPicker + "                   \n                                 \n                     " + yearPicker + "\n                 </div>\n                 </div>\n            </div>  \n                 \n        ";
+                var datePicker = "\n               <!-- date view - default view -->\n               <div class=\"date-picker\" ng-if=\"ctrl.view == 'DATE'\">                \n                    <table>\n                        <thead>\n                            <!-- TODO year forward and backward -->\n                        \n                            <tr ng-if=\"ctrl.pickerMode == 'DATE_TIME'\">\n                                <td colspan=\"8\" class=\"invalid picker-title\" >{{ctrl.innerSelection}}</td>\n                            </tr>\n                            \n                            <tr>\n                                <td><a class=\"prev glyphicon glyphicon-menu-left\" ng-click=\"ctrl._prevMonth()\"></a></td><td colspan=\"2\" ng-click=\"ctrl._switchToMonthView()\">{{ctrl._currentDate.format(\"MMMM\")}}</td><td><a class=\"next glyphicon glyphicon-menu-right\" ng-click=\"ctrl._nextMonth()\"></a></td>\n                                <td><a class=\"prev glyphicon glyphicon-menu-left\" ng-click=\"ctrl._prevYear()\"></a></td><td colspan=\"2\" ng-click=\"ctrl._switchToYearView()\">{{ctrl.monthPickerData.year}}</td><td><a class=\"next glyphicon glyphicon-menu-right\" ng-click=\"ctrl._nextYear()\"></a></td>\n                            </tr>\n                            <tr>\n                                <td class=\"calendarWeek\"><!-- week of year --></td>\n                                <td class=\"dayOfWeek\" ng-repeat=\"dayOfWeek in ctrl.monthPickerData.dayOfWeek\" ng-click=\"ctrl._selectDate(dayOfWeek)\">{{::dayOfWeek}}</td>    \n                            </tr>\n                        </thead>\n                        <tbody>\n                            <tr ng-repeat=\"week in ctrl.monthPickerData.weeks\">\n                                <td class=\"calendarWeek\">{{::week.calendarWeek}}</td>\n                                <td class=\"day\" ng-repeat=\"day in week.days\" ng-class=\"{'outside': !day.sameMonth, 'invalid': day.invalid, 'selected' : ctrl._isSelectedDate(day), 'chosen' : ctrl._isChosenDate(day), 'today': ctrl._isToday(day)}\" ng-click=\"ctrl._selectDate(day)\">{{::day.day}}</td>\n                            </tr>\n                        </tbody>\n                        \n                    </table>\n                \n                    " + timePickerSpinning + "\n                    \n                    <div class=\"button-group bottom-buttons col-xs-12 col-sm-12 col-md-12 col-lg-12\">\n                        <input type=\"button\" class=\"Sset btn btn-default btn-sm\" ng-click=\"ctrl._set()\" value=\"Set\" ng-if=\"ctrl.pickerOnlyMode == 'DOUBLE_BUFFERED'\" />\n                        <input type=\"button\" class=\"clear btn btn-default btn-sm\" ng-click=\"ctrl._clear()\" value=\"Clear\" ng-if=\"!ctrl.pickerOnlyMode\" />\n                        <input type=\"button\" class=\"today btn btn-default btn-sm\" ng-click=\"ctrl._today()\" value=\"Today\" />\n                        <input type=\"button\" class=\"picker-close btn btn-default btn-sm\" ng-click=\"ctrl._close()\" ng-if=\"!ctrl.pickerOnlyMode\" value=\"Close\" ng-if=\"!ctrl.pickerOnlyMpde\" />\n                    </div>\n               </div> \n        ";
+                var monthPicker = "\n            <!-- month view -->\n            <div class=\"month-picker\" ng-if=\"ctrl.view == 'MONTH'\">\n                 <table>\n                    <thead>\n                          <tr>\n                          <td><a class=\"prev glyphicon glyphicon-menu-left\" ng-click=\"ctrl._prevYear()\" class=\"glyphicon glyphicon-menu-left\"></a></td>\n                          <td ng-click=\"ctrl._switchToYearView()\">{{ctrl.monthPickerData.year}}</td>\n                          <td><a class=\"next glyphicon glyphicon-menu-right\" ng-click=\"ctrl._nextYear()\"></a></td>\n                          </tr>\n                    </thead>\n                    <tbody>\n                        <tr ng-repeat=\"monthRow in ctrl.yearPickerData.row\">\n                            <td ng-repeat=\"month in monthRow\" ng-class=\"{'invalid': month.invalid, 'selected' : ctrl._isSameMonth(month), 'chosen' : ctrl._isChosenMonth(month), 'today': ctrl._isTodayMonth(month)}\"\n                            ng-click=\"ctrl._selectMonth(month)\"\n                            >{{::month.month}}</td>\n                        </tr>\n                    </tbody>\n                 </table>   \n            \n                <div class=\"button-group bottom-buttons\">\n                    <input type=\"button\" class=\"btn btn-default btn-sm\" ng-click=\"ctrl._goBackInView()\" value=\"Back\" />\n                </div>\n            </div>    \n        ";
+                var yearPicker = "\n            <!-- year view -->  \n            <div class=\"year-picker\" ng-if=\"ctrl.view == 'YEAR'\">\n                  <table>\n                    <thead>\n                    <tr>\n                        <td><a ng-click=\"ctrl._prevDecade()\" class=\"glyphicon glyphicon-menu-left\"></a></td>\n                        <td colspan=\"3\" class=\"no-link\">{{ctrl.decadeFrom}} - {{ctrl.decadeTo}}</td>\n                        <td><a ng-click=\"ctrl._nextDecade()\" class=\"glyphicon glyphicon-menu-right\"></a></td>\n                    </tr>\n                    </thead>\n                    <tbody>\n                        <tr ng-repeat=\"yearrow in ctrl.decadePickerData.row\">\n                            <td ng-repeat=\"year in yearrow\"\n                            ng-class=\"{'invalid': year.invalid, 'selected' : ctrl._isSameYear(year), 'chosen' : ctrl._isChosenYear(year), 'today': ctrl._isTodayYear(year)}\"\n                             ng-click=\"ctrl._selectYear(year)\"\n                            >{{::year.year}}</td></td>\n                        </tr>\n                    </table>\n                  <div class=\"button-group bottom-buttons\">\n                    <input type=\"button\" class=\"btn btn-default btn-sm\" ng-click=\"ctrl._goBackInView()\" value=\"Back\" />\n                  </div>\n            </div>   \n        ";
+                return "\n           <div class=\"dropdown\" ng-if=\"!ctrl.pickerOnlyMode\"> \n                " + inputArea + " \n               <div class=\"dropdown-menu picker-popup\">\n                    <div class=\"content\" ng-if=\"ctrl.isOpen\">\n                       " + datePicker + "\n                       \n                       " + monthPicker + "                   \n                             \n                       " + yearPicker + "\n                   </div>\n               \n                </div>\n            </div> \n            <div class=\"dropdown picker-standalone\" ng-if=\"ctrl.pickerOnlyMode\">\n                 " + inputAreaHidden + "\n                 <div class=\"picker-popup\">\n                  <div class=\"content\"> \n                     " + datePicker + "\n                           \n                     " + monthPicker + "                   \n                                 \n                     " + yearPicker + "\n                 </div>\n                 </div>\n            </div>  \n                 \n        ";
             };
             this.controllerAs = "ctrl";
             this.bindings = {
@@ -174,7 +174,7 @@
                 placeholder: "@",
                 buttonLabel: "@",
                 pickerMode: "@",
-                pickerOnly: "<",
+                pickerOnlyMode: "@",
                 endOfDay: "<"
             };
             this.require = {
@@ -241,6 +241,24 @@
                         }
                     };
                     /**
+                     * checks if the current picker date is the selected one
+                     * @param selectedDate
+                     * @returns {boolean}
+                     * @private
+                     */
+                    this._isChosenDate = function (selectedDate) {
+                        if (!_this._currentDate) {
+                            return false;
+                        }
+                        else {
+                            //booga
+                            var modelDate = _this._currentDate;
+                            return modelDate.isSame(selectedDate.momentDate, "date") &&
+                                modelDate.isSame(selectedDate.momentDate, "month") &&
+                                modelDate.isSame(selectedDate.momentDate, "year");
+                        }
+                    };
+                    /**
                      * checks if the current picker date is today
                      * @param selectedDate
                      * @returns {boolean}
@@ -262,12 +280,21 @@
                         return modelDate.isSame(selectedMonth.momentDate, "month") &&
                             modelDate.isSame(selectedMonth.momentDate, "year");
                     };
+                    this._isChosenMonth = function (selectedMonth) {
+                        var modelDate = _this._currentDate;
+                        return modelDate.isSame(selectedMonth.momentDate, "month") &&
+                            modelDate.isSame(selectedMonth.momentDate, "year");
+                    };
                     this._isTodayYear = function (selectedDate) {
                         var modelDate = moment.tz(new Date(), _getTimezone());
                         return modelDate.isSame(selectedDate.momentDate, "year");
                     };
                     this._isSameYear = function (selectedMonth) {
                         var modelDate = moment.tz(_this.ngModel.$modelValue, _getTimezone());
+                        return modelDate.isSame(selectedMonth.momentDate, "year");
+                    };
+                    this._isChosenYear = function (selectedMonth) {
+                        var modelDate = _this._currentDate;
                         return modelDate.isSame(selectedMonth.momentDate, "year");
                     };
                     /**
@@ -416,9 +443,11 @@
                                 (!_this.endOfDay) ? _this._currentDate.startOf("day") : _this._currentDate.endOf("day");
                             }
                             _this._fixCurrentDate();
-                            _updateModel(_this._currentDate.toDate());
+                            if (!_this.pickerOnlyMode || (_this.pickerOnlyMode && _this.pickerOnlyMode != "DOUBLE_BUFFERED")) {
+                                _updateModel(_this._currentDate.toDate());
+                            }
                             /*in case of a date mode we are done*/
-                            if (_this.pickerMode === PickerConstants.DEFAULT_PICKER_MODE && !_this.pickerOnly) {
+                            if (_this.pickerMode === PickerConstants.DEFAULT_PICKER_MODE && !_this.pickerOnlyMode) {
                                 _this._close();
                             }
                         }
@@ -440,7 +469,7 @@
                                 _this._currentDate.set("year", selectedDate.momentDate.get("year"));
                             }
                             _this._fixCurrentDate();
-                            if (_this.pickerMode != PickerConstants.DEFAULT_PICKER_MODE || _this.pickerOnly) {
+                            if (_this.pickerMode != PickerConstants.DEFAULT_PICKER_MODE || (_this.pickerOnlyMode && _this.pickerOnlyMode != "DOUBLE_BUFFERED")) {
                                 _this._selectDate(new DatePickerTypes_1.PickerDate(false, _this._currentDate, 1, true));
                             }
                             _this._goBackInView();
@@ -462,7 +491,7 @@
                                 _this._currentDate.set("year", selectedDate.momentDate.get("year"));
                             }
                             _this._fixCurrentDate();
-                            if (_this.pickerMode != PickerConstants.DEFAULT_PICKER_MODE || _this.pickerOnly) {
+                            if (_this.pickerMode != PickerConstants.DEFAULT_PICKER_MODE || (_this.pickerOnlyMode && _this.pickerOnlyMode != "DOUBLE_BUFFERED")) {
                                 _this._selectDate(new DatePickerTypes_1.PickerDate(false, _this._currentDate, 1, true));
                             }
                             _this._goBackInView();
@@ -583,6 +612,14 @@
                         BehavioralFixes_1.BehavioralFixes.closeDropDown($element, _this);
                     };
                     /**
+                     * set for double buffered mode
+                     *
+                     * @private
+                     */
+                    this._set = function () {
+                        _updateModel(_this._currentDate.toDate());
+                    };
+                    /**
                      * switches to the month view
                      * @private
                      */
@@ -641,7 +678,7 @@
                             //currentDate != modelValue?
                             var currentModel = moment.tz(_this.ngModel.$modelValue, _getTimezone());
                             //if there is a discrepancy we also update the model
-                            if (_this.pickerMode != PickerConstants.DEFAULT_PICKER_MODE || _this.pickerOnly) {
+                            if (_this.pickerMode != PickerConstants.DEFAULT_PICKER_MODE || _this.pickerOnlyMode) {
                                 if (!currentModel || currentModel.get("day") != _this._currentDate.get("day") ||
                                     currentModel.get("month") != _this._currentDate.get("month") ||
                                     currentModel.get("year") != _this._currentDate.get("year")) {
@@ -743,7 +780,7 @@
                             return moment.tz(data, timezone).format(_getDateFormat());
                         });
                         //update the picker data if we are in popupOnly mode
-                        if (_this.pickerOnly) {
+                        if (_this.pickerOnlyMode) {
                             _this._openPicker();
                         }
                     };

@@ -50,9 +50,17 @@ date-picker .picker-popup td.invalid:hover{
     text-decoration: inherit;
 }
 
+
+
+date-picker .picker-popup td.chosen {
+    border: 1px dotted silver;
+    background-color: #eaeaea;
+}
+
 date-picker .picker-popup td.selected {
     background-color: white;
 }
+
 
 date-picker .picker-popup td.today {
     color: #f25b15;

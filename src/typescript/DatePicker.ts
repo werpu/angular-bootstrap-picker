@@ -120,7 +120,7 @@ class DatePicker implements IComponentOptions {
                         <tbody>
                             <tr ng-repeat="week in ctrl.monthPickerData.weeks">
                                 <td class="calendarWeek">{{::week.calendarWeek}}</td>
-                                <td class="day" ng-repeat="day in week.days" ng-class="{'outside': !day.sameMonth, 'invalid': day.invalid, 'selected' : ctrl._isSelectedDate(day), 'today': ctrl._isToday(day)}" ng-click="ctrl._selectDate(day)">{{::day.day}}</td>
+                                <td class="day" ng-repeat="day in week.days" ng-class="{'outside': !day.sameMonth, 'invalid': day.invalid, 'selected' : ctrl._isSelectedDate(day), 'chosen' : ctrl._isChosenDate(day), 'today': ctrl._isToday(day)}" ng-click="ctrl._selectDate(day)">{{::day.day}}</td>
                             </tr>
                         </tbody>
                         
@@ -129,9 +129,10 @@ class DatePicker implements IComponentOptions {
                     ${timePickerSpinning}
                     
                     <div class="button-group bottom-buttons col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                        <input type="button" class="clear btn btn-default btn-sm" ng-click="ctrl._clear()" value="Clear" />
+                        <input type="button" class="Sset btn btn-default btn-sm" ng-click="ctrl._set()" value="Set" ng-if="ctrl.pickerOnlyMode == 'DOUBLE_BUFFERED'" />
+                        <input type="button" class="clear btn btn-default btn-sm" ng-click="ctrl._clear()" value="Clear" ng-if="!ctrl.pickerOnlyMode" />
                         <input type="button" class="today btn btn-default btn-sm" ng-click="ctrl._today()" value="Today" />
-                        <input type="button" class="picker-close btn btn-default btn-sm" ng-click="ctrl._close()" value="Close" ng-if="!ctrl.pickerOnly" />
+                        <input type="button" class="picker-close btn btn-default btn-sm" ng-click="ctrl._close()" ng-if="!ctrl.pickerOnlyMode" value="Close" ng-if="!ctrl.pickerOnlyMpde" />
                     </div>
                </div> 
         `;
@@ -149,7 +150,7 @@ class DatePicker implements IComponentOptions {
                     </thead>
                     <tbody>
                         <tr ng-repeat="monthRow in ctrl.yearPickerData.row">
-                            <td ng-repeat="month in monthRow" ng-class="{'invalid': month.invalid, 'selected' : ctrl._isSameMonth(month), 'today': ctrl._isTodayMonth(month)}"
+                            <td ng-repeat="month in monthRow" ng-class="{'invalid': month.invalid, 'selected' : ctrl._isSameMonth(month), 'chosen' : ctrl._isChosenMonth(month), 'today': ctrl._isTodayMonth(month)}"
                             ng-click="ctrl._selectMonth(month)"
                             >{{::month.month}}</td>
                         </tr>
@@ -176,7 +177,7 @@ class DatePicker implements IComponentOptions {
                     <tbody>
                         <tr ng-repeat="yearrow in ctrl.decadePickerData.row">
                             <td ng-repeat="year in yearrow"
-                            ng-class="{'invalid': year.invalid, 'selected' : ctrl._isSameYear(year), 'today': ctrl._isTodayYear(year)}"
+                            ng-class="{'invalid': year.invalid, 'selected' : ctrl._isSameYear(year), 'chosen' : ctrl._isChosenYear(year), 'today': ctrl._isTodayYear(year)}"
                              ng-click="ctrl._selectYear(year)"
                             >{{::year.year}}</td></td>
                         </tr>
@@ -191,7 +192,7 @@ class DatePicker implements IComponentOptions {
 
 
         return `
-           <div class="dropdown" ng-if="!ctrl.pickerOnly"> 
+           <div class="dropdown" ng-if="!ctrl.pickerOnlyMode"> 
                 ${inputArea} 
                <div class="dropdown-menu picker-popup">
                     <div class="content" ng-if="ctrl.isOpen">
@@ -204,7 +205,7 @@ class DatePicker implements IComponentOptions {
                
                 </div>
             </div> 
-            <div class="dropdown picker-standalone" ng-if="ctrl.pickerOnly">
+            <div class="dropdown picker-standalone" ng-if="ctrl.pickerOnlyMode">
                  ${inputAreaHidden}
                  <div class="picker-popup">
                   <div class="content"> 
@@ -231,7 +232,7 @@ class DatePicker implements IComponentOptions {
         placeholder: "@",
         buttonLabel: "@",
         pickerMode: "@",
-        pickerOnly: "<",
+        pickerOnlyMode: "@",
         endOfDay: "<"
     };
 
@@ -307,6 +308,24 @@ class DatePicker implements IComponentOptions {
             };
 
             /**
+             * checks if the current picker date is the selected one
+             * @param selectedDate
+             * @returns {boolean}
+             * @private
+             */
+            this._isChosenDate = (selectedDate: PickerDate) => {
+                if (!this._currentDate) {
+                    return false;
+                } else {
+                    //booga
+                    var modelDate = this._currentDate;
+                    return modelDate.isSame(selectedDate.momentDate, "date") &&
+                        modelDate.isSame(selectedDate.momentDate, "month") &&
+                        modelDate.isSame(selectedDate.momentDate, "year");
+                }
+            };
+
+            /**
              * checks if the current picker date is today
              * @param selectedDate
              * @returns {boolean}
@@ -335,6 +354,12 @@ class DatePicker implements IComponentOptions {
                     modelDate.isSame(selectedMonth.momentDate, "year");
             };
 
+            this._isChosenMonth = (selectedMonth: PickerMonth) => {
+                var modelDate = this._currentDate;
+                return modelDate.isSame(selectedMonth.momentDate, "month") &&
+                    modelDate.isSame(selectedMonth.momentDate, "year");
+            };
+
 
             this._isTodayYear = (selectedDate: PickerYear) => {
 
@@ -345,6 +370,11 @@ class DatePicker implements IComponentOptions {
 
             this._isSameYear = (selectedMonth: PickerYear) => {
                 var modelDate = moment.tz(this.ngModel.$modelValue, _getTimezone());
+                return modelDate.isSame(selectedMonth.momentDate, "year");
+            };
+
+            this._isChosenYear = (selectedMonth: PickerYear) => {
+                var modelDate = this._currentDate;
                 return modelDate.isSame(selectedMonth.momentDate, "year");
             };
 
@@ -514,13 +544,19 @@ class DatePicker implements IComponentOptions {
                     }
 
                     this._fixCurrentDate();
-                    _updateModel(this._currentDate.toDate());
+
+                    if(!this.pickerOnlyMode || (this.pickerOnlyMode && this.pickerOnlyMode != "DOUBLE_BUFFERED")) {
+                        _updateModel(this._currentDate.toDate());
+                    }
+
+
                     /*in case of a date mode we are done*/
-                    if (this.pickerMode === PickerConstants.DEFAULT_PICKER_MODE && !this.pickerOnly) {
+                    if (this.pickerMode === PickerConstants.DEFAULT_PICKER_MODE && !this.pickerOnlyMode) {
                         this._close();
                     }
 
                 }
+
             };
 
             /**
@@ -540,7 +576,7 @@ class DatePicker implements IComponentOptions {
                         this._currentDate.set("year", selectedDate.momentDate.get("year"));
                     }
                     this._fixCurrentDate();
-                    if(this.pickerMode != PickerConstants.DEFAULT_PICKER_MODE || this.pickerOnly) {
+                    if(this.pickerMode != PickerConstants.DEFAULT_PICKER_MODE || (this.pickerOnlyMode && this.pickerOnlyMode != "DOUBLE_BUFFERED")) {
                         this._selectDate(new PickerDate(false, this._currentDate, 1, true));
                     }
                     this._goBackInView();
@@ -565,7 +601,7 @@ class DatePicker implements IComponentOptions {
 
                     }
                     this._fixCurrentDate();
-                    if(this.pickerMode != PickerConstants.DEFAULT_PICKER_MODE || this.pickerOnly) {
+                    if(this.pickerMode != PickerConstants.DEFAULT_PICKER_MODE || (this.pickerOnlyMode && this.pickerOnlyMode != "DOUBLE_BUFFERED")) {
                         this._selectDate(new PickerDate(false, this._currentDate, 1, true));
                     }
                     this._goBackInView();
@@ -709,6 +745,15 @@ class DatePicker implements IComponentOptions {
             };
 
             /**
+             * set for double buffered mode
+             *
+             * @private
+             */
+            this._set = () => {
+                _updateModel(this._currentDate.toDate());
+            };
+
+            /**
              * switches to the month view
              * @private
              */
@@ -774,7 +819,7 @@ class DatePicker implements IComponentOptions {
                     //currentDate != modelValue?
                     var currentModel = moment.tz(this.ngModel.$modelValue, _getTimezone());
                     //if there is a discrepancy we also update the model
-                    if(this.pickerMode != PickerConstants.DEFAULT_PICKER_MODE || this.pickerOnly) {
+                    if(this.pickerMode != PickerConstants.DEFAULT_PICKER_MODE || this.pickerOnlyMode) {
                         if(!currentModel || currentModel.get("day") != this._currentDate.get("day") ||
                             currentModel.get("month") != this._currentDate.get("month") ||
                             currentModel.get("year") != this._currentDate.get("year")
@@ -896,7 +941,7 @@ class DatePicker implements IComponentOptions {
 
 
                 //update the picker data if we are in popupOnly mode
-                if(this.pickerOnly) {
+                if(this.pickerOnlyMode) {
                     this._openPicker();
                 }
             };

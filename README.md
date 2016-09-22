@@ -88,7 +88,8 @@ Following attributes are available:
 * name {optional} form name
 * picker-mode {optional} allowed values DATE or DATE_TIME if no value is set DATE is used automatically
 * button-label {optional} label for the picker button
-* pickerOnly {optional:boolean} if set to true only the picker is displayed (see also the demo)
+* pickerOnlyMode {"SINGLEBUFFERED" | "DOUBLE_BUFFERED"} if this is set, the date picker is shown in picker only mode, SINGLE_BUFFRED means that the selection
+is instantly reflected in the model. DOUBLE_BUFFERED means a set button has to be pressed to update the model.
 * endOfDay {optional:boolean} if a new date is picked the end of day is returned automatically (do not mix this with pickermode DATE_TIME)
 
 #Building
