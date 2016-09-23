@@ -609,9 +609,9 @@ class DatePicker implements IComponentOptions {
                         this._currentDate.set("year", selectedDate.momentDate.get("year"));
                     }
                     this._fixCurrentDate();
-                    if(this.pickerMode != PickerConstants.DEFAULT_PICKER_MODE || (this.pickerOnlyMode && this.pickerOnlyMode != "DOUBLE_BUFFERED")) {
+                    /*if(this.pickerMode != PickerConstants.DEFAULT_PICKER_MODE || (this.pickerOnlyMode && this.pickerOnlyMode != "DOUBLE_BUFFERED")) {
                         this._selectDate(new PickerDate(false, this._currentDate, 1, true));
-                    }
+                    }*/
                     this._goBackInView();
                 }
 
@@ -634,9 +634,9 @@ class DatePicker implements IComponentOptions {
 
                     }
                     this._fixCurrentDate();
-                    if(this.pickerMode != PickerConstants.DEFAULT_PICKER_MODE || (this.pickerOnlyMode && this.pickerOnlyMode != "DOUBLE_BUFFERED")) {
+                    /*if(this.pickerMode != PickerConstants.DEFAULT_PICKER_MODE || (this.pickerOnlyMode && this.pickerOnlyMode != "DOUBLE_BUFFERED")) {
                         this._selectDate(new PickerDate(false, this._currentDate, 1, true));
-                    }
+                    }*/
                     this._goBackInView();
                 }
             };

@@ -783,9 +783,9 @@ define("DatePicker", ["require", "exports", "BehavioralFixes", "ViewModelBuilder
                                 _this._currentDate.set("year", selectedDate.momentDate.get("year"));
                             }
                             _this._fixCurrentDate();
-                            if (_this.pickerMode != PickerConstants.DEFAULT_PICKER_MODE || (_this.pickerOnlyMode && _this.pickerOnlyMode != "DOUBLE_BUFFERED")) {
-                                _this._selectDate(new DatePickerTypes_2.PickerDate(false, _this._currentDate, 1, true));
-                            }
+                            /*if(this.pickerMode != PickerConstants.DEFAULT_PICKER_MODE || (this.pickerOnlyMode && this.pickerOnlyMode != "DOUBLE_BUFFERED")) {
+                                this._selectDate(new PickerDate(false, this._currentDate, 1, true));
+                            }*/
                             _this._goBackInView();
                         }
                     };
@@ -805,9 +805,9 @@ define("DatePicker", ["require", "exports", "BehavioralFixes", "ViewModelBuilder
                                 _this._currentDate.set("year", selectedDate.momentDate.get("year"));
                             }
                             _this._fixCurrentDate();
-                            if (_this.pickerMode != PickerConstants.DEFAULT_PICKER_MODE || (_this.pickerOnlyMode && _this.pickerOnlyMode != "DOUBLE_BUFFERED")) {
-                                _this._selectDate(new DatePickerTypes_2.PickerDate(false, _this._currentDate, 1, true));
-                            }
+                            /*if(this.pickerMode != PickerConstants.DEFAULT_PICKER_MODE || (this.pickerOnlyMode && this.pickerOnlyMode != "DOUBLE_BUFFERED")) {
+                                this._selectDate(new PickerDate(false, this._currentDate, 1, true));
+                            }*/
                             _this._goBackInView();
                         }
                     };
