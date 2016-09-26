@@ -259,8 +259,8 @@ define("ViewModelBuilder", ["require", "exports", "DatePickerTypes"], function (
             var current = moment.tz(newValue, timezone);
             var offset = current.get("year") % 20 - 1;
             var nextDecadeOffset = 20 - offset - 1;
-            var start = moment.tz(newValue, timezone).startOf("year").startOf("month").startOf("day").subtract("year", offset);
-            var end = moment.tz(newValue, timezone).endOf("year").endOf("month").endOf("day").add("year", nextDecadeOffset);
+            var start = moment.tz(newValue, timezone).startOf("year").startOf("month").startOf("day").subtract(offset, "year");
+            var end = moment.tz(newValue, timezone).endOf("year").endOf("month").endOf("day").add(nextDecadeOffset, "year");
             var momentStartDate = (startDate) ? moment.tz(startDate, timezone).startOf("year").startOf("month").startOf("day") : null;
             var momentEndDate = (endDate) ? moment.tz(endDate, timezone).endOf("year").endOf("month").endOf("day") : null;
             var cnt = 0;
@@ -323,7 +323,7 @@ define("ViewModelBuilder", ["require", "exports", "DatePickerTypes"], function (
             }
             var momentDate = moment.tz(newValue, timezone);
             var start = moment.tz(newValue, timezone).startOf("month").startOf("week");
-            var end = moment.tz(newValue, timezone).startOf("month").startOf("week").add("days", 41);
+            var end = moment.tz(newValue, timezone).startOf("month").startOf("week").add(41, "days");
             var momentStartDate = (startDate) ? startDate : null;
             var momentEndDate = (endDate) ? endDate : null;
             var range1 = moment.range(start, end);
@@ -659,28 +659,28 @@ define("DatePicker", ["require", "exports", "BehavioralFixes", "ViewModelBuilder
                         if (!_this._isValidHour(_this._currentDate.get("hour") + 1)) {
                             return;
                         }
-                        _this._currentDate.add("hour", 1);
+                        _this._currentDate.add(1, "hour");
                         _this._selectDate(new DatePickerTypes_2.PickerDate(false, _this._currentDate, 1, true));
                     };
                     this._prevHour = function () {
                         if (!_this._isValidHour(_this._currentDate.get("hour") - 1)) {
                             return;
                         }
-                        _this._currentDate.subtract("hour", 1);
+                        _this._currentDate.subtract(1, "hour");
                         _this._selectDate(new DatePickerTypes_2.PickerDate(false, _this._currentDate, 1, true));
                     };
                     this._nextMinute = function () {
                         if (!_this._isValidMinute(_this._currentDate.get("minute") + 1)) {
                             return;
                         }
-                        _this._currentDate.add("minute", 1);
+                        _this._currentDate.add(1, "minute");
                         _this._selectDate(new DatePickerTypes_2.PickerDate(false, _this._currentDate, 1, true));
                     };
                     this._prevMinute = function () {
                         if (!_this._isValidMinute(_this._currentDate.get("minute") - 1)) {
                             return;
                         }
-                        _this._currentDate.subtract("minute", 1);
+                        _this._currentDate.subtract(1, "minute");
                         _this._selectDate(new DatePickerTypes_2.PickerDate(false, _this._currentDate, 1, true));
                     };
                     /*we do the proper max min date validity checks over our setters*/
@@ -824,10 +824,10 @@ define("DatePicker", ["require", "exports", "BehavioralFixes", "ViewModelBuilder
                         _this.yearPickerData = ViewModelBuilder_1.ViewModelBuilder.calculateMonthView(_this._currentDate.toDate(), _this.startDate, _this.endDate, _getTimezone());
                         _this.decadePickerData = ViewModelBuilder_1.ViewModelBuilder.calculateYearView(_this._currentDate.toDate(), _this.startDate, _this.endDate, _getTimezone());
                         var offset = _this._currentDate.get("year") % 20 - 1;
-                        _this.decadeFrom = moment.tz(_this._currentDate.toDate(), _getTimezone()).subtract("year", offset).format("YYYY");
+                        _this.decadeFrom = moment.tz(_this._currentDate.toDate(), _getTimezone()).subtract(offset, "year").format("YYYY");
                         var offset = _this._currentDate.get("year") % 20 - 1;
                         var nextDecadeOffset = 20 - offset - 1;
-                        _this.decadeTo = moment.tz(_this._currentDate.toDate(), _getTimezone()).add("year", nextDecadeOffset).format("YYYY");
+                        _this.decadeTo = moment.tz(_this._currentDate.toDate(), _getTimezone()).add(nextDecadeOffset, "year").format("YYYY");
                     };
                     /**
                      * opens the date picker

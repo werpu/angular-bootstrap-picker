@@ -464,7 +464,7 @@ class DatePicker implements IComponentOptions {
                 if(!this._isValidHour(this._currentDate.get("hour") + 1)) {
                     return;
                 }
-                this._currentDate.add("hour", 1);
+                this._currentDate.add(1,"hour");
                 this._selectDate(new PickerDate(false, this._currentDate, 1, true));
             };
 
@@ -472,7 +472,7 @@ class DatePicker implements IComponentOptions {
                 if(!this._isValidHour(this._currentDate.get("hour") - 1)) {
                     return;
                 }
-                this._currentDate.subtract("hour", 1);
+                this._currentDate.subtract(1,"hour");
                 this._selectDate(new PickerDate(false, this._currentDate, 1, true));
             };
 
@@ -480,7 +480,7 @@ class DatePicker implements IComponentOptions {
                 if(!this._isValidMinute(this._currentDate.get("minute") + 1)) {
                     return;
                 }
-                this._currentDate.add("minute", 1);
+                this._currentDate.add(1,"minute");
                 this._selectDate(new PickerDate(false, this._currentDate, 1, true));
             };
 
@@ -488,7 +488,7 @@ class DatePicker implements IComponentOptions {
                 if(!this._isValidMinute(this._currentDate.get("minute") - 1)) {
                     return;
                 }
-                this._currentDate.subtract("minute", 1);
+                this._currentDate.subtract(1,"minute");
                 this._selectDate(new PickerDate(false, this._currentDate, 1, true));
             };
 
@@ -655,11 +655,11 @@ class DatePicker implements IComponentOptions {
                 this.decadePickerData = ViewModelBuilder.calculateYearView(this._currentDate.toDate(), this.startDate, this.endDate, _getTimezone());
 
                 var offset = this._currentDate.get("year") % 20 - 1;
-                this.decadeFrom = moment.tz(this._currentDate.toDate(), _getTimezone()).subtract("year", offset).format("YYYY");
+                this.decadeFrom = moment.tz(this._currentDate.toDate(), _getTimezone()).subtract(offset, "year").format("YYYY");
 
                 var offset = this._currentDate.get("year") % 20 - 1;
                 var nextDecadeOffset = 20 - offset - 1;
-                this.decadeTo = moment.tz(this._currentDate.toDate(), _getTimezone()).add("year", nextDecadeOffset).format("YYYY");
+                this.decadeTo = moment.tz(this._currentDate.toDate(), _getTimezone()).add(nextDecadeOffset, "year").format("YYYY");
 
             };
 

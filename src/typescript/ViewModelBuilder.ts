@@ -38,8 +38,8 @@ export class ViewModelBuilder {
         var nextDecadeOffset = 20 - offset - 1;
 
 
-        var start = moment.tz(newValue, timezone).startOf("year").startOf("month").startOf("day").subtract("year", offset);
-        var end = moment.tz(newValue, timezone).endOf("year").endOf("month").endOf("day").add("year", nextDecadeOffset);
+        var start = moment.tz(newValue, timezone).startOf("year").startOf("month").startOf("day").subtract(offset, "year");
+        var end = moment.tz(newValue, timezone).endOf("year").endOf("month").endOf("day").add(nextDecadeOffset, "year");
 
         var momentStartDate = (startDate) ? moment.tz(startDate, timezone).startOf("year").startOf("month").startOf("day") : null;
         var momentEndDate = (endDate) ? moment.tz(endDate, timezone).endOf("year").endOf("month").endOf("day") : null;
@@ -126,7 +126,7 @@ export class ViewModelBuilder {
 
         var momentDate = moment.tz(newValue, timezone);
         var start = moment.tz(newValue, timezone).startOf("month").startOf("week");
-        var end = moment.tz(newValue, timezone).startOf("month").startOf("week").add("days",41);
+        var end = moment.tz(newValue, timezone).startOf("month").startOf("week").add(41, "days");
 
         var momentStartDate = (startDate) ? startDate : null;
         var momentEndDate = (endDate) ? endDate : null;
