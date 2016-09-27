@@ -175,7 +175,11 @@
                 buttonLabel: "@",
                 pickerMode: "@",
                 pickerOnlyMode: "@",
-                endOfDay: "<"
+                endOfDay: "<",
+                /*callback whenever a date is selected*/
+                onYearSelection: "&",
+                onMonthSelection: "&",
+                onDateSelection: "&" /*function($picker, $date) callback for the date selection*/
             };
             this.require = {
                 "ngModel": 'ngModel',
@@ -183,6 +187,9 @@
             this.controller = ["$scope", "$element", "$timeout",
                 function ($scope, $element, $timeout) {
                     var _this = this;
+                    /*we expose the scope and element for the callback*/
+                    this.scope = $scope;
+                    this.el = $element;
                     /**
                      * current date viewed (aka navigational position=
                      * @type {Moment}
@@ -474,6 +481,10 @@
                             if (!_this.pickerOnlyMode || (_this.pickerOnlyMode && _this.pickerOnlyMode != "DOUBLE_BUFFERED")) {
                                 _updateModel(_this._currentDate.toDate());
                             }
+                            _this.onDateSelection({
+                                $picker: _this,
+                                $date: _this._currentDate.toDate()
+                            });
                             /*in case of a date mode we are done*/
                             if (_this.pickerMode === PickerConstants.DEFAULT_PICKER_MODE && !_this.pickerOnlyMode) {
                                 _this._close();
@@ -500,6 +511,10 @@
                             /*if(this.pickerMode != PickerConstants.DEFAULT_PICKER_MODE || (this.pickerOnlyMode && this.pickerOnlyMode != "DOUBLE_BUFFERED")) {
                                 this._selectDate(new PickerDate(false, this._currentDate, 1, true));
                             }*/
+                            _this.onMonthSelection({
+                                $picker: _this,
+                                $date: _this._currentDate.toDate()
+                            });
                             _this._goBackInView();
                         }
                     };
@@ -522,6 +537,10 @@
                             /*if(this.pickerMode != PickerConstants.DEFAULT_PICKER_MODE || (this.pickerOnlyMode && this.pickerOnlyMode != "DOUBLE_BUFFERED")) {
                                 this._selectDate(new PickerDate(false, this._currentDate, 1, true));
                             }*/
+                            _this.onYearSelection({
+                                $picker: _this,
+                                $date: _this._currentDate.toDate()
+                            });
                             _this._goBackInView();
                         }
                     };

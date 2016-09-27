@@ -234,7 +234,11 @@ class DatePicker implements IComponentOptions {
         buttonLabel: "@",
         pickerMode: "@",
         pickerOnlyMode: "@",
-        endOfDay: "<"
+        endOfDay: "<",
+        /*callback whenever a date is selected*/
+        onYearSelection: "&", /*function($picker, $date) callback for the year selection*/
+        onMonthSelection: "&", /*function($picker, $date) callback for the month selection*/
+        onDateSelection: "&" /*function($picker, $date) callback for the date selection*/
     };
 
     require: any = {
@@ -243,6 +247,10 @@ class DatePicker implements IComponentOptions {
 
     controller: any = ["$scope", "$element", "$timeout",
         function ($scope: IScope, $element: JQuery, $timeout: ITimeoutService) {
+
+            /*we expose the scope and element for the callback*/
+            this.scope = $scope;
+            this.el = $element;
 
             /**
              * current date viewed (aka navigational position=
@@ -581,7 +589,10 @@ class DatePicker implements IComponentOptions {
                         _updateModel(this._currentDate.toDate());
                     }
 
-
+                    this.onDateSelection({
+                       $picker: this,
+                       $date: this._currentDate.toDate()
+                    });
 
                     /*in case of a date mode we are done*/
                     if (this.pickerMode === PickerConstants.DEFAULT_PICKER_MODE && !this.pickerOnlyMode) {
@@ -612,6 +623,10 @@ class DatePicker implements IComponentOptions {
                     /*if(this.pickerMode != PickerConstants.DEFAULT_PICKER_MODE || (this.pickerOnlyMode && this.pickerOnlyMode != "DOUBLE_BUFFERED")) {
                         this._selectDate(new PickerDate(false, this._currentDate, 1, true));
                     }*/
+                    this.onMonthSelection({
+                        $picker: this,
+                        $date: this._currentDate.toDate()
+                    });
                     this._goBackInView();
                 }
 
@@ -637,6 +652,10 @@ class DatePicker implements IComponentOptions {
                     /*if(this.pickerMode != PickerConstants.DEFAULT_PICKER_MODE || (this.pickerOnlyMode && this.pickerOnlyMode != "DOUBLE_BUFFERED")) {
                         this._selectDate(new PickerDate(false, this._currentDate, 1, true));
                     }*/
+                    this.onYearSelection({
+                        $picker: this,
+                        $date: this._currentDate.toDate()
+                    });
                     this._goBackInView();
                 }
             };

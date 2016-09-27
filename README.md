@@ -93,6 +93,12 @@ Following attributes are available:
 is instantly reflected in the model. DOUBLE_BUFFERED means a set button has to be pressed to update the model.
 * endOfDay {optional:boolean} if a new date is picked the end of day is returned automatically (do not mix this with pickermode DATE_TIME)
 
+Following callbacks are available
+
+* function onYearSelection($picker, $date) - callback which is called whenever a year is selected (but the model is not necessarily updated at this time)
+* function onMonthSelection($picker, $date) - callback which is called whenever a year is selected (but the model is not necessarily updated at this time)
+* function onDateSelection($picker, $date) - callback which is called whenever a month is selected (but the model is not necessarily updated at this time, but can be)
+
 #Building
 
 The picker was programmed to 100% in typescript, to generate the javascripts following tasks have to be performed
