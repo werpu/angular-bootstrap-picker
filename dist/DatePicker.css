@@ -111,3 +111,8 @@ date-picker .picker-popup td.invalid.picker-title {
     border-bottom: 1px solid #5F82D9;
     font-size: 15px;
 }
+
+
+date-picker .additional-buttons {
+    display: inline;
+}

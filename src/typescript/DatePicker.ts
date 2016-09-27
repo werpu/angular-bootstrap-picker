@@ -44,7 +44,7 @@ class DatePicker implements IComponentOptions {
 
         var inputArea = `
                 <div class="input-group">
-                   <input type="text" placeholder="{{ctrl.placeholder}}" class="form-control" name="{{ctrl.name}}_inner" ng-model="ctrl.innerSelection"></input>
+                   <input type="text" placeholder="{{ctrl.placeholder}}" class="form-control" name="{{ctrl.name}}_inner" ng-model="ctrl.innerSelection">
                    <span class="input-group-btn">
                        <button type="button" class="picker-open btn btn-default" ng-click="ctrl._openPicker()">
                              <span class="glyphicon glyphicon-align-right glyph-icon glyphicon-calendar"> {{ctrl.buttonLabel}} </span>
@@ -56,7 +56,7 @@ class DatePicker implements IComponentOptions {
 
 
         var inputAreaHidden = `
-           <input type="text" style="display: none;" placeholder="{{ctrl.placeholder}}" class="form-control" name="{{ctrl.name}}_inner" ng-model="ctrl.innerSelection"></input>
+           <input type="text" style="display: none;" placeholder="{{ctrl.placeholder}}" class="form-control" name="{{ctrl.name}}_inner" ng-model="ctrl.innerSelection">
         `;
 
         var timePickerSpinning = `
@@ -129,7 +129,10 @@ class DatePicker implements IComponentOptions {
                 
                     ${timePickerSpinning}
                     
+                    <div class="additional-content" ng-transclude="additionalContentDate"></div>
+                    
                     <div class="button-group bottom-buttons col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <div class="additional-buttons" ng-transclude="additionalButtonsDate"></div>
                         <input type="button" class="Sset btn btn-default btn-sm" ng-click="ctrl._set()" value="Set" ng-if="ctrl.pickerOnlyMode == 'DOUBLE_BUFFERED'" />
                         <input type="button" class="clear btn btn-default btn-sm" ng-click="ctrl._clear()" value="Clear" ng-if="!ctrl.pickerOnlyMode" />
                         <input type="button" class="today btn btn-default btn-sm" ng-click="ctrl._today()" value="Today" />
@@ -158,7 +161,9 @@ class DatePicker implements IComponentOptions {
                     </tbody>
                  </table>   
             
+                 <div class="additional-content" ng-transclude="additionalContentMonth"></div>
                 <div class="button-group bottom-buttons">
+                    <div class="additional-buttons" ng-transclude="additionalButtonsMonth"></div>
                     <input type="button" class="btn btn-default btn-sm" ng-click="ctrl._goBackInView()" value="Back" />
                 </div>
             </div>    
@@ -183,7 +188,9 @@ class DatePicker implements IComponentOptions {
                             >{{::year.year}}</td></td>
                         </tr>
                     </table>
+                  <div class="additional-content" ng-transclude="additionalContentYear"></div>  
                   <div class="button-group bottom-buttons">
+                    <div class="additional-buttons" ng-transclude="additionalButtonsYear"></div>
                     <input type="button" class="btn btn-default btn-sm" ng-click="ctrl._goBackInView()" value="Back" />
                   </div>
             </div>   
@@ -240,6 +247,17 @@ class DatePicker implements IComponentOptions {
         onMonthSelection: "&", /*function($picker, $date) callback for the month selection*/
         onDateSelection: "&" /*function($picker, $date) callback for the date selection*/
     };
+
+    transclude:any = {
+        additionalButtonsDate: "?additionalButtonsDate", /*transclusion to add additional buttons*/
+        additionalContentDate: "?additionalContentDate", /*transclusion to add additional content*/
+
+        additionalButtonsMonth: "?additionalButtonsMonth", /*transclusion to add additional buttons*/
+        additionalContentMonth: "?additionalContentMonth", /*transclusion to add additional content*/
+
+        additionalButtonsYear: "?additionalButtonsYear", /*transclusion to add additional buttons*/
+        additionalContentYear: "?additionalContentYear" /*transclusion to add additional content*/
+   };
 
     require: any = {
         "ngModel": 'ngModel',
