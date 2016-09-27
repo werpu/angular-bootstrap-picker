@@ -69,7 +69,7 @@ You simply can use the date picker like every other angular module. Once importe
     </date-picker>
 ```
 
-The date picker has following dependencies which must be loaded upfront
+### The date picker has following dependencies which must be loaded upfront
 
 * bootstrap (with it jquery)
 * angular 1.5.x+
@@ -78,7 +78,9 @@ The date picker has following dependencies which must be loaded upfront
 * moment-range
 
 
-Following attributes are available:
+# API
+
+### Following attributes are available:
 
 * ng-model {required} the model of the date picker, must be an object of type Date
 * start-date {optional} the lower bound of the possible pick values (must be of type date=
@@ -93,20 +95,18 @@ Following attributes are available:
 is instantly reflected in the model. DOUBLE_BUFFERED means a set button has to be pressed to update the model.
 * endOfDay {optional:boolean} if a new date is picked the end of day is returned automatically (do not mix this with pickermode DATE_TIME)
 
-Following callbacks are available
+### Following callbacks are available
 
 * function onYearSelection($picker, $date) - callback which is called whenever a year is selected (but the model is not necessarily updated at this time)
 * function onMonthSelection($picker, $date) - callback which is called whenever a year is selected (but the model is not necessarily updated at this time)
 * function onDateSelection($picker, $date) - callback which is called whenever a month is selected (but the model is not necessarily updated at this time, but can be)
 
-Following transclusions are available
+### Following transclusions are available
 
 *  additionalButtonsDate: optional transclusion for the date picker button area
-*  additionalContentDate: optional transclusion for the date picker content area
-  
+*  additionalContentDate: optional transclusion for the date picker content area  
 *  additionalButtonsMonth: optional transclusion for the month picker button area
 *  additionalContentMonth: optional transclusion for the month picker content area
-  
 *  additionalButtonsYear: optional transclusion for the year picker button area
 *  additionalContentYear: optional transclusion for the year picker content area
 
