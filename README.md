@@ -99,6 +99,18 @@ Following callbacks are available
 * function onMonthSelection($picker, $date) - callback which is called whenever a year is selected (but the model is not necessarily updated at this time)
 * function onDateSelection($picker, $date) - callback which is called whenever a month is selected (but the model is not necessarily updated at this time, but can be)
 
+Following transclusions are available
+
+*  additionalButtonsDate: optional transclusion for the date picker button area
+*  additionalContentDate: optional transclusion for the date picker content area
+  
+*  additionalButtonsMonth: optional transclusion for the month picker button area
+*  additionalContentMonth: optional transclusion for the month picker content area
+  
+*  additionalButtonsYear: optional transclusion for the year picker button area
+*  additionalContentYear: optional transclusion for the year picker content area
+
+
 #Building
 
 The picker was programmed to 100% in typescript, to generate the javascripts following tasks have to be performed
