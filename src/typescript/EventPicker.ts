@@ -1,7 +1,7 @@
 import IComponentOptions = angular.IComponentOptions;
 import ITimeoutService = angular.ITimeoutService;
 import IScope = angular.IScope;
-import {PickerMonth} from "./DatePickerTypes";
+import {PickerMonth} from "./utils/DatePickerTypes";
 import INgModelOptions = angular.INgModelOptions;
 import INgModelController = angular.INgModelController;
 
