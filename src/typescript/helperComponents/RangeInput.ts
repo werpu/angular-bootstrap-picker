@@ -4,6 +4,8 @@ import IScope = angular.IScope;
 /**
  * A simple range input which allows a numeric input within a certain range
  */
+
+
 export class RangeInput implements IComponentOptions {
 
     template = () => {

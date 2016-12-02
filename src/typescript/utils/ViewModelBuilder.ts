@@ -18,7 +18,7 @@
 
 import {
     DatePickerPage, PickerMonth, MonthPickerPage, PickerYear, YearPickerPage, PickerWeek,
-    PickerDate
+    PickerDate, EventPickerPage
 } from "./DatePickerTypes";
 
 /**
@@ -26,7 +26,7 @@ import {
  */
 export class ViewModelBuilder {
 
-    static calculateYearView = function (newValue: Date, startDate: Date, endDate: Date, timezone: string): YearPickerPage {
+    static calculateYearView(newValue: Date, startDate: Date, endDate: Date, timezone: string): YearPickerPage {
 
         if (!newValue) {
             newValue = new Date();
@@ -71,7 +71,7 @@ export class ViewModelBuilder {
     };
 
 
-    static calculateMonthView = function (newValue: Date, startDate: Date, endDate: Date, timezone: string): MonthPickerPage {
+    static calculateMonthView(newValue: Date, startDate: Date, endDate: Date, timezone: string): MonthPickerPage {
         if (!newValue) {
             newValue = new Date();
         }
@@ -119,7 +119,7 @@ export class ViewModelBuilder {
      * @param newValue
      * @private
      */
-    static calculateDateView = function (newValue: Date, startDate: Date, endDate: Date, timezone: string): DatePickerPage {
+    static calculateDateView(newValue: Date, startDate: Date, endDate: Date, timezone: string): DatePickerPage {
         if (!newValue) {
             newValue = new Date();
         }
@@ -167,5 +167,61 @@ export class ViewModelBuilder {
 
         return new DatePickerPage(momentDate.get("year"), dayOfWeek, weeks);
     };
+
+
+    /**
+     * calculates the the entire event range for a given start and end date
+     * @param newValue
+     * @private
+     */
+    static calculateEventDateView(startDate: Date, endDate: Date, timezone: string): EventPickerPage {
+
+        var start = moment.tz(startDate, timezone).startOf("month").startOf("week");
+        var end = moment.tz(endDate, timezone).startOf("month").startOf("week").add(41, "days");
+
+
+        var momentStartDate = (startDate) ? startDate : null;
+        var momentEndDate = (endDate) ? endDate : null;
+
+        var momentDate = moment.tz(timezone);
+
+
+        var weeks: Array<PickerWeek> = [];
+        var dayOfWeek: Array<string> = [];
+
+        var cnt = 0;
+
+        var retVal = new EventPickerPage();
+
+
+        var tempEndDate = moment.tz(startDate, timezone).startOf("month").startOf("week").add(41, "days");
+        do {
+            var range1 = moment.range(momentStartDate, momentEndDate);
+            range1.by("day", (date: moment.Moment) => {
+                if (cnt % 7 == 0) {
+                    weeks.push(new PickerWeek(date.tz(timezone).get("week")));
+                }
+                //TODO check for timezone eventually here
+
+                var isInvalid = date.startOf("day").isBefore(momentStartDate, "day") ||date.endOf("day").isAfter(momentEndDate, "day") || date.endOf("day").isAfter(date.clone().endOf("month"));
+
+                weeks[weeks.length - 1].days.push(
+                    new PickerDate(isInvalid, date, date.tz(timezone).get("date"), date.tz(timezone).isSame(momentDate, "month"))
+                );
+
+                //We also need to display the work days
+                if (dayOfWeek.length < 7) {
+                    dayOfWeek.push(date.tz(timezone).format("ddd"));
+                }
+
+                cnt++;
+            });
+
+            retVal.months.push(new DatePickerPage(momentDate.get("year"), dayOfWeek, weeks));
+
+        } while(tempEndDate.isBefore(momentEndDate));
+
+        return retVal;
+    }
 
 }

@@ -26,37 +26,27 @@ class PickerConstants {
 
 export class _DatePickerController {
 
-
+    /**
+     * internal controller vars
+     */
     private doubleBufferDate: Moment;
-
     private visibleDays: Array<any>;
-
     private pickerVisible: boolean;
-
     private selectedDate: PickerDate;
-
     private selectedMonth: PickerMonth;
-
     private documentClickHandler: Function;
 
+
+    /*used by view and controller outside of the bindings*/
     currentDate: Moment;
-
     view: string;
-
     private viewStack: Array<string>;
-
     ngModel: INgModelController;
-
     innerSelection: string;
-
     monthPickerData: DatePickerPage;
-
     yearPickerData: MonthPickerPage;
-
     decadePickerData: YearPickerPage;
-
     decadeFrom: string;
-
     decadeTo: string;
 
 
@@ -80,6 +70,8 @@ export class _DatePickerController {
     /*function($picker, $date) callback for the month selection*/
     onDateSelection: Function;
     /*function($picker, $date) callback for the date selection*/
+
+    buttonStyleClass: string;/*optional stylecass for the button*/
 
 
     constructor(private $scope: IScope, private $element: JQuery, private $timeout: ITimeoutService) {
@@ -663,6 +655,7 @@ export class _DatePickerController {
         this.pickerVisible = false;
         BehavioralFixes.unregisterDocumentBindings(this);
         BehavioralFixes.closeDropDown(this.$element, this);
+        this.$element.find("input[type=text]:first").focus();
     };
 
     /**

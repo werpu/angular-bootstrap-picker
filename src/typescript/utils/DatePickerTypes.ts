@@ -102,6 +102,15 @@ export class DatePickerPage {
     }
 }
 
+
+export class EventPickerPage {
+
+    months: Array<DatePickerPage> = [];
+
+
+}
+
+
 /**
  * we have a 3x4 row for the months of the year
  */

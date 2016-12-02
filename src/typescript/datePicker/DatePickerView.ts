@@ -7,7 +7,7 @@ export class _DatePickerView {
                    <input type="text" placeholder="{{ctrl.placeholder}}" class="form-control" name="{{ctrl.name}}_inner" ng-model="ctrl.innerSelection">
                    <span class="input-group-btn">
                        <button type="button" class="picker-open btn btn-default" ng-click="ctrl.openPicker()">
-                             <span class="glyphicon glyphicon-align-right glyph-icon glyphicon-calendar"> {{ctrl.buttonLabel}} </span>
+                             <span ng-class="{'glyphicon glyphicon-align-right glyph-icon glyphicon-calendar': !ctrl.buttonStyleClass, ctrl.buttonStyleClass: ctrl.buttonStyleClass}"> {{ctrl.buttonLabel}} </span>
                        </button>
                    </span> 
                </div>
@@ -200,7 +200,8 @@ export class _DatePickerView {
         /*callback whenever a date is selected*/
         onYearSelection: "&", /*function($picker, $date) callback for the year selection*/
         onMonthSelection: "&", /*function($picker, $date) callback for the month selection*/
-        onDateSelection: "&" /*function($picker, $date) callback for the date selection*/
+        onDateSelection: "&", /*function($picker, $date) callback for the date selection*/
+        buttonStyleClass: "@?" /*styleclass of the button*/
     };
 
     static require = {

@@ -19,17 +19,11 @@
 import IComponentOptions = angular.IComponentOptions;
 import ITimeoutService = angular.ITimeoutService;
 import IScope = angular.IScope;
-import {BehavioralFixes} from "./utils/BehavioralFixes";
-import {ViewModelBuilder} from "./utils/ViewModelBuilder";
-import {PickerDate, PickerMonth, PickerYear, DatePickerPage, MonthPickerPage, YearPickerPage} from "./utils/DatePickerTypes";
 import {RangeInput} from "./helperComponents/RangeInput";
-import Moment = moment.Moment;
-import {DateUtils} from "./utils/DateUtils";
-import INgModelController = angular.INgModelController;
 import {_DatePickerView} from "./datePicker/DatePickerView";
 import {_DatePickerController} from "./datePicker/DatePickerController";
-
-
+import Moment = moment.Moment;
+import INgModelController = angular.INgModelController;
 
 
 export class DatePicker implements IComponentOptions {
