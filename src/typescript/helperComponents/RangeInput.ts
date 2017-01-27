@@ -1,9 +1,18 @@
 import IComponentOptions = angular.IComponentOptions;
 import ITimeoutService = angular.ITimeoutService;
 import IScope = angular.IScope;
+import INgModelOptions = angular.INgModelOptions;
+import INgModelController = angular.INgModelController;
 /**
  * A simple range input which allows a numeric input within a certain range
  */
+
+interface IRangeInput {
+    from: string;
+    to: string;
+    ngModel: INgModelController;
+    inputText: string;
+}
 
 
 export class RangeInput implements IComponentOptions {
@@ -29,14 +38,14 @@ export class RangeInput implements IComponentOptions {
         function ($scope: IScope, $element: JQuery, $timeout: ITimeoutService) {
             $scope.$watch('ctrl.inputText', (newval: string, oldval: string) => {
                 if (newval != oldval) {
-                    this.ngModel.$setViewValue(newval);
+                    (<IRangeInput>this).ngModel.$setViewValue(newval);
                 }
             });
 
             this.$postLink = () => {
                 //with this trick we are able to traverse the outer ngModel view value into the inner ngModel
-                this.ngModel.$render = () => {
-                    this.inputText = this.ngModel.$viewValue;
+                (<IRangeInput>this).ngModel.$render = () => {
+                    (<IRangeInput>this).inputText = (<IRangeInput>this).ngModel.$viewValue;
                 };
                 $element.find("input").on("keydown", (event: JQueryEventObject) => {
                     var keyCode = event.keyCode;
@@ -46,8 +55,8 @@ export class RangeInput implements IComponentOptions {
                     }
                     if(keyCode >= 48 && keyCode <= 57) {
                         var finalValue = angular.element(event.target).val() + String.fromCharCode(keyCode);
-                        if((('undefined' != typeof this.from) && this.from > finalValue) ||
-                            (('undefined' != typeof this.to && this.to < finalValue))) {
+                        if((('undefined' != typeof (<IRangeInput>this).from) && (<IRangeInput>this).from > finalValue) ||
+                            (('undefined' != typeof (<IRangeInput>this).to && (<IRangeInput>this).to < finalValue))) {
                             event.preventDefault();
                             return false;
                         }

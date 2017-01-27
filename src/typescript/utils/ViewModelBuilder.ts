@@ -233,8 +233,13 @@ export class ViewModelBuilder {
         return retVal;
     }
 
-
-
+    /**
+     * builds a model index for the event model
+     *
+     * @param eventModel
+     * @param timezone
+     * @returns {any}
+     */
     public static buildModelIdx(eventModel: EventModel, timezone: string): RangeModelDictionary {
         if(!eventModel) {
             return {};

@@ -24,6 +24,8 @@ import {_DatePickerView} from "./datePicker/DatePickerView";
 import {_DatePickerController} from "./datePicker/DatePickerController";
 import Moment = moment.Moment;
 import INgModelController = angular.INgModelController;
+import {EventPicker} from "./eventPicker/EventPicker";
+import {DatePickerService} from "./services/DatePickerService";
 
 
 export class DatePicker implements IComponentOptions {
@@ -37,6 +39,12 @@ export class DatePicker implements IComponentOptions {
 
 
 //note this code is ported from github please do not change it here
-(<any>angular).module('werpu.bootstrap.picker', []).component("datePicker", new DatePicker()).component("internalRangeInput", new RangeInput());
+(<any>angular).module('werpu.bootstrap.picker', [])
+    .component("datePicker", new DatePicker())
+    .component("internalRangeInput", new RangeInput())
+    .component("eventPicker", new EventPicker())
+    .service("datePickerService", DatePickerService)
+
+;
 
 

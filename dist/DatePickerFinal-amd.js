@@ -5,9 +5,6 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 define("helperComponents/RangeInput", ["require", "exports"], function (require, exports) {
     "use strict";
-    /**
-     * A simple range input which allows a numeric input within a certain range
-     */
     var RangeInput = (function () {
         function RangeInput() {
             this.template = function () {
@@ -63,10 +60,10 @@ define("datePicker/DatePickerView", ["require", "exports"], function (require, e
         function _DatePickerView() {
         }
         _DatePickerView.template = function () {
-            var inputArea = "\n\n                <div class=\"input-group\">\n                   <input type=\"text\" placeholder=\"{{ctrl.placeholder}}\" class=\"form-control\" name=\"{{ctrl.name}}_inner\" ng-model=\"ctrl.innerSelection\">\n                   <span class=\"input-group-btn\">\n                       <button type=\"button\" class=\"picker-open btn btn-default\" ng-click=\"ctrl.openPicker()\">\n                             <span class=\"glyphicon glyphicon-align-right glyph-icon glyphicon-calendar\"> {{ctrl.buttonLabel}} </span>\n                       </button>\n                   </span> \n               </div>\n               <input type=\"button\" class=\"picker-close\" ng-click=\"ctrl.close()\" value=\"Close\" ng-show=\"false\"/>\n        ";
+            var inputArea = "\n\n                <div class=\"input-group\">\n                   <input type=\"text\" placeholder=\"{{ctrl.placeholder}}\" class=\"form-control\" name=\"{{ctrl.name}}_inner\" ng-model=\"ctrl.innerSelection\">\n                   <span class=\"input-group-btn\">\n                       <button type=\"button\" class=\"picker-open btn btn-default\" ng-click=\"ctrl.openPicker()\">\n                             <span ng-class=\"{'glyphicon glyphicon-align-right glyph-icon glyphicon-calendar': !ctrl.buttonStyleClass, ctrl.buttonStyleClass: ctrl.buttonStyleClass}\"> {{ctrl.buttonLabel}} </span>\n                       </button>\n                   </span> \n               </div>\n               <input type=\"button\" class=\"picker-close\" ng-click=\"ctrl.close()\" value=\"Close\" ng-show=\"false\"/>\n        ";
             var inputAreaHidden = "\n           <input type=\"text\" style=\"display: none;\" placeholder=\"{{ctrl.placeholder}}\" class=\"form-control\" name=\"{{ctrl.name}}_inner\" ng-model=\"ctrl.innerSelection\">\n        ";
             var timePickerSpinning = "\n            <div class=\"time-picker\" ng-if=\"ctrl.view == 'DATE' && ctrl.pickerMode == 'DATE_TIME'\" >\n                <table>\n                   <thead>\n                        \n                    </thead>\n                    <tbody>\n                        \n                         <tr>\n                            <td class=\"glyphicon glyphicon-chevron-up\" ng-class=\"{'invalid' : !ctrl.isValidHour(ctrl.currentDate.get('hour') + 1)}\" ng-click=\"ctrl.nextHour()\">\n                            </td>\n                            <td></td>\n                            <td class=\"glyphicon glyphicon-chevron-up\" ng-class=\"{'invalid' : !ctrl.isValidMinute(ctrl.currentDate.get('minute') + 1)}\" ng-click=\"ctrl.nextMinute()\">\n                            </td>\n                        </tr>\n                        <tr>\n                            <td class=\"selected-hour\">\n                                <internal-range-input class=\"hour-input\" from=\"0\" to=\"23\" ng-model=\"ctrl.currentHour\"/>    \n                            </td>\n                            <td class=\"invalid\">:</td>\n                            <td class=\"selected-minute\">\n                                <internal-range-input class=\"minute-input\" from=\"0\" to=\"59\" ng-model=\"ctrl.currentMinute\"/> \n                            </td>\n                        </tr>\n                         <tr>\n                            <td class=\"glyphicon glyphicon-chevron-down\" ng-class=\"{'invalid' : !ctrl.isValidHour(ctrl.currentDate.get('hour') - 1)}\" ng-click=\"ctrl.prevHour()\">\n                            </td>\n                            <td></td>\n                            <td class=\"glyphicon glyphicon-chevron-down\" ng-class=\"{'invalid' : !ctrl.isValidMinute(ctrl.currentDate.get('minute') - 1)}\" ng-click=\"ctrl.prevMinute()\">\n                            </td>\n                        </tr>\n                    </tbody>\n                </table>\n                <div class=\"button-group bottom-buttons\" ng-if=\"ctrl.view == 'TIME'\">\n                  <input type=\"button\" class=\"btn btn-default btn-sm\" ng-click=\"ctrl.goBackInView()\" value=\"Back\" />\n                </div>\n            </div>\n        ";
-            var datePicker = "\n               <!-- date view - default view -->\n               <div class=\"date-picker\" ng-if=\"ctrl.view == 'DATE'\">                \n                    <table>\n                        <thead>\n                            <!-- TODO year forward and backward -->\n                        \n                            <tr ng-if=\"ctrl.pickerMode == 'DATE_TIME'\">\n                                <td colspan=\"8\" class=\"invalid picker-title\" >{{ctrl.innerSelection}}</td>\n                            </tr>\n                            \n                            <tr>\n                                <td><a class=\"prev glyphicon glyphicon-menu-left\" ng-click=\"ctrl.prevMonth()\"></a></td><td colspan=\"2\" ng-click=\"ctrl.switchToMonthView()\">{{ctrl.currentDate.format(\"MMMM\")}}</td><td><a class=\"next glyphicon glyphicon-menu-right\" ng-click=\"ctrl.nextMonth()\"></a></td>\n                                <td><a class=\"prev glyphicon glyphicon-menu-left\" ng-click=\"ctrl.prevYear()\"></a></td><td colspan=\"2\" ng-click=\"ctrl.switchToYearView()\">{{ctrl.monthPickerData.year}}</td><td><a class=\"next glyphicon glyphicon-menu-right\" ng-click=\"ctrl.nextYear()\"></a></td>\n                            </tr>\n                            <tr>\n                                <td class=\"calendarWeek\"><!-- week of year --></td>\n                                <td class=\"dayOfWeek\" ng-repeat=\"dayOfWeek in ctrl.monthPickerData.dayOfWeek\" ng-click=\"ctrl.selectDate(dayOfWeek)\">{{::dayOfWeek}}</td>    \n                            </tr>\n                        </thead>\n                        <tbody>\n                            <tr ng-repeat=\"week in ctrl.monthPickerData.weeks\">\n                                <td class=\"calendarWeek\">{{::week.calendarWeek}}</td>\n                                <td class=\"day\" ng-repeat=\"day in week.days\" ng-class=\"{'outside': !day.sameMonth, 'invalid': day.invalid, 'selected' : ctrl.isSelectedDate(day), 'chosen' : ctrl.isChosenDate(day), 'today': ctrl.isToday(day)}\" ng-click=\"ctrl.selectDate(day)\">{{::day.day}}</td>\n                            </tr>\n                        </tbody>\n                        \n                    </table>\n                \n                    " + timePickerSpinning + "\n                    \n                    <div class=\"additional-content\" ng-transclude=\"additionalContentDate\"></div>\n                    \n                    <div class=\"button-group bottom-buttons col-xs-12 col-sm-12 col-md-12 col-lg-12\">\n                        <div class=\"additional-buttons\" ng-transclude=\"additionalButtonsDate\"></div>\n                        <input type=\"button\" class=\"Sset btn btn-default btn-sm\" ng-click=\"ctrl.set()\" value=\"Set\" ng-if=\"ctrl.pickerOnlyMode == 'DOUBLE_BUFFERED'\" />\n                        <input type=\"button\" class=\"clear btn btn-default btn-sm\" ng-click=\"ctrl.clear()\" value=\"Clear\" ng-if=\"!ctrl.pickerOnlyMode\" />\n                        <input type=\"button\" class=\"today btn btn-default btn-sm\" ng-click=\"ctrl.today()\" value=\"Today\" />\n                        <input type=\"button\" class=\"picker-close btn btn-default btn-sm\" ng-click=\"ctrl.close()\" ng-if=\"!ctrl.pickerOnlyMode\" value=\"Close\" ng-if=\"!ctrl.pickerOnlyMpde\" />\n                    </div>\n               </div> \n        ";
+            var datePicker = "\n               <!-- date view - default view -->\n               <div class=\"date-picker\" ng-if=\"ctrl.view == 'DATE'\">                \n                    <table>\n                        <thead>\n                            <!-- TODO year forward and backward -->\n                        \n                            <tr ng-if=\"ctrl.pickerMode == 'DATE_TIME'\">\n                                <td colspan=\"8\" class=\"invalid picker-title\" >{{ctrl.innerSelection}}</td>\n                            </tr>\n                            \n                            <tr>\n                                <td><a class=\"prev glyphicon glyphicon-menu-left\" ng-click=\"ctrl.prevMonth()\"></a></td><td colspan=\"2\" ng-click=\"ctrl.switchToMonthView()\">{{ctrl.currentDate.format(\"MMMM\")}}</td><td><a class=\"next glyphicon glyphicon-menu-right\" ng-click=\"ctrl.nextMonth()\"></a></td>\n                                <td><a class=\"prev glyphicon glyphicon-menu-left\" ng-click=\"ctrl.prevYear()\"></a></td><td colspan=\"2\" ng-click=\"ctrl.switchToYearView()\">{{ctrl.monthPickerData.year}}</td><td><a class=\"next glyphicon glyphicon-menu-right\" ng-click=\"ctrl.nextYear()\"></a></td>\n                            </tr>\n                            <tr>\n                                <td class=\"calendarWeek\"><!-- week of year --></td>\n                                <td class=\"dayOfWeek\" ng-repeat=\"dayOfWeek in ctrl.monthPickerData.dayOfWeek\" ng-click=\"ctrl.selectDate(dayOfWeek)\">{{::dayOfWeek}}</td>    \n                            </tr>\n                        </thead>\n                        <tbody>\n                            <tr ng-repeat=\"week in ctrl.monthPickerData.weeks\">\n                                <td class=\"calendarWeek\">{{::week.calendarWeek}}</td>\n                                <td class=\"day\" ng-repeat=\"day in week.days\" ng-class=\"{'outside': !day.sameMonth, 'invalid': day.invalid, 'selected' : ctrl.isSelectedDate(day), 'chosen' : ctrl.isChosenDate(day), 'today': ctrl.isToday(day)}, 'event': day.event\" class=\"{{day.event.importance}}\" ng-click=\"ctrl.selectDate(day)\">{{::day.day}}</td>\n                            </tr>\n                        </tbody>\n                        \n                    </table>\n                \n                    " + timePickerSpinning + "\n                    \n                    <div class=\"additional-content\" ng-transclude=\"additionalContentDate\"></div>\n                    \n                    <div class=\"button-group bottom-buttons col-xs-12 col-sm-12 col-md-12 col-lg-12\">\n                        <div class=\"additional-buttons\" ng-transclude=\"additionalButtonsDate\"></div>\n                        <input type=\"button\" class=\"Sset btn btn-default btn-sm\" ng-click=\"ctrl.set()\" value=\"Set\" ng-if=\"ctrl.pickerOnlyMode == 'DOUBLE_BUFFERED'\" />\n                        <input type=\"button\" class=\"clear btn btn-default btn-sm\" ng-click=\"ctrl.clear()\" value=\"Clear\" ng-if=\"!ctrl.pickerOnlyMode\" />\n                        <input type=\"button\" class=\"today btn btn-default btn-sm\" ng-click=\"ctrl.today()\" value=\"Today\" />\n                        <input type=\"button\" class=\"picker-close btn btn-default btn-sm\" ng-click=\"ctrl.close()\" ng-if=\"!ctrl.pickerOnlyMode\" value=\"Close\" ng-if=\"!ctrl.pickerOnlyMpde\" />\n                    </div>\n               </div> \n        ";
             var monthPicker = "\n            <!-- month view -->\n            <div class=\"month-picker\" ng-if=\"ctrl.view == 'MONTH'\">\n                 <table>\n                    <thead>\n                          <tr>\n                          <td><a class=\"prev glyphicon glyphicon-menu-left\" ng-click=\"ctrl.prevYear()\" class=\"glyphicon glyphicon-menu-left\"></a></td>\n                          <td ng-click=\"ctrl.switchToYearView()\">{{ctrl.monthPickerData.year}}</td>\n                          <td><a class=\"next glyphicon glyphicon-menu-right\" ng-click=\"ctrl.nextYear()\"></a></td>\n                          </tr>\n                    </thead>\n                    <tbody>\n                        <tr ng-repeat=\"monthRow in ctrl.yearPickerData.row\">\n                            <td ng-repeat=\"month in monthRow\" ng-class=\"{'invalid': month.invalid, 'selected' : ctrl.isSameMonth(month), 'chosen' : ctrl.isChosenMonth(month), 'today': ctrl.isTodayMonth(month)}\"\n                            ng-click=\"ctrl.selectMonth(month)\"\n                            >{{::month.month}}</td>\n                        </tr>\n                    </tbody>\n                 </table>   \n            \n                 <div class=\"additional-content\" ng-transclude=\"additionalContentMonth\"></div>\n                <div class=\"button-group bottom-buttons\">\n                    <div class=\"additional-buttons\" ng-transclude=\"additionalButtonsMonth\"></div>\n                    <input type=\"button\" class=\"btn btn-default btn-sm\" ng-click=\"ctrl.goBackInView()\" value=\"Back\" />\n                </div>\n            </div>    \n        ";
             var yearPicker = "\n            <!-- year view -->  \n            <div class=\"year-picker\" ng-if=\"ctrl.view == 'YEAR'\">\n                  <table>\n                    <thead>\n                    <tr>\n                        <td><a ng-click=\"ctrl.prevDecade()\" class=\"glyphicon glyphicon-menu-left\"></a></td>\n                        <td colspan=\"3\" class=\"no-link\">{{ctrl.decadeFrom}} - {{ctrl.decadeTo}}</td>\n                        <td><a ng-click=\"ctrl.nextDecade()\" class=\"glyphicon glyphicon-menu-right\"></a></td>\n                    </tr>\n                    </thead>\n                    <tbody>\n                        <tr ng-repeat=\"yearrow in ctrl.decadePickerData.row\">\n                            <td ng-repeat=\"year in yearrow\"\n                            ng-class=\"{'invalid': year.invalid, 'selected' : ctrl.isSameYear(year), 'chosen' : ctrl.isChosenYear(year), 'today': ctrl.isTodayYear(year)}\"\n                             ng-click=\"ctrl.selectYear(year)\"\n                            >{{::year.year}}</td></td>\n                        </tr>\n                    </table>\n                  <div class=\"additional-content\" ng-transclude=\"additionalContentYear\"></div>  \n                  <div class=\"button-group bottom-buttons\">\n                    <div class=\"additional-buttons\" ng-transclude=\"additionalButtonsYear\"></div>\n                    <input type=\"button\" class=\"btn btn-default btn-sm\" ng-click=\"ctrl.goBackInView()\" value=\"Back\" />\n                  </div>\n            </div>   \n        ";
             return "\n           <div class=\"dropdown\" ng-if=\"!ctrl.pickerOnlyMode\"> \n                " + inputArea + " \n               <div class=\"dropdown-menu picker-popup\">\n                    <div class=\"content\" ng-if=\"ctrl.isOpen\">\n                       " + datePicker + "\n                       \n                       " + monthPicker + "                   \n                             \n                       " + yearPicker + "\n                   </div>\n               \n                </div>\n            </div> \n            <div class=\"dropdown picker-standalone\" ng-if=\"ctrl.pickerOnlyMode\">\n                 " + inputAreaHidden + "\n                 <div class=\"picker-popup\">\n                  <div class=\"content\"> \n                     " + datePicker + "\n                           \n                     " + monthPicker + "                   \n                                 \n                     " + yearPicker + "\n                 </div>\n                 </div>\n            </div>  \n                 \n        ";
@@ -85,7 +82,8 @@ define("datePicker/DatePickerView", ["require", "exports"], function (require, e
             /*callback whenever a date is selected*/
             onYearSelection: "&",
             onMonthSelection: "&",
-            onDateSelection: "&" /*function($picker, $date) callback for the date selection*/
+            onDateSelection: "&",
+            buttonStyleClass: "@?" /*styleclass of the button*/
         };
         _DatePickerView.require = {
             "ngModel": 'ngModel',
@@ -121,6 +119,24 @@ define("datePicker/DatePickerView", ["require", "exports"], function (require, e
  */
 define("utils/DatePickerTypes", ["require", "exports"], function (require, exports) {
     "use strict";
+    exports.Importance = {
+        LOW: "LOW",
+        MEDIUM: "MEDIUM",
+        HIGH: "HIGH",
+        NONE: "NONE",
+    };
+    var EventModelValue = (function () {
+        function EventModelValue() {
+        }
+        return EventModelValue;
+    }());
+    exports.EventModelValue = EventModelValue;
+    var EventModel = (function () {
+        function EventModel() {
+        }
+        return EventModel;
+    }());
+    exports.EventModel = EventModel;
     /*
      Picker types internally used for the view representation
      */
@@ -137,10 +153,13 @@ define("utils/DatePickerTypes", ["require", "exports"], function (require, expor
      */
     var PickerDate = (function (_super) {
         __extends(PickerDate, _super);
-        function PickerDate(invalid, momentDate, day, sameMonth) {
+        function PickerDate(invalid, momentDate, day, sameMonth, event) {
             _super.call(this, invalid, momentDate);
             this.day = day;
             this.sameMonth = sameMonth;
+            if (event) {
+                this.event = event;
+            }
         }
         return PickerDate;
     }(BaseDate));
@@ -268,6 +287,19 @@ define("utils/DateUtils", ["require", "exports"], function (require, exports) {
             return modelDate.isSame(selectedDate, "date")
                 && modelDate.isSame(selectedDate, "month")
                 && modelDate.isSame(selectedDate, "year");
+        };
+        ;
+        /**
+         * checks if both dates are the same
+         *
+         * @param timezone
+         * @param selectedDate
+         * @returns {boolean}
+         */
+        DateUtils.isSameDay = function (selectedDate, dateToCompare) {
+            return dateToCompare.isSame(selectedDate, "date")
+                && dateToCompare.isSame(selectedDate, "month")
+                && dateToCompare.isSame(selectedDate, "year");
         };
         ;
         /**
@@ -463,7 +495,8 @@ define("utils/ViewModelBuilder", ["require", "exports", "utils/DatePickerTypes"]
          * @param newValue
          * @private
          */
-        ViewModelBuilder.calculateEventDateView = function (startDate, endDate, timezone) {
+        ViewModelBuilder.calculateEventDateView = function (rangeModel, startDate, endDate, timezone) {
+            var rangeIdx = ViewModelBuilder.buildModelIdx(rangeModel, timezone);
             var start = moment.tz(startDate, timezone).startOf("month").startOf("week");
             var end = moment.tz(endDate, timezone).startOf("month").startOf("week").add(41, "days");
             var momentStartDate = (startDate) ? startDate : null;
@@ -480,9 +513,10 @@ define("utils/ViewModelBuilder", ["require", "exports", "utils/DatePickerTypes"]
                     if (cnt % 7 == 0) {
                         weeks.push(new DatePickerTypes_1.PickerWeek(date.tz(timezone).get("week")));
                     }
-                    //TODO check for timezone eventually here
                     var isInvalid = date.startOf("day").isBefore(momentStartDate, "day") || date.endOf("day").isAfter(momentEndDate, "day") || date.endOf("day").isAfter(date.clone().endOf("month"));
-                    weeks[weeks.length - 1].days.push(new DatePickerTypes_1.PickerDate(isInvalid, date, date.tz(timezone).get("date"), date.tz(timezone).isSame(momentDate, "month")));
+                    var eventKey = date.format("dd.mm.yyyy");
+                    var eventModelValue = rangeIdx[eventKey];
+                    weeks[weeks.length - 1].days.push(new DatePickerTypes_1.PickerDate(isInvalid, date, date.tz(timezone).get("date"), date.tz(timezone).isSame(momentDate, "month"), eventModelValue));
                     //We also need to display the work days
                     if (dayOfWeek.length < 7) {
                         dayOfWeek.push(date.tz(timezone).format("ddd"));
@@ -492,6 +526,25 @@ define("utils/ViewModelBuilder", ["require", "exports", "utils/DatePickerTypes"]
                 retVal.months.push(new DatePickerTypes_1.DatePickerPage(momentDate.get("year"), dayOfWeek, weeks));
             } while (tempEndDate.isBefore(momentEndDate));
             return retVal;
+        };
+        /**
+         * builds a model index for the event model
+         *
+         * @param eventModel
+         * @param timezone
+         * @returns {any}
+         */
+        ViewModelBuilder.buildModelIdx = function (eventModel, timezone) {
+            if (!eventModel) {
+                return {};
+            }
+            var rangeIdx = {};
+            for (var cnt = 0; cnt < eventModel.data.length; cnt++) {
+                var value = eventModel.data[cnt];
+                var key = moment.tz(value.day, timezone).format("dd.mm.yyyy");
+                rangeIdx[key] = value;
+            }
+            return rangeIdx;
         };
         return ViewModelBuilder;
     }());
@@ -616,7 +669,6 @@ define("datePicker/DatePickerController", ["require", "exports", "utils/DatePick
         return PickerConstants;
     }());
     var _DatePickerController = (function () {
-        /*function($picker, $date) callback for the date selection*/
         function _DatePickerController($scope, $element, $timeout) {
             var _this = this;
             this.$scope = $scope;
@@ -1152,6 +1204,7 @@ define("datePicker/DatePickerController", ["require", "exports", "utils/DatePick
             this.pickerVisible = false;
             BehavioralFixes_1.BehavioralFixes.unregisterDocumentBindings(this);
             BehavioralFixes_1.BehavioralFixes.closeDropDown(this.$element, this);
+            this.$element.find("input[type=text]:first").focus();
         };
         ;
         /**
@@ -1302,39 +1355,6 @@ define("datePicker/DatePickerController", ["require", "exports", "utils/DatePick
     }());
     exports._DatePickerController = _DatePickerController;
 });
-/*
- Copyright (c) 2016 Werner Punz
-
- Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
- (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
- modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the
- Software is furnished to do so, subject to the following conditions:
-
- The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
- WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
- ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
- */
-define("DatePicker", ["require", "exports", "helperComponents/RangeInput", "datePicker/DatePickerView", "datePicker/DatePickerController"], function (require, exports, RangeInput_1, DatePickerView_1, DatePickerController_1) {
-    "use strict";
-    var DatePicker = (function () {
-        function DatePicker() {
-            this.template = DatePickerView_1._DatePickerView.template;
-            this.controllerAs = DatePickerView_1._DatePickerView.controllerAs;
-            this.bindings = DatePickerView_1._DatePickerView.bindings;
-            this.transclude = DatePickerView_1._DatePickerView.transclude;
-            this.require = DatePickerView_1._DatePickerView.require;
-            this.controller = ["$scope", "$element", "$timeout", DatePickerController_1._DatePickerController];
-        }
-        return DatePicker;
-    }());
-    exports.DatePicker = DatePicker;
-    //note this code is ported from github please do not change it here
-    angular.module('werpu.bootstrap.picker', []).component("datePicker", new DatePicker()).component("internalRangeInput", new RangeInput_1.RangeInput());
-});
 define("eventPicker/EventPicker", ["require", "exports", "utils/DateUtils", "utils/ViewModelBuilder"], function (require, exports, DateUtils_2, ViewModelBuilder_2) {
     "use strict";
     /**
@@ -1342,27 +1362,6 @@ define("eventPicker/EventPicker", ["require", "exports", "utils/DateUtils", "uti
      * key: date
      *  values
      */
-    (function (Importance) {
-        Importance[Importance["LOW"] = 0] = "LOW";
-        Importance[Importance["MEDIUM"] = 1] = "MEDIUM";
-        Importance[Importance["HIGH"] = 2] = "HIGH";
-        Importance[Importance["NONE"] = 3] = "NONE";
-    })(exports.Importance || (exports.Importance = {}));
-    var Importance = exports.Importance;
-    var RangeModelValue = (function () {
-        function RangeModelValue() {
-        }
-        return RangeModelValue;
-    }());
-    exports.RangeModelValue = RangeModelValue;
-    var RangeModel = (function () {
-        function RangeModel() {
-            /*iso representation of a certain date*/
-            this.data = {};
-        }
-        return RangeModel;
-    }());
-    exports.RangeModel = RangeModel;
     /**
      * Event picker component which allows to display date ranges
      * and handle corresponding events
@@ -1371,16 +1370,18 @@ define("eventPicker/EventPicker", ["require", "exports", "utils/DateUtils", "uti
         function _EventPickerView() {
         }
         _EventPickerView.template = function () {
-            return "";
+            return "\n        <div class=\"event-picker\">\n            <table ng-repeat=\"datePickerPage in ctrl.pickerPage.months\">\n                <thead>\n                    <tr>\n                        <td class=\"calendarWeek\"><!-- week of year --></td>\n                        <td class=\"dayOfWeek\" ng-repeat=\"dayOfWeek in datePickerPage.dayOfWeek\" ng-click=\"ctrl.selectDate(dayOfWeek)\">{{::dayOfWeek}}</td>    \n                    </tr>\n                </thead>\n                <tbody>\n                     <tr ng-repeat=\"week in datePickerPage.weeks\">\n                                <td class=\"calendarWeek\">{{::week.calendarWeek}}</td>\n                                <td class=\"day\" ng-repeat=\"day in week.days\" ng-class=\"{'outside': !day.sameMonth, 'invalid': day.invalid, 'selected' : ctrl.isSelectedDate(day), 'today': ctrl.isToday(day)}\" ng-click=\"ctrl.selectDate(day)\">{{::day.day}}</td>\n                   </tr>    \n                </tbody>\n            </table>\n        </div>\n        ";
         };
         _EventPickerView.controllerAs = "ctrl";
         _EventPickerView.bindings = {
             timezone: "@",
             startDate: "<",
-            endDate: "<"
+            endDate: "<",
+            events: "<"
         };
         _EventPickerView.require = {
-            "ngModel": 'ngModel',
+            /*the selected date*/
+            "ngModel": 'ngModel'
         };
         return _EventPickerView;
     }());
@@ -1392,6 +1393,7 @@ define("eventPicker/EventPicker", ["require", "exports", "utils/DateUtils", "uti
             this.$timeout = $timeout;
             this.startDate = moment.tz(DateUtils_2.DateUtils.getTimezone(this.timezone)).startOf("day").subtract(30, "days").toDate();
             this.endDate = moment.tz(DateUtils_2.DateUtils.getTimezone(this.timezone)).endOf("day").toDate();
+            this.rangeModelIdx = {};
             $scope.$watch('ctrl.startDate', function (newValue, oldValue) {
                 if (!newValue) {
                     _this.startDate = moment.tz(DateUtils_2.DateUtils.getTimezone(_this.timezone)).startOf("day").subtract(30, "days").toDate();
@@ -1408,12 +1410,45 @@ define("eventPicker/EventPicker", ["require", "exports", "utils/DateUtils", "uti
                     _this.endDate = newValue;
                 }
             });
+            $scope.$watch("ctrl.events", function (newValue, oldValue) {
+                _this.updateRange(newValue);
+                _this.rangeModelIdx = ViewModelBuilder_2.ViewModelBuilder.buildModelIdx(newValue, _this.timezone);
+            }, true);
         }
-        _EventPickerController.prototype.updateRange = function () {
-            ViewModelBuilder_2.ViewModelBuilder.calculateEventDateView(this.startDate, this.endDate, DateUtils_2.DateUtils.getTimezone(this.timezone));
+        _EventPickerController.prototype.updateRange = function (rangeModel) {
+            this.pickerPage = ViewModelBuilder_2.ViewModelBuilder.calculateEventDateView(rangeModel, this.startDate, this.endDate, DateUtils_2.DateUtils.getTimezone(this.timezone));
         };
         _EventPickerController.prototype.$postLink = function () {
+            this.updateRange(this.events);
         };
+        _EventPickerController.prototype.eventPresent = function (moment) {
+            if (this.events) {
+                return this.rangeModelIdx[moment.format("dd.mm.yyyy")];
+            }
+            return null;
+        };
+        _EventPickerController.prototype.isActive = function (currentMoment) {
+            var startMoment = moment.tz(this.startDate, this.timezone);
+            var endMoment = moment.tz(this.endDate, this.timezone);
+            return currentMoment && currentMoment.isBetween(startMoment.subtract(1, "day"), endMoment.add(1, "day"), "day");
+        };
+        _EventPickerController.prototype.isSelectedDate = function (selectedDate) {
+            var modelDate = moment.tz(this.timezone, this.ngModel.$modelValue);
+            return DateUtils_2.DateUtils.isSameDay(modelDate, selectedDate.momentDate);
+        };
+        _EventPickerController.prototype.selectDate = function (selectDate) {
+            this.ngModel.$modelValue = selectDate.momentDate.toDate();
+        };
+        /**
+         * checks if the current picker date is today
+         * @param selectedDate
+         * @returns {boolean}
+         * @private
+         */
+        _EventPickerController.prototype.isToday = function (selectedDate) {
+            return DateUtils_2.DateUtils.isToday(this.timezone, selectedDate.momentDate);
+        };
+        ;
         return _EventPickerController;
     }());
     var EventPicker = (function () {
@@ -1429,5 +1464,87 @@ define("eventPicker/EventPicker", ["require", "exports", "utils/DateUtils", "uti
         return EventPicker;
     }());
     exports.EventPicker = EventPicker;
+});
+define("services/DatePickerService", ["require", "exports", "utils/DatePickerTypes"], function (require, exports, DatePickerTypes_3) {
+    "use strict";
+    /**
+     * factory service which exposes the interfaces used by the picker and needed for the functionality
+     */
+    var DatePickerService = (function () {
+        function DatePickerService() {
+        }
+        /**
+         * creates a single model with the existing interfaces
+         *
+         * @param numberOfEvents
+         * @param importance
+         * @param date
+         * @param data
+         * @returns {EventModelValue}
+         */
+        DatePickerService.prototype.createEventModelValue = function (numberOfEvents, importance, date, data) {
+            var retVal = new DatePickerTypes_3.EventModelValue();
+            retVal.numberOfEvents = numberOfEvents;
+            retVal.importance = importance;
+            retVal.day = date;
+            if (data) {
+                retVal.data = data;
+            }
+            return retVal;
+        };
+        /**
+         * creates an entier event model from the given events
+         * @param events
+         * @returns {EventModel}
+         */
+        DatePickerService.prototype.createEventEventModel = function () {
+            var events = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                events[_i - 0] = arguments[_i];
+            }
+            var retVal = new DatePickerTypes_3.EventModel();
+            retVal.data = events;
+            return retVal;
+        };
+        return DatePickerService;
+    }());
+    exports.DatePickerService = DatePickerService;
+});
+/*
+ Copyright (c) 2016 Werner Punz
+
+ Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
+ (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
+ modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the
+ Software is furnished to do so, subject to the following conditions:
+
+ The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+ WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+ */
+define("DatePicker", ["require", "exports", "helperComponents/RangeInput", "datePicker/DatePickerView", "datePicker/DatePickerController", "eventPicker/EventPicker", "services/DatePickerService"], function (require, exports, RangeInput_1, DatePickerView_1, DatePickerController_1, EventPicker_1, DatePickerService_1) {
+    "use strict";
+    var DatePicker = (function () {
+        function DatePicker() {
+            this.template = DatePickerView_1._DatePickerView.template;
+            this.controllerAs = DatePickerView_1._DatePickerView.controllerAs;
+            this.bindings = DatePickerView_1._DatePickerView.bindings;
+            this.transclude = DatePickerView_1._DatePickerView.transclude;
+            this.require = DatePickerView_1._DatePickerView.require;
+            this.controller = ["$scope", "$element", "$timeout", DatePickerController_1._DatePickerController];
+        }
+        return DatePicker;
+    }());
+    exports.DatePicker = DatePicker;
+    //note this code is ported from github please do not change it here
+    angular.module('werpu.bootstrap.picker', [])
+        .component("datePicker", new DatePicker())
+        .component("internalRangeInput", new RangeInput_1.RangeInput())
+        .component("eventPicker", new EventPicker_1.EventPicker())
+        .service("datePickerService", DatePickerService_1.DatePickerService);
 });
 //# sourceMappingURL=DatePickerFinal-amd.js.map

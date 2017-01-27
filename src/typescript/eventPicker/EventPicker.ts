@@ -5,7 +5,7 @@ import {PickerMonth, EventPickerPage, PickerDate, EventModel, EventModelValue} f
 import INgModelOptions = angular.INgModelOptions;
 import INgModelController = angular.INgModelController;
 import {DateUtils} from "../utils/DateUtils";
-import {ViewModelBuilder} from "../utils/ViewModelBuilder";
+import {ViewModelBuilder, RangeModelDictionary} from "../utils/ViewModelBuilder";
 import Moment = moment.Moment;
 
 
@@ -68,16 +68,16 @@ class _EventPickerController {
     endDate: Date;
     events: EventModel;
     ngModel: INgModelController;
-
     pickerPage: EventPickerPage;
 
 
+    private rangeModelIdx: RangeModelDictionary;
 
     constructor(private $scope: IScope, private $element: JQuery, private $timeout: ITimeoutService) {
 
         this.startDate = moment.tz(DateUtils.getTimezone(this.timezone)).startOf("day").subtract(30, "days").toDate();
         this.endDate = moment.tz(DateUtils.getTimezone(this.timezone)).endOf("day").toDate();
-
+        this.rangeModelIdx = {};
 
         $scope.$watch('ctrl.startDate', (newValue: Date, oldValue: Date) => {
             if (!newValue) {
@@ -95,8 +95,9 @@ class _EventPickerController {
             }
         });
 
-        $scope.$watch("ctrl.events", (newValue: EventModel, oldValue: EventModel) => {
+        $scope.$watch("ctrl.events", (newValue: EventModel, oldValue: EventModel)  => {
             this.updateRange(newValue);
+            this.rangeModelIdx = ViewModelBuilder.buildModelIdx(newValue, this.timezone);
         }, true);
     }
 
@@ -109,8 +110,10 @@ class _EventPickerController {
     }
 
     eventPresent(moment: moment.Moment): EventModelValue {
-        if(this.events) {
-            return this.events[moment.toISOString()];
+        if((<any>this).events) {
+
+
+             return this.rangeModelIdx[moment.format("dd.mm.yyyy")];
         }
         return null;
     }
