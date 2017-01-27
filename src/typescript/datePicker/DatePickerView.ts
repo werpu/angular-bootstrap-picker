@@ -80,7 +80,7 @@ export class _DatePickerView {
                         <tbody>
                             <tr ng-repeat="week in ctrl.monthPickerData.weeks">
                                 <td class="calendarWeek">{{::week.calendarWeek}}</td>
-                                <td class="day" ng-repeat="day in week.days" ng-class="{'outside': !day.sameMonth, 'invalid': day.invalid, 'selected' : ctrl.isSelectedDate(day), 'chosen' : ctrl.isChosenDate(day), 'today': ctrl.isToday(day)}" ng-click="ctrl.selectDate(day)">{{::day.day}}</td>
+                                <td class="day" ng-repeat="day in week.days" ng-class="{'outside': !day.sameMonth, 'invalid': day.invalid, 'selected' : ctrl.isSelectedDate(day), 'chosen' : ctrl.isChosenDate(day), 'today': ctrl.isToday(day)}, 'event': day.event" class="{{day.event.importance}}" ng-click="ctrl.selectDate(day)">{{::day.day}}</td>
                             </tr>
                         </tbody>
                         

@@ -37,6 +37,20 @@ export class DateUtils {
     };
 
     /**
+     * checks if both dates are the same
+     *
+     * @param timezone
+     * @param selectedDate
+     * @returns {boolean}
+     */
+    static isSameDay(selectedDate: Moment,  dateToCompare: Moment): boolean {
+
+        return dateToCompare.isSame(selectedDate, "date")
+            && dateToCompare.isSame(selectedDate, "month")
+            && dateToCompare.isSame(selectedDate, "year");
+    };
+
+    /**
      * checks if the given month is the current month within the given timezone
      *
      * @param timezone

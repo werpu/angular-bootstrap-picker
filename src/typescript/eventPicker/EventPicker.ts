@@ -1,7 +1,7 @@
 import IComponentOptions = angular.IComponentOptions;
 import ITimeoutService = angular.ITimeoutService;
 import IScope = angular.IScope;
-import {PickerMonth, EventPickerPage} from "../utils/DatePickerTypes";
+import {PickerMonth, EventPickerPage, PickerDate, EventModel, EventModelValue} from "../utils/DatePickerTypes";
 import INgModelOptions = angular.INgModelOptions;
 import INgModelController = angular.INgModelController;
 import {DateUtils} from "../utils/DateUtils";
@@ -15,22 +15,6 @@ import Moment = moment.Moment;
  *  values
  */
 
-export enum Importance {
-    LOW, MEDIUM, HIGH, NONE
-}
-
-
-export class RangeModelValue {
-    numberOfEvents: number;
-    importance: Importance;
-    data: any;
-}
-
-
-export class RangeModel {
-    /*iso representation of a certain date*/
-    data: {[key: string]: RangeModelValue} = {};
-}
 
 /**
  * Event picker component which allows to display date ranges
@@ -49,6 +33,12 @@ class _EventPickerView {
                         <td class="dayOfWeek" ng-repeat="dayOfWeek in datePickerPage.dayOfWeek" ng-click="ctrl.selectDate(dayOfWeek)">{{::dayOfWeek}}</td>    
                     </tr>
                 </thead>
+                <tbody>
+                     <tr ng-repeat="week in datePickerPage.weeks">
+                                <td class="calendarWeek">{{::week.calendarWeek}}</td>
+                                <td class="day" ng-repeat="day in week.days" ng-class="{'outside': !day.sameMonth, 'invalid': day.invalid, 'selected' : ctrl.isSelectedDate(day), 'today': ctrl.isToday(day)}" ng-click="ctrl.selectDate(day)">{{::day.day}}</td>
+                   </tr>    
+                </tbody>
             </table>
         </div>
         `;
@@ -59,11 +49,13 @@ class _EventPickerView {
     static bindings: any = {
         timezone: "@",
         startDate: "<",
-        endDate: "<"
+        endDate: "<",
+        events: "<"
     };
 
     static require: any = {
-        "ngModel": 'ngModel',
+        /*the selected date*/
+        "ngModel": 'ngModel'
     };
 }
 
@@ -74,6 +66,7 @@ class _EventPickerController {
     timezone: string;
     startDate: Date;
     endDate: Date;
+    events: EventModel;
     ngModel: INgModelController;
 
     pickerPage: EventPickerPage;
@@ -102,22 +95,22 @@ class _EventPickerController {
             }
         });
 
-        $scope.$watch("ctrl.ngModel.$modelValue", (newValue: RangeModel, oldValue: RangeModel) => {
-            this.updateRange();
+        $scope.$watch("ctrl.events", (newValue: EventModel, oldValue: EventModel) => {
+            this.updateRange(newValue);
         }, true);
     }
 
-    updateRange() {
-        this.pickerPage = ViewModelBuilder.calculateEventDateView(this.startDate, this.endDate, DateUtils.getTimezone(this.timezone));
+    updateRange(rangeModel: EventModel) {
+        this.pickerPage = ViewModelBuilder.calculateEventDateView(rangeModel, this.startDate, this.endDate, DateUtils.getTimezone(this.timezone));
     }
 
     $postLink() {
-        this.updateRange();
+        this.updateRange(this.events);
     }
 
-    eventPresent(moment: moment.Moment): RangeModelValue {
-        if(this.ngModel.$modelValue) {
-            return this.ngModel.$modelValue[moment.toISOString()];
+    eventPresent(moment: moment.Moment): EventModelValue {
+        if(this.events) {
+            return this.events[moment.toISOString()];
         }
         return null;
     }
@@ -127,6 +120,25 @@ class _EventPickerController {
         var endMoment = moment.tz(this.endDate, this.timezone);
         return currentMoment && currentMoment.isBetween(startMoment.subtract(1, "day"), endMoment.add(1, "day"), "day");
     }
+
+    isSelectedDate(selectedDate: PickerDate) {
+        var modelDate: Moment = moment.tz(this.timezone, this.ngModel.$modelValue);
+        return DateUtils.isSameDay(modelDate, selectedDate.momentDate);
+    }
+
+    selectDate(selectDate: PickerDate) {
+        this.ngModel.$modelValue = selectDate.momentDate.toDate();
+    }
+
+    /**
+     * checks if the current picker date is today
+     * @param selectedDate
+     * @returns {boolean}
+     * @private
+     */
+    isToday(selectedDate: PickerDate) {
+        return DateUtils.isToday(this.timezone, selectedDate.momentDate);
+    };
 
 
 }

@@ -15,6 +15,42 @@
 
  */
 
+
+/**
+ * Typescript 1.8 string enums
+ * see http://stackoverflow.com/questions/15490560/create-an-enum-with-string-values-in-typescript
+ *
+ * This works with json conversion and theoretically should work both ways
+ */
+export type Importance =
+    "LOW" |
+        "MEDIUM" |
+        "HIGH" |
+        "NONE";
+
+export const Importance = {
+    LOW: "LOW" as Importance,
+    MEDIUM: "MEDIUM" as Importance,
+    HIGH: "HIGH" as Importance,
+    NONE: "NONE" as Importance,
+};
+
+
+export class EventModelValue {
+    numberOfEvents: number;
+    importance: Importance;
+    data: any;
+    day: Date;
+}
+
+
+export class EventModel {
+    /*iso representation of a certain date*/
+    data: Array<EventModelValue>;
+}
+
+
+
 /*
  Picker types internally used for the view representation
  */
@@ -37,12 +73,17 @@ class BaseDate {
 export class PickerDate extends BaseDate {
     day:number;
     sameMonth:boolean;
+    /*used by the event picker to indicate that there is an event on this date*/
+    event: EventModelValue;
 
-
-    constructor(invalid:boolean, momentDate:moment.Moment, day:number, sameMonth:boolean) {
+    constructor(invalid:boolean, momentDate:moment.Moment, day:number, sameMonth:boolean, event ?: EventModelValue) {
         super(invalid, momentDate);
         this.day = day;
         this.sameMonth = sameMonth;
+
+        if(event) {
+            this.event = event;
+        }
     }
 }
 

@@ -18,8 +18,13 @@
 
 import {
     DatePickerPage, PickerMonth, MonthPickerPage, PickerYear, YearPickerPage, PickerWeek,
-    PickerDate, EventPickerPage
+    PickerDate, EventPickerPage, EventModel, EventModelValue
 } from "./DatePickerTypes";
+
+
+export interface RangeModelDictionary {
+    [key: string]: EventModelValue;
+}
 
 /**
  * utils class to build the various view models
@@ -174,7 +179,9 @@ export class ViewModelBuilder {
      * @param newValue
      * @private
      */
-    static calculateEventDateView(startDate: Date, endDate: Date, timezone: string): EventPickerPage {
+    static calculateEventDateView(rangeModel: EventModel, startDate: Date, endDate: Date, timezone: string): EventPickerPage {
+
+        var rangeIdx = ViewModelBuilder.buildModelIdx(rangeModel, timezone);
 
         var start = moment.tz(startDate, timezone).startOf("month").startOf("week");
         var end = moment.tz(endDate, timezone).startOf("month").startOf("week").add(41, "days");
@@ -201,12 +208,14 @@ export class ViewModelBuilder {
                 if (cnt % 7 == 0) {
                     weeks.push(new PickerWeek(date.tz(timezone).get("week")));
                 }
-                //TODO check for timezone eventually here
 
                 var isInvalid = date.startOf("day").isBefore(momentStartDate, "day") ||date.endOf("day").isAfter(momentEndDate, "day") || date.endOf("day").isAfter(date.clone().endOf("month"));
 
+                var eventKey = date.format("dd.mm.yyyy");
+                var eventModelValue: EventModelValue = rangeIdx[eventKey];
+
                 weeks[weeks.length - 1].days.push(
-                    new PickerDate(isInvalid, date, date.tz(timezone).get("date"), date.tz(timezone).isSame(momentDate, "month"))
+                    new PickerDate(isInvalid, date, date.tz(timezone).get("date"), date.tz(timezone).isSame(momentDate, "month"), eventModelValue)
                 );
 
                 //We also need to display the work days
@@ -222,6 +231,21 @@ export class ViewModelBuilder {
         } while(tempEndDate.isBefore(momentEndDate));
 
         return retVal;
+    }
+
+
+
+    public static buildModelIdx(eventModel: EventModel, timezone: string): RangeModelDictionary {
+        if(!eventModel) {
+            return {};
+        }
+        var rangeIdx: RangeModelDictionary = {};
+        for (var cnt = 0; cnt < eventModel.data.length; cnt++) {
+            let value: EventModelValue = eventModel.data[cnt];
+            let key = moment.tz(value.day, timezone).format("dd.mm.yyyy");
+            rangeIdx[key] = value;
+        }
+        return rangeIdx;
     }
 
 }
