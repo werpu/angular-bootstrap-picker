@@ -28,6 +28,9 @@ class _EventPickerView {
         <div class="event-picker">
             <table ng-repeat="datePickerPage in ctrl.pickerPage.months">
                 <thead>
+                     <tr>
+                          <td class="calendarMonth" colspan="8"> {{::datePickerPage.month}} {{::datePickerPage.year}}</td>   
+                    </tr>
                     <tr>
                         <td class="calendarWeek"><!-- week of year --></td>
                         <td class="dayOfWeek" ng-repeat="dayOfWeek in datePickerPage.dayOfWeek" ng-click="ctrl.selectDate(dayOfWeek)">{{::dayOfWeek}}</td>    
@@ -36,7 +39,7 @@ class _EventPickerView {
                 <tbody>
                      <tr ng-repeat="week in datePickerPage.weeks">
                                 <td class="calendarWeek">{{::week.calendarWeek}}</td>
-                                <td class="day" ng-repeat="day in week.days" ng-class="{'outside': !day.sameMonth, 'invalid': day.invalid, 'selected' : ctrl.isSelectedDate(day), 'today': ctrl.isToday(day)}" ng-click="ctrl.selectDate(day)">{{::day.day}}</td>
+                                <td class="day day.event.importance" ng-repeat="day in week.days" ng-class="{'outside': !day.sameMonth, 'invalid': day.invalid, 'selected' : ctrl.isSelectedDate(day), 'today': ctrl.isToday(day) , 'event': day.event }" ng-click="ctrl.selectDate(day)">{{::day.day}}</td>
                    </tr>    
                 </tbody>
             </table>
@@ -75,23 +78,27 @@ class _EventPickerController {
 
     constructor(private $scope: IScope, private $element: JQuery, private $timeout: ITimeoutService) {
 
-        this.startDate = moment.tz(DateUtils.getTimezone(this.timezone)).startOf("day").subtract(30, "days").toDate();
-        this.endDate = moment.tz(DateUtils.getTimezone(this.timezone)).endOf("day").toDate();
         this.rangeModelIdx = {};
 
         $scope.$watch('ctrl.startDate', (newValue: Date, oldValue: Date) => {
             if (!newValue) {
-                this.startDate = moment.tz(DateUtils.getTimezone(this.timezone)).startOf("day").subtract(30, "days").toDate();
+
+                this.startDate = moment.tz(DateUtils.getTimezone(this.timezone)).startOf("day").toDate();
+                this.updateRange(this.events);
             } else {
+
                 this.startDate = newValue;
+                this.updateRange(this.events);
             }
         });
 
         $scope.$watch('ctrl.endDate', (newValue: Date, oldValue: Date) => {
             if (!newValue) {
                 this.endDate = moment.tz(DateUtils.getTimezone(this.timezone)).endOf("day").toDate();
+                this.updateRange(this.events);
             } else {
                 this.endDate = newValue;
+                this.updateRange(this.events);
             }
         });
 
@@ -125,7 +132,7 @@ class _EventPickerController {
     }
 
     isSelectedDate(selectedDate: PickerDate) {
-        var modelDate: Moment = moment.tz(this.timezone, this.ngModel.$modelValue);
+        var modelDate: Moment = moment.tz( this.ngModel.$modelValue, this.timezone);
         return DateUtils.isSameDay(modelDate, selectedDate.momentDate);
     }
 

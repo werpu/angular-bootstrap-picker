@@ -46,7 +46,7 @@ export class EventModelValue {
 
 export class EventModel {
     /*iso representation of a certain date*/
-    data: Array<EventModelValue>;
+    data: Array<EventModelValue> = [];
 }
 
 
@@ -131,15 +131,17 @@ export class PickerWeek {
  * page model for the date picker page
  */
 export class DatePickerPage {
+    month: string;
     dayOfWeek:Array<string>;
     weeks:Array<PickerWeek>;
     year:number;
 
 
-    constructor(year:number, dayOfWeek:Array<string> = [], weeks:Array<PickerWeek> = []) {
+    constructor(year:number, month: string, dayOfWeek:Array<string> = [], weeks:Array<PickerWeek> = []) {
         this.dayOfWeek = dayOfWeek;
         this.weeks = weeks;
         this.year = year;
+        this.month = month;
     }
 }
 

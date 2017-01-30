@@ -170,7 +170,7 @@ export class ViewModelBuilder {
 
         });
 
-        return new DatePickerPage(momentDate.get("year"), dayOfWeek, weeks);
+        return new DatePickerPage(momentDate.get("year"),"", dayOfWeek, weeks);
     };
 
 
@@ -180,6 +180,7 @@ export class ViewModelBuilder {
      * @private
      */
     static calculateEventDateView(rangeModel: EventModel, startDate: Date, endDate: Date, timezone: string): EventPickerPage {
+
 
         var rangeIdx = ViewModelBuilder.buildModelIdx(rangeModel, timezone);
 
@@ -202,8 +203,13 @@ export class ViewModelBuilder {
 
 
         var tempEndDate = moment.tz(startDate, timezone).startOf("month").startOf("week").add(41, "days");
+        var tempStartDate = moment.tz(startDate, timezone).startOf("month").startOf("week");
+        var tempMonth = moment.tz(startDate, timezone);
+
+
         do {
-            var range1 = moment.range(momentStartDate, momentEndDate);
+            var hasDisplayableValues = false;
+            var range1 = moment.range(tempStartDate, tempEndDate);
             range1.by("day", (date: moment.Moment) => {
                 if (cnt % 7 == 0) {
                     weeks.push(new PickerWeek(date.tz(timezone).get("week")));
@@ -211,12 +217,16 @@ export class ViewModelBuilder {
 
                 var isInvalid = date.startOf("day").isBefore(momentStartDate, "day") ||date.endOf("day").isAfter(momentEndDate, "day") || date.endOf("day").isAfter(date.clone().endOf("month"));
 
-                var eventKey = date.format("dd.mm.yyyy");
+                var eventKey = date.format("DD.MM.YYYY");
                 var eventModelValue: EventModelValue = rangeIdx[eventKey];
 
+
                 weeks[weeks.length - 1].days.push(
-                    new PickerDate(isInvalid, date, date.tz(timezone).get("date"), date.tz(timezone).isSame(momentDate, "month"), eventModelValue)
+                    new PickerDate(isInvalid, date, date.tz(timezone).get("date"), date.tz(timezone).isSame(tempMonth, "month"), eventModelValue)
                 );
+
+
+                hasDisplayableValues = hasDisplayableValues || (date.tz(timezone).isSame(tempMonth, "month") && !isInvalid);
 
                 //We also need to display the work days
                 if (dayOfWeek.length < 7) {
@@ -226,9 +236,24 @@ export class ViewModelBuilder {
                 cnt++;
             });
 
-            retVal.months.push(new DatePickerPage(momentDate.get("year"), dayOfWeek, weeks));
 
-        } while(tempEndDate.isBefore(momentEndDate));
+
+            var year =  moment.tz(tempEndDate, timezone).startOf("month").subtract(1, "day").get("year");
+            var month =  moment.tz(tempEndDate, timezone).startOf("month").subtract(1, "day").format("MMM");
+
+            tempStartDate = moment.tz(tempEndDate.add("day", 1), timezone).startOf("month").startOf("week");
+            tempEndDate = moment.tz(tempStartDate, timezone).add(41, "days");
+            tempMonth.add("month", 1);
+
+
+            if(hasDisplayableValues) {
+                retVal.months.push(new DatePickerPage(year, month, dayOfWeek, weeks));
+            }
+
+            var weeks: Array<PickerWeek> = [];
+            var dayOfWeek: Array<string> = [];
+
+        } while(tempStartDate.isSameOrBefore(momentEndDate));
 
         return retVal;
     }
@@ -247,7 +272,7 @@ export class ViewModelBuilder {
         var rangeIdx: RangeModelDictionary = {};
         for (var cnt = 0; cnt < eventModel.data.length; cnt++) {
             let value: EventModelValue = eventModel.data[cnt];
-            let key = moment.tz(value.day, timezone).format("dd.mm.yyyy");
+            let key = moment.tz(value.day, timezone).format("DD.MM.YYYY");
             rangeIdx[key] = value;
         }
         return rangeIdx;

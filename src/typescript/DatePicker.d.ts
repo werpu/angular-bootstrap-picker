@@ -32,6 +32,6 @@ declare class DatePickerService {
      * @param events
      * @returns {EventModel}
      */
-    createEventEventModel(...events: EventModelValue[]): EventModel;
+    createEventEventModel(events: EventModelValue[]): EventModel;
 
 }

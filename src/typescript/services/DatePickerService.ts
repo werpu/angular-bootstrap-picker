@@ -29,7 +29,7 @@ export class DatePickerService {
      * @param events
      * @returns {EventModel}
      */
-    createEventEventModel(...events: EventModelValue[]): EventModel {
+    createEventEventModel(events: EventModelValue[]): EventModel {
         var retVal = new EventModel();
         retVal.data = events;
         return retVal;
