@@ -8,14 +8,24 @@ angular.module('App', ['werpu.bootstrap.picker'])
 
         //lets generated some for our page events
         var events = [];
-        for(var cnt = 0; cnt < 10; cnt++) {
-            events.push(datePickerService.createEventModelValue(cnt+10, "HIGH",moment.tz(new Date(), TIME_ZONE).add("days", cnt), "data"+cnt));
+        for(var cnt = 6; cnt < 15; cnt++) {
+            events.push(datePickerService.createEventModelValue(cnt+10, "HIGH",moment.tz(new Date(), TIME_ZONE).add("days", cnt).startOf("day").toDate(), "data"+cnt));
         }
 
 
         $scope.eventData = datePickerService.createEventEventModel(events);
-        $scope.currentDate = moment.tz(new Date(), TIME_ZONE).startOf("day").toDate();
 
+        $scope.selectionResult = "";
+
+        $scope.eventSelected = function(selectedEvent) {
+            var res = [];
+            res.push("event was selected. Details:")  ;
+            res.push("Number of events at that day "+selectedEvent.numberOfEvents);
+            res.push("Importance "+selectedEvent.importance);
+            res.push("Date "+selectedEvent.day);
+            res.push("data "+selectedEvent.data.toString());
+            $scope.selectionResult = res.join("\n");
+        };
 
         $scope.$watch("currentDate", function(newValue, oldValue) {
             if(newValue) {

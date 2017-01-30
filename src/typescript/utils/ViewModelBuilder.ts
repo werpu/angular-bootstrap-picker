@@ -54,16 +54,17 @@ export class ViewModelBuilder {
 
         var range1 = moment.range(start, end);
         range1.by("year", (date: moment.Moment) => {
+            date = moment.tz(date,timezone);
             if (cnt % 5 == 0) {
                 pickerPage.row.push([]);
             }
 
             var isInvalid = false;
             if (momentStartDate) {
-                isInvalid = isInvalid || (date.startOf("day").isBefore(momentStartDate) && date.endOf("day").isBefore(momentStartDate));
+                isInvalid = isInvalid || (moment.tz(date,timezone).startOf("day").isBefore(momentStartDate) && moment.tz(date,timezone).endOf("day").isBefore(momentStartDate));
             }
             if (!isInvalid && momentEndDate) {
-                isInvalid = isInvalid || (date.startOf("day").isAfter(momentEndDate) && date.endOf("day").isAfter(momentEndDate));
+                isInvalid = isInvalid || (moment.tz(date,timezone).startOf("day").isAfter(momentEndDate) && moment.tz(date,timezone).endOf("day").isAfter(momentEndDate));
             }
 
             pickerPage.row[pickerPage.row.length - 1].push(
@@ -94,21 +95,21 @@ export class ViewModelBuilder {
         var cnt = 0;
         var pickerPage = new MonthPickerPage(momentDate.get("year"));
         range1.by("month", (date: moment.Moment) => {
-
+            date = moment.tz(date,timezone);
             if (cnt % 3 == 0) {
                 pickerPage.row.push([]);
             }
 
             var isInvalid = false;
             if (momentStartDate) {
-                isInvalid = isInvalid || (date.startOf("day").isBefore(momentStartDate) && date.endOf("day").isBefore(momentStartDate));
+                isInvalid = isInvalid || (moment.tz(date,timezone).startOf("day").isBefore(momentStartDate) && moment.tz(date,timezone).endOf("day").isBefore(momentStartDate));
             }
             if (!isInvalid && momentEndDate) {
-                isInvalid = isInvalid || (date.startOf("day").isAfter(momentEndDate) && date.endOf("day").isAfter(momentEndDate));
+                isInvalid = isInvalid || (moment.tz(date,timezone).startOf("day").isAfter(momentEndDate) && moment.tz(date,timezone).endOf("day").isAfter(momentEndDate));
             }
 
             pickerPage.row[pickerPage.row.length - 1].push(
-                new PickerMonth(isInvalid, date, date.tz(timezone).format("MMMM"), date.tz(timezone).isSame(momentDate, "year"))
+                new PickerMonth(isInvalid, date, moment.tz(date,timezone).format("MMMM"), moment.tz(date,timezone).isSame(momentDate, "year"))
             );
 
             cnt++;
@@ -211,22 +212,23 @@ export class ViewModelBuilder {
             var hasDisplayableValues = false;
             var range1 = moment.range(tempStartDate, tempEndDate);
             range1.by("day", (date: moment.Moment) => {
+                date = moment.tz(date, timezone).startOf("day");
                 if (cnt % 7 == 0) {
                     weeks.push(new PickerWeek(date.tz(timezone).get("week")));
                 }
 
-                var isInvalid = date.startOf("day").isBefore(momentStartDate, "day") ||date.endOf("day").isAfter(momentEndDate, "day") || date.endOf("day").isAfter(date.clone().endOf("month"));
+                var isInvalid = date.isBefore(momentStartDate, "day") || moment.tz(date,timezone).isAfter(momentEndDate, "day") || moment.tz(date,timezone).endOf("day").isAfter(date.clone().endOf("month"));
 
                 var eventKey = date.format("DD.MM.YYYY");
                 var eventModelValue: EventModelValue = rangeIdx[eventKey];
 
 
                 weeks[weeks.length - 1].days.push(
-                    new PickerDate(isInvalid, date, date.tz(timezone).get("date"), date.tz(timezone).isSame(tempMonth, "month"), eventModelValue)
+                    new PickerDate(isInvalid, date, date.get("date"), date.isSame(tempMonth, "month"), eventModelValue)
                 );
 
 
-                hasDisplayableValues = hasDisplayableValues || (date.tz(timezone).isSame(tempMonth, "month") && !isInvalid);
+                hasDisplayableValues = hasDisplayableValues || (date.isSame(tempMonth, "month") && !isInvalid);
 
                 //We also need to display the work days
                 if (dayOfWeek.length < 7) {

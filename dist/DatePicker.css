@@ -47,11 +47,21 @@ event-picker  td.no-link
 
 date-picker .picker-popup td:hover:not(.no-link),
 date-picker .picker-popup td:focus:not(.no-link),
-event-picker  td:hover:not(.no-link),
-event-picker  td:focus:not(.no-link)
+event-picker td.event:hover:not(.no-link),
+event-picker td.event:focus:not(.no-link)
 {
     color: #23527c;
     text-decoration: underline;
+}
+
+event-picker td.noevent,
+event-picker td.noevent,
+event-picker td.event.invalid:hover:not(.no-link),
+event-picker td.event.inalid:focus:not(.no-link)
+{
+    color: inherit;
+    text-decoration: inherit;
+
 }
 
 date-picker .picker-popup td.invalid,
@@ -158,4 +168,16 @@ event-picker table {
 
 event-picker .event {
     border: 1px dotted silver;
+}
+
+event-picker .event.invalid {
+    border: none;
+}
+
+event-picker .invalid {
+    cursor: default;
+}
+
+event-picker .selected {
+    background-color: aliceblue !important;
 }

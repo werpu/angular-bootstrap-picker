@@ -407,15 +407,16 @@ define("utils/ViewModelBuilder", ["require", "exports", "utils/DatePickerTypes"]
             var pickerPage = new DatePickerTypes_1.YearPickerPage();
             var range1 = moment.range(start, end);
             range1.by("year", function (date) {
+                date = moment.tz(date, timezone);
                 if (cnt % 5 == 0) {
                     pickerPage.row.push([]);
                 }
                 var isInvalid = false;
                 if (momentStartDate) {
-                    isInvalid = isInvalid || (date.startOf("day").isBefore(momentStartDate) && date.endOf("day").isBefore(momentStartDate));
+                    isInvalid = isInvalid || (moment.tz(date, timezone).startOf("day").isBefore(momentStartDate) && moment.tz(date, timezone).endOf("day").isBefore(momentStartDate));
                 }
                 if (!isInvalid && momentEndDate) {
-                    isInvalid = isInvalid || (date.startOf("day").isAfter(momentEndDate) && date.endOf("day").isAfter(momentEndDate));
+                    isInvalid = isInvalid || (moment.tz(date, timezone).startOf("day").isAfter(momentEndDate) && moment.tz(date, timezone).endOf("day").isAfter(momentEndDate));
                 }
                 pickerPage.row[pickerPage.row.length - 1].push(new DatePickerTypes_1.PickerYear(isInvalid, date, parseInt(date.tz(timezone).format("YYYY"))));
                 cnt++;
@@ -436,17 +437,18 @@ define("utils/ViewModelBuilder", ["require", "exports", "utils/DatePickerTypes"]
             var cnt = 0;
             var pickerPage = new DatePickerTypes_1.MonthPickerPage(momentDate.get("year"));
             range1.by("month", function (date) {
+                date = moment.tz(date, timezone);
                 if (cnt % 3 == 0) {
                     pickerPage.row.push([]);
                 }
                 var isInvalid = false;
                 if (momentStartDate) {
-                    isInvalid = isInvalid || (date.startOf("day").isBefore(momentStartDate) && date.endOf("day").isBefore(momentStartDate));
+                    isInvalid = isInvalid || (moment.tz(date, timezone).startOf("day").isBefore(momentStartDate) && moment.tz(date, timezone).endOf("day").isBefore(momentStartDate));
                 }
                 if (!isInvalid && momentEndDate) {
-                    isInvalid = isInvalid || (date.startOf("day").isAfter(momentEndDate) && date.endOf("day").isAfter(momentEndDate));
+                    isInvalid = isInvalid || (moment.tz(date, timezone).startOf("day").isAfter(momentEndDate) && moment.tz(date, timezone).endOf("day").isAfter(momentEndDate));
                 }
-                pickerPage.row[pickerPage.row.length - 1].push(new DatePickerTypes_1.PickerMonth(isInvalid, date, date.tz(timezone).format("MMMM"), date.tz(timezone).isSame(momentDate, "year")));
+                pickerPage.row[pickerPage.row.length - 1].push(new DatePickerTypes_1.PickerMonth(isInvalid, date, moment.tz(date, timezone).format("MMMM"), moment.tz(date, timezone).isSame(momentDate, "year")));
                 cnt++;
             });
             return pickerPage;
@@ -516,14 +518,15 @@ define("utils/ViewModelBuilder", ["require", "exports", "utils/DatePickerTypes"]
                 var hasDisplayableValues = false;
                 var range1 = moment.range(tempStartDate, tempEndDate);
                 range1.by("day", function (date) {
+                    date = moment.tz(date, timezone).startOf("day");
                     if (cnt % 7 == 0) {
                         weeks.push(new DatePickerTypes_1.PickerWeek(date.tz(timezone).get("week")));
                     }
-                    var isInvalid = date.startOf("day").isBefore(momentStartDate, "day") || date.endOf("day").isAfter(momentEndDate, "day") || date.endOf("day").isAfter(date.clone().endOf("month"));
+                    var isInvalid = date.isBefore(momentStartDate, "day") || moment.tz(date, timezone).isAfter(momentEndDate, "day") || moment.tz(date, timezone).endOf("day").isAfter(date.clone().endOf("month"));
                     var eventKey = date.format("DD.MM.YYYY");
                     var eventModelValue = rangeIdx[eventKey];
-                    weeks[weeks.length - 1].days.push(new DatePickerTypes_1.PickerDate(isInvalid, date, date.tz(timezone).get("date"), date.tz(timezone).isSame(tempMonth, "month"), eventModelValue));
-                    hasDisplayableValues = hasDisplayableValues || (date.tz(timezone).isSame(tempMonth, "month") && !isInvalid);
+                    weeks[weeks.length - 1].days.push(new DatePickerTypes_1.PickerDate(isInvalid, date, date.get("date"), date.isSame(tempMonth, "month"), eventModelValue));
+                    hasDisplayableValues = hasDisplayableValues || (date.isSame(tempMonth, "month") && !isInvalid);
                     //We also need to display the work days
                     if (dayOfWeek.length < 7) {
                         dayOfWeek.push(date.tz(timezone).format("ddd"));
@@ -1386,14 +1389,15 @@ define("eventPicker/EventPicker", ["require", "exports", "utils/DateUtils", "uti
         function _EventPickerView() {
         }
         _EventPickerView.template = function () {
-            return "\n        <div class=\"event-picker\">\n            <table ng-repeat=\"datePickerPage in ctrl.pickerPage.months\">\n                <thead>\n                     <tr>\n                          <td class=\"calendarMonth\" colspan=\"8\"> {{::datePickerPage.month}} {{::datePickerPage.year}}</td>   \n                    </tr>\n                    <tr>\n                        <td class=\"calendarWeek\"><!-- week of year --></td>\n                        <td class=\"dayOfWeek\" ng-repeat=\"dayOfWeek in datePickerPage.dayOfWeek\" ng-click=\"ctrl.selectDate(dayOfWeek)\">{{::dayOfWeek}}</td>    \n                    </tr>\n                </thead>\n                <tbody>\n                     <tr ng-repeat=\"week in datePickerPage.weeks\">\n                                <td class=\"calendarWeek\">{{::week.calendarWeek}}</td>\n                                <td class=\"day day.event.importance\" ng-repeat=\"day in week.days\" ng-class=\"{'outside': !day.sameMonth, 'invalid': day.invalid, 'selected' : ctrl.isSelectedDate(day), 'today': ctrl.isToday(day) , 'event': day.event }\" ng-click=\"ctrl.selectDate(day)\">{{::day.day}}</td>\n                   </tr>    \n                </tbody>\n            </table>\n        </div>\n        ";
+            return "\n        <div class=\"event-picker\">\n            <table ng-repeat=\"datePickerPage in ctrl.pickerPage.months\">\n                <thead>\n                     <tr>\n                          <td class=\"calendarMonth\" colspan=\"8\"> {{::datePickerPage.month}} {{::datePickerPage.year}}</td>   \n                    </tr>\n                    <tr>\n                        <td class=\"calendarWeek\"><!-- week of year --></td>\n                        <td class=\"dayOfWeek\" ng-repeat=\"dayOfWeek in datePickerPage.dayOfWeek\" ng-click=\"ctrl.selectDate(dayOfWeek)\">{{::dayOfWeek}}</td>    \n                    </tr>\n                </thead>\n                <tbody>\n                     <tr ng-repeat=\"week in datePickerPage.weeks\">\n                                <td class=\"calendarWeek\">{{::week.calendarWeek}}</td>\n                                <td class=\"day {{::day.event.importance}}\" ng-repeat=\"day in week.days\" ng-class=\"{'outside': !day.sameMonth, 'invalid': day.invalid, 'selected' : ctrl.isSelectedDate(day), 'today': ctrl.isToday(day), 'noevent': !day.event , 'event': day.event }\" ng-click=\"ctrl.selectDate(day)\">{{::day.day}}</td>\n                   </tr>    \n                </tbody>\n            </table>\n        </div>\n        ";
         };
         _EventPickerView.controllerAs = "ctrl";
         _EventPickerView.bindings = {
             timezone: "@",
             startDate: "<",
             endDate: "<",
-            events: "<"
+            events: "<",
+            eventSelected: "&"
         };
         _EventPickerView.require = {
             /*the selected date*/
@@ -1430,18 +1434,29 @@ define("eventPicker/EventPicker", ["require", "exports", "utils/DateUtils", "uti
             });
             $scope.$watch("ctrl.events", function (newValue, oldValue) {
                 _this.updateRange(newValue);
-                _this.rangeModelIdx = ViewModelBuilder_2.ViewModelBuilder.buildModelIdx(newValue, _this.timezone);
+                _this.rangeModelIdx = ViewModelBuilder_2.ViewModelBuilder.buildModelIdx(newValue, DateUtils_2.DateUtils.getTimezone(_this.timezone));
             }, true);
         }
         _EventPickerController.prototype.updateRange = function (rangeModel) {
             this.pickerPage = ViewModelBuilder_2.ViewModelBuilder.calculateEventDateView(rangeModel, this.startDate, this.endDate, DateUtils_2.DateUtils.getTimezone(this.timezone));
         };
         _EventPickerController.prototype.$postLink = function () {
+            var _this = this;
             this.updateRange(this.events);
+            /*
+             * registers the internal parsers, validators and formatters
+             * into the ngModel for the date string conversion
+             */
+            this.ngModel.$parsers.push(function (data) {
+                if ('undefined' == typeof data || null == data || data == "") {
+                    return null;
+                }
+                return moment.tz(data, "DD.MM.YYYY", _this.timezone).startOf("day");
+            });
         };
         _EventPickerController.prototype.eventPresent = function (moment) {
             if (this.events) {
-                return this.rangeModelIdx[moment.format("dd.mm.yyyy")];
+                return this.rangeModelIdx[moment.format("DD.MM.YYYY")];
             }
             return null;
         };
@@ -1451,11 +1466,19 @@ define("eventPicker/EventPicker", ["require", "exports", "utils/DateUtils", "uti
             return currentMoment && currentMoment.isBetween(startMoment.subtract(1, "day"), endMoment.add(1, "day"), "day");
         };
         _EventPickerController.prototype.isSelectedDate = function (selectedDate) {
+            if (!this.ngModel.$modelValue) {
+                return false;
+            }
             var modelDate = moment.tz(this.ngModel.$modelValue, this.timezone);
             return DateUtils_2.DateUtils.isSameDay(modelDate, selectedDate.momentDate);
         };
         _EventPickerController.prototype.selectDate = function (selectDate) {
-            this.ngModel.$modelValue = selectDate.momentDate.toDate();
+            if (!selectDate.event) {
+                return;
+            }
+            this.ngModel.$setViewValue(selectDate.momentDate.format("DD.MM.YYYY"));
+            this.eventSelected({ $event: selectDate.event });
+            this.updateRange(this.events);
         };
         /**
          * checks if the current picker date is today

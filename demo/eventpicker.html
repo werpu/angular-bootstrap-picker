@@ -20,15 +20,18 @@
 
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.8/angular.js"></script>
     <script type="text/javascript" src="../dist/DatePickerFinal.js"></script>
-    <script type="text/javascript" src="Range.js"></script>
+    <script type="text/javascript" src="EventPicker.js"></script>
 
 
 </head>
 <body ng-controller="AppController">
 
 <form name="submitForm">
+    <p style="display: table;">
+    <event-picker event-selected="eventSelected($event)" events="eventData" start-date="minDate" end-date="maxDate" ng-model="currentDate"></event-picker>
+    </p>
+    <pre>{{selectionResult}}</pre>
 
-    <event-picker events="eventData" start-date="minDate" end-date="maxDate" ng-model="currentDate"></event-picker>
 </form>
 
 
