@@ -111,6 +111,64 @@ is instantly reflected in the model. DOUBLE_BUFFERED means a set button has to b
 *  additionalContentYear: optional transclusion for the year picker content area
 
 
+# Event Picker
+
+Also as newest member of the component set, an event picker has been added.
+
+
+## Usage
+
+You simply can use the date picker like every other angular module. Once imported
+
+```javascript
+
+    angular.module('App', ['werpu.bootstrap.picker'])
+
+```
+
+
+```html
+    <event-picker name="europe" ng-model="currentDate"
+                 start-date="minDate" end-date="maxDate" 
+                 timezone="Europe/Zurich"
+                 event-selected="eventIsSelected($event)"
+                 >
+    </event-picker>
+```
+
+# API
+
+### Following attributes are available:
+
+* ng-model {required} the model of the event picker, must be an object of type Date
+* events {required} an array of events following following convention
+
+```typescript
+
+
+
+export class EventModelValue {
+    numberOfEvents: number;
+    importance: string; /*string with either LOW, MEDIUM, HIGH, NONE*/
+    data: any;
+    day: Date;
+}
+
+
+export class EventModel {
+    /*iso representation of a certain date*/
+    data: Array<EventModelValue> = [];
+}
+```
+* start-date {optional} the lower bound of the possible pick values (must be of type date=
+* end-date {optional} the upper bound of the possible pick values (must be of type date=
+* timezone {optional} the moment timezone which should be used for the current picker, if not set the browsers timezone is used per default
+* event-selected {optional} function which gets an eventModelValue in if you pass the parameter $event
+
+
+A live demo of the event picker can be found at 
+https://werpu.github.io/angular-bootstrap-picker/demo/eventpicker.html
+
 #Building
 
 The picker was programmed to 100% in typescript, to generate the javascripts following tasks have to be performed

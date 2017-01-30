@@ -25,10 +25,11 @@
 
 </head>
 <body ng-controller="AppController">
-
+<a href="./index.html">&gt;&gt;To the Date Picker Example</a>
 <form name="submitForm">
+    <p>Small Event Picker example</p>
     <p style="display: table;">
-    <event-picker event-selected="eventSelected($event)" events="eventData" start-date="minDate" end-date="maxDate" ng-model="currentDate"></event-picker>
+        <event-picker event-selected="eventSelected($event)" events="eventData" start-date="minDate" end-date="maxDate" ng-model="currentDate"></event-picker>
     </p>
     <pre>{{selectionResult}}</pre>
 
