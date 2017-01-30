@@ -7,7 +7,7 @@ export class _DatePickerView {
                    <input type="text" placeholder="{{ctrl.placeholder}}" class="form-control" name="{{ctrl.name}}_inner" ng-model="ctrl.innerSelection">
                    <span class="input-group-btn">
                        <button type="button" class="picker-open btn btn-default" ng-click="ctrl.openPicker()">
-                             <span ng-class="{'glyphicon glyphicon-align-right glyph-icon glyphicon-calendar': !ctrl.buttonStyleClass, ctrl.buttonStyleClass: ctrl.buttonStyleClass}"> {{ctrl.buttonLabel}} </span>
+                             <span class="{{ctrl.buttonStyleClass ? ctrl.buttonStyleClass : ''}}" ng-class="{'glyphicon glyphicon-align-right glyph-icon glyphicon-calendar': !ctrl.buttonStyleClass}"> {{ctrl.buttonLabel}} </span>
                        </button>
                    </span> 
                </div>
@@ -80,7 +80,7 @@ export class _DatePickerView {
                         <tbody>
                             <tr ng-repeat="week in ctrl.monthPickerData.weeks">
                                 <td class="calendarWeek">{{::week.calendarWeek}}</td>
-                                <td class="day" ng-repeat="day in week.days" ng-class="{'outside': !day.sameMonth, 'invalid': day.invalid, 'selected' : ctrl.isSelectedDate(day), 'chosen' : ctrl.isChosenDate(day), 'today': ctrl.isToday(day)}, 'event': day.event" class="{{day.event.importance}}" ng-click="ctrl.selectDate(day)">{{::day.day}}</td>
+                                <td class="day" ng-repeat="day in week.days" ng-class="{'outside': !day.sameMonth, 'invalid': day.invalid, 'selected' : ctrl.isSelectedDate(day), 'chosen' : ctrl.isChosenDate(day), 'today': ctrl.isToday(day)}" class="{{day.event.importance}}" ng-click="ctrl.selectDate(day)">{{::day.day}}</td>
                             </tr>
                         </tbody>
                         
