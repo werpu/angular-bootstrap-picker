@@ -62,7 +62,6 @@ export class _DatePickerView {
                <div class="date-picker" ng-if="ctrl.view == 'DATE'">                
                     <table>
                         <thead>
-                            <!-- TODO year forward and backward -->
                         
                             <tr ng-if="ctrl.pickerMode == 'DATE_TIME'">
                                 <td colspan="8" class="invalid picker-title" >{{ctrl.innerSelection}}</td>

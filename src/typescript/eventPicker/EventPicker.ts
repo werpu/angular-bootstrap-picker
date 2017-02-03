@@ -29,7 +29,7 @@ class _EventPickerView {
             <table ng-repeat="datePickerPage in ctrl.pickerPage.months">
                 <thead>
                      <tr>
-                          <td class="calendarMonth" colspan="8"> {{::datePickerPage.month}} {{::datePickerPage.year}}</td>   
+                          <td class="calendarMonth no-link" colspan="8"> {{::datePickerPage.month}} {{::datePickerPage.year}}</td>   
                     </tr>
                     <tr>
                         <td class="calendarWeek"><!-- week of year --></td>
