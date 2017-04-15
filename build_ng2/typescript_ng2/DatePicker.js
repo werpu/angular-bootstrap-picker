@@ -11,6 +11,12 @@ var DatePicker_1 = require("./datePicker/DatePicker");
 var RangeInput_1 = require("./helperComponents/RangeInput");
 var forms_1 = require("@angular/forms");
 var common_1 = require("@angular/common");
+var AdditionalContentDate_1 = require("./datePicker/fakeDirectives/AdditionalContentDate");
+var AdditionalButtonsDate_1 = require("./datePicker/fakeDirectives/AdditionalButtonsDate");
+var AdditionalContentYear_1 = require("./datePicker/fakeDirectives/AdditionalContentYear");
+var AdditionalContentMonth_1 = require("./datePicker/fakeDirectives/AdditionalContentMonth");
+var AdditionalButtonsMonth_1 = require("./datePicker/fakeDirectives/AdditionalButtonsMonth");
+var AdditionalButtonsYear_1 = require("./datePicker/fakeDirectives/AdditionalButtonsYear");
 var DatePickerModule = (function () {
     function DatePickerModule() {
     }
@@ -21,11 +27,23 @@ DatePickerModule = __decorate([
         imports: [forms_1.FormsModule, common_1.CommonModule],
         declarations: [
             DatePicker_1.DatePicker,
-            RangeInput_1.RangeInput
+            RangeInput_1.RangeInput,
+            AdditionalButtonsDate_1.AdditionalButtonsDate,
+            AdditionalButtonsMonth_1.AdditionalButtonsMonth,
+            AdditionalButtonsYear_1.AdditionalButtonsYear,
+            AdditionalContentDate_1.AdditionalContentDate,
+            AdditionalContentMonth_1.AdditionalContentMonth,
+            AdditionalContentYear_1.AdditionalContentYear
         ],
         exports: [
             RangeInput_1.RangeInput,
-            DatePicker_1.DatePicker
+            DatePicker_1.DatePicker,
+            AdditionalButtonsDate_1.AdditionalButtonsDate,
+            AdditionalButtonsMonth_1.AdditionalButtonsMonth,
+            AdditionalButtonsYear_1.AdditionalButtonsYear,
+            AdditionalContentDate_1.AdditionalContentDate,
+            AdditionalContentMonth_1.AdditionalContentMonth,
+            AdditionalContentYear_1.AdditionalContentYear
         ]
     })
 ], DatePickerModule);

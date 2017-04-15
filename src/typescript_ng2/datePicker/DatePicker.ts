@@ -44,6 +44,7 @@ var template = () => {
                    </span> 
                </div>
                <input type="button" class="picker-close" (click)="close()" value="Close" [hidden]="true"/>
+              
         `;
 
     var inputAreaHidden = `
@@ -67,11 +68,11 @@ var template = () => {
                         </tr>
                         <tr>
                             <td class="selected-hour">
-                                <internal-range-input class="hour-input" from="0" to="23" [(ngModel)]="currentHour"></internal-range-input>    
+                                <internal-range-input ngDefaultControl class="hour-input" [from]="0" [to]="23" [(ngModel)]="currentHour"></internal-range-input>    
                             </td>
                             <td class="invalid">:</td>
                             <td class="selected-minute">
-                                <internal-range-input class="minute-input" from="0" to="59" [(ngModel)]="currentMinute"></internal-range-input> 
+                                <internal-range-input ngDefaultControl  class="minute-input" [from]="0" [to]="59" [(ngModel)]="currentMinute"></internal-range-input> 
                             </td>
                         </tr>
                          <tr>
@@ -124,13 +125,13 @@ var template = () => {
                     </div>
                     
                     <div class="button-group bottom-buttons col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                        <div class="additional-buttons">
-                            <ng-content select="additional-buttons-date"></ng-content>
-                        </div>
-                        <input type="button" class="Sset btn btn-default btn-sm" (click)="set($event)" value="Set" *ngIf="pickerOnlyMode == 'DOUBLE_BUFFERED'" />
-                        <input type="button" class="clear btn btn-default btn-sm" (click)="clear($event)" value="Clear" *ngIf="!pickerOnlyMode" />
-                        <input type="button" class="today btn btn-default btn-sm" (click)="today($event)" value="Today" />
-                        <input type="button" class="picker-close btn btn-default btn-sm" (click)="close($event)" *ngIf="!pickerOnlyMode" value="Close" />
+                      
+                        <ng-content class="additional-buttons" select="additional-buttons-date"></ng-content>
+              
+                        <input type="button" class="set btn btn-default btn-sm" (click)="set($event)" value="Set" *ngIf="pickerOnlyMode == 'DOUBLE_BUFFERED'" >
+                        <input type="button" class="clear btn btn-default btn-sm" (click)="clear($event)" value="Clear" *ngIf="!pickerOnlyMode" >
+                        <input type="button" class="today btn btn-default btn-sm" (click)="today($event)" value="Today" >
+                        <input type="button" class="picker-close btn btn-default btn-sm" (click)="close($event)" *ngIf="!pickerOnlyMode" value="Close" >
                     </div>
                </div> 
         `;
@@ -200,11 +201,27 @@ var template = () => {
 
 
     return `
-           <div class="dropdown" *ngIf="!pickerOnlyMode" (click)="$event.stopImmediatePropagation()"> 
+ <!--
+           <div [ngClass]="{'dropdown': !pickerOnlyMode, 'dropdown picker-standalone':pickerOnlyMode}" > 
              
-                ${inputArea} 
-               <div class="dropdown-menu picker-popup">
-                    <div class="content" *ngIf="isOpen">
+               <span *ngIf="!pickerOnlyMode">${inputArea}</span>  
+               <span *ngIf="pickerOnlyMode">${inputAreaHidden}</span>  
+               <div [ngClass]="{'dropdown-menu picker-popup':!pickerOnlyMode, 'picker-popup': pickerOnlyMode}" (click)="$event.stopImmediatePropagation()">
+                    
+                    <div class="content" *ngIf="isOpen || pickerOnlyMode">
+                       
+                      
+                   </div>
+               
+                </div>
+            </div> 
+-->            
+      <div class="dropdown" [ngClass]="{'picker-standalone':pickerOnlyMode}" (click)="$event.stopImmediatePropagation()"> 
+             
+               <span *ngIf="!pickerOnlyMode">${inputArea}</span>  
+               <span *ngIf="pickerOnlyMode">${inputAreaHidden}</span>  
+               <div class="picker-popup" [ngClass]="{'dropdown-menu':!pickerOnlyMode}" (click)="$event.stopImmediatePropagation()">
+                    <div class="content" *ngIf="isOpen|| pickerOnlyMode">
                        
                        ${datePicker}
                        
@@ -214,20 +231,7 @@ var template = () => {
                    </div>
                
                 </div>
-            </div> 
-            <div class="dropdown picker-standalone" *ngIf="pickerOnlyMode">
-                 ${inputAreaHidden}
-                 <div class="picker-popup">
-                  <div class="content"> 
-                     ${datePicker}
-                           
-                     ${monthPicker}                   
-                                 
-                     ${yearPicker}
-                 </div>
-                 </div>
-            </div>  
-                 
+            </div>            
         `;
 }
 
@@ -256,7 +260,7 @@ export class DatePicker implements Validator,OnInit,OnDestroy, OnChanges {
 
     @Output() onYearSelection: EventEmitter<any> = new EventEmitter<any>();
     @Output() onMonthSelection: EventEmitter<any> = new EventEmitter<any>();
-    @Output() onDateSelection: EventEmitter<any> = new EventEmitter<any>();
+    @Output() onDateSelection: EventEmitter<any> = new EventEmitter<any>(false);
 
 
     _innerSelection: string;
@@ -592,7 +596,7 @@ export class DatePicker implements Validator,OnInit,OnDestroy, OnChanges {
         return !temporaryDate.isBefore(momentStartDate) && !temporaryDate.isAfter(momentEndDate);
     };
 
-    nextHour() {
+    nextHour(event: UIEvent) {
         if (!this.isValidHour(this.currentDate.get("hour") + 1)) {
             return;
         }
@@ -600,7 +604,7 @@ export class DatePicker implements Validator,OnInit,OnDestroy, OnChanges {
         this.selectDate(new PickerDate(false, this.currentDate, 1, true));
     };
 
-    prevHour() {
+    prevHour(event: UIEvent) {
         if (!this.isValidHour(this.currentDate.get("hour") - 1)) {
             return;
         }
@@ -608,7 +612,7 @@ export class DatePicker implements Validator,OnInit,OnDestroy, OnChanges {
         this.selectDate(new PickerDate(false, this.currentDate, 1, true));
     };
 
-    nextMinute() {
+    nextMinute(event: UIEvent) {
         if (!this.isValidMinute(this.currentDate.get("minute") + 1)) {
             return;
         }
@@ -616,7 +620,7 @@ export class DatePicker implements Validator,OnInit,OnDestroy, OnChanges {
         this.selectDate(new PickerDate(false, this.currentDate, 1, true));
     };
 
-    prevMinute() {
+    prevMinute(event: UIEvent) {
         if (!this.isValidMinute(this.currentDate.get("minute") - 1)) {
             return;
         }
@@ -682,6 +686,7 @@ export class DatePicker implements Validator,OnInit,OnDestroy, OnChanges {
                 this.updateModel(this.currentDate.toDate());
             }
 
+
             this.onDateSelection.emit({
                 $picker: this,
                 $date: this.currentDate.toDate()
@@ -689,7 +694,7 @@ export class DatePicker implements Validator,OnInit,OnDestroy, OnChanges {
 
             /*in case of a date mode we are done*/
             if (this.pickerMode === PickerConstants.DEFAULT_PICKER_MODE && !this.pickerOnlyMode) {
-                this.close();
+                this.close(event);
             }
 
         }
@@ -722,7 +727,7 @@ export class DatePicker implements Validator,OnInit,OnDestroy, OnChanges {
                 $picker: this,
                 $date: this.currentDate.toDate()
             });
-            this.goBackInView();
+            this.goBackInView(event);
         }
 
     };
@@ -754,7 +759,7 @@ export class DatePicker implements Validator,OnInit,OnDestroy, OnChanges {
                 $picker: this,
                 $date: this.currentDate.toDate()
             });
-            this.goBackInView();
+            this.goBackInView(event);
         }
     };
 
@@ -910,7 +915,7 @@ export class DatePicker implements Validator,OnInit,OnDestroy, OnChanges {
         }
         this._fixCurrentDate();
         this.updateModel(this.currentDate.toDate());
-        this.close();
+        this.close(event);
     };
 
     /**

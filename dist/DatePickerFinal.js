@@ -256,7 +256,7 @@
         };
         ;
         _DatePickerController.prototype.isSameMonth = function (selectedMonth) {
-            return DateUtils_1.DateUtils.isSameMonth(this.timezone, this.ngModel.$modelValue, this.selectedMonth.momentDate);
+            return DateUtils_1.DateUtils.isSameMonth(this.timezone, this.ngModel.$modelValue, selectedMonth.momentDate);
         };
         ;
         _DatePickerController.prototype.isChosenMonth = function (selectedMonth) {

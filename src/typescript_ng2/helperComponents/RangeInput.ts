@@ -12,9 +12,10 @@ interface IRangeInput {
 
 @Component({
     selector: "internal-range-input",
-    template: `<input type="text" [(ngModel)]="inputText" (ngModelChange)="changedExtraHandler($event)" (keydown)="keyDown($event)" >{{inputText}}`
+    template: `<input type="text" [(ngModel)]="inputText" (ngModelChange)="changedExtraHandler($event)" (keydown)="keyDown($event)" >`
 })
 export class RangeInput implements OnChanges, OnInit, Validator {
+
 
 
     @Input() from: number;
@@ -30,8 +31,14 @@ export class RangeInput implements OnChanges, OnInit, Validator {
 
     }
 
+    ngOnChanges(changes: SimpleChanges): void {
+        if(changes.ngModel) {
+            this.inputText = changes.ngModel.currentValue.toString();
+        }
+    }
+
     ngOnInit(): void {
-        this.inputText = (this.ngModel) ? this.ngModel.toString() : "";
+
     }
 
     validate(c: AbstractControl): ValidationErrors | any {

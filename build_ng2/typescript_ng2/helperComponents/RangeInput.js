@@ -15,8 +15,12 @@ var RangeInput = (function () {
         this.elementRef = elementRef;
         this.ngModelChange = new core_1.EventEmitter(false);
     }
+    RangeInput.prototype.ngOnChanges = function (changes) {
+        if (changes.ngModel) {
+            this.inputText = changes.ngModel.currentValue.toString();
+        }
+    };
     RangeInput.prototype.ngOnInit = function () {
-        this.inputText = (this.ngModel) ? this.ngModel.toString() : "";
     };
     RangeInput.prototype.validate = function (c) {
         try {
@@ -71,7 +75,7 @@ __decorate([
 RangeInput = __decorate([
     core_1.Component({
         selector: "internal-range-input",
-        template: "<input type=\"text\" [(ngModel)]=\"inputText\" (ngModelChange)=\"changedExtraHandler($event)\" (keydown)=\"keyDown($event)\" >{{inputText}}"
+        template: "<input type=\"text\" [(ngModel)]=\"inputText\" (ngModelChange)=\"changedExtraHandler($event)\" (keydown)=\"keyDown($event)\" >"
     }),
     __metadata("design:paramtypes", [core_1.ElementRef])
 ], RangeInput);
