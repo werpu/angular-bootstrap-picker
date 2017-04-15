@@ -1,8 +1,11 @@
+declare var angular: any;
+
 import IComponentOptions = angular.IComponentOptions;
 import ITimeoutService = angular.ITimeoutService;
 import IScope = angular.IScope;
 import INgModelOptions = angular.INgModelOptions;
 import INgModelController = angular.INgModelController;
+
 /**
  * A simple range input which allows a numeric input within a certain range
  */

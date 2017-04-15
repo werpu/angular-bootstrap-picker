@@ -15,17 +15,32 @@
 
  */
 
-/// <reference path="../../typings/tsd.d.ts" />
+/// <reference path="../../node_modules/@types/angular/index.d.ts" />
+/// <reference path="../../node_modules/moment/moment.d.ts" />
+
+
+
 import IComponentOptions = angular.IComponentOptions;
 import ITimeoutService = angular.ITimeoutService;
 import IScope = angular.IScope;
 import {RangeInput} from "./helperComponents/RangeInput";
 import {_DatePickerView} from "./datePicker/DatePickerView";
 import {_DatePickerController} from "./datePicker/DatePickerController";
-import Moment = moment.Moment;
+
 import INgModelController = angular.INgModelController;
 import {EventPicker} from "./eventPicker/EventPicker";
 import {DatePickerService} from "./services/DatePickerService";
+
+import * as ang1 from "angular";
+import * as mom from "moment";
+
+
+declare global {
+    var angular: typeof ang1;
+    var moment: typeof mom;
+    type Moment = mom.Moment;
+}
+
 
 
 export class DatePicker implements IComponentOptions {
@@ -39,7 +54,7 @@ export class DatePicker implements IComponentOptions {
 
 
 //note this code is ported from github please do not change it here
-(<any>angular).module('werpu.bootstrap.picker', [])
+angular.module('werpu.bootstrap.picker', [])
     .component("datePicker", new DatePicker())
     .component("internalRangeInput", new RangeInput())
     .component("eventPicker", new EventPicker())

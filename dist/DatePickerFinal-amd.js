@@ -1,10 +1,16 @@
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 define("helperComponents/RangeInput", ["require", "exports"], function (require, exports) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     var RangeInput = (function () {
         function RangeInput() {
             this.template = function () {
@@ -56,6 +62,7 @@ define("helperComponents/RangeInput", ["require", "exports"], function (require,
 });
 define("datePicker/DatePickerView", ["require", "exports"], function (require, exports) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     var _DatePickerView = (function () {
         function _DatePickerView() {
         }
@@ -68,57 +75,42 @@ define("datePicker/DatePickerView", ["require", "exports"], function (require, e
             var yearPicker = "\n            <!-- year view -->  \n            <div class=\"year-picker\" ng-if=\"ctrl.view == 'YEAR'\">\n                  <table>\n                    <thead>\n                    <tr>\n                        <td><a ng-click=\"ctrl.prevDecade()\" class=\"glyphicon glyphicon-menu-left\"></a></td>\n                        <td colspan=\"3\" class=\"no-link\">{{ctrl.decadeFrom}} - {{ctrl.decadeTo}}</td>\n                        <td><a ng-click=\"ctrl.nextDecade()\" class=\"glyphicon glyphicon-menu-right\"></a></td>\n                    </tr>\n                    </thead>\n                    <tbody>\n                        <tr ng-repeat=\"yearrow in ctrl.decadePickerData.row\">\n                            <td ng-repeat=\"year in yearrow\"\n                            ng-class=\"{'invalid': year.invalid, 'selected' : ctrl.isSameYear(year), 'chosen' : ctrl.isChosenYear(year), 'today': ctrl.isTodayYear(year)}\"\n                             ng-click=\"ctrl.selectYear(year)\"\n                            >{{::year.year}}</td></td>\n                        </tr>\n                    </table>\n                  <div class=\"additional-content\" ng-transclude=\"additionalContentYear\"></div>  \n                  <div class=\"button-group bottom-buttons\">\n                    <div class=\"additional-buttons\" ng-transclude=\"additionalButtonsYear\"></div>\n                    <input type=\"button\" class=\"btn btn-default btn-sm\" ng-click=\"ctrl.goBackInView()\" value=\"Back\" />\n                  </div>\n            </div>   \n        ";
             return "\n           <div class=\"dropdown\" ng-if=\"!ctrl.pickerOnlyMode\"> \n                " + inputArea + " \n               <div class=\"dropdown-menu picker-popup\">\n                    <div class=\"content\" ng-if=\"ctrl.isOpen\">\n                       " + datePicker + "\n                       \n                       " + monthPicker + "                   \n                             \n                       " + yearPicker + "\n                   </div>\n               \n                </div>\n            </div> \n            <div class=\"dropdown picker-standalone\" ng-if=\"ctrl.pickerOnlyMode\">\n                 " + inputAreaHidden + "\n                 <div class=\"picker-popup\">\n                  <div class=\"content\"> \n                     " + datePicker + "\n                           \n                     " + monthPicker + "                   \n                                 \n                     " + yearPicker + "\n                 </div>\n                 </div>\n            </div>  \n                 \n        ";
         };
-        _DatePickerView.bindings = {
-            name: "@",
-            timezone: "@",
-            startDate: "<",
-            endDate: "<",
-            dateFormat: "@",
-            placeholder: "@",
-            buttonLabel: "@",
-            pickerMode: "@",
-            pickerOnlyMode: "@",
-            endOfDay: "<",
-            /*callback whenever a date is selected*/
-            onYearSelection: "&",
-            onMonthSelection: "&",
-            onDateSelection: "&",
-            buttonStyleClass: "@?" /*styleclass of the button*/
-        };
-        _DatePickerView.require = {
-            "ngModel": 'ngModel',
-        };
-        _DatePickerView.transclude = {
-            additionalButtonsDate: "?additionalButtonsDate",
-            additionalContentDate: "?additionalContentDate",
-            additionalButtonsMonth: "?additionalButtonsMonth",
-            additionalContentMonth: "?additionalContentMonth",
-            additionalButtonsYear: "?additionalButtonsYear",
-            additionalContentYear: "?additionalContentYear" /*transclusion to add additional content*/
-        };
-        _DatePickerView.controllerAs = "ctrl";
         return _DatePickerView;
     }());
+    _DatePickerView.bindings = {
+        name: "@",
+        timezone: "@",
+        startDate: "<",
+        endDate: "<",
+        dateFormat: "@",
+        placeholder: "@",
+        buttonLabel: "@",
+        pickerMode: "@",
+        pickerOnlyMode: "@",
+        endOfDay: "<",
+        /*callback whenever a date is selected*/
+        onYearSelection: "&",
+        onMonthSelection: "&",
+        onDateSelection: "&",
+        buttonStyleClass: "@?" /*styleclass of the button*/
+    };
+    _DatePickerView.require = {
+        "ngModel": 'ngModel',
+    };
+    _DatePickerView.transclude = {
+        additionalButtonsDate: "?additionalButtonsDate",
+        additionalContentDate: "?additionalContentDate",
+        additionalButtonsMonth: "?additionalButtonsMonth",
+        additionalContentMonth: "?additionalContentMonth",
+        additionalButtonsYear: "?additionalButtonsYear",
+        additionalContentYear: "?additionalContentYear" /*transclusion to add additional content*/
+    };
+    _DatePickerView.controllerAs = "ctrl";
     exports._DatePickerView = _DatePickerView;
 });
-/*
- Copyright (c) 2016 Werner Punz
-
- Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
- (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
- modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the
- Software is furnished to do so, subject to the following conditions:
-
- The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
- WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
- ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
- */
 define("utils/DatePickerTypes", ["require", "exports"], function (require, exports) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     exports.Importance = {
         LOW: "LOW",
         MEDIUM: "MEDIUM",
@@ -156,12 +148,13 @@ define("utils/DatePickerTypes", ["require", "exports"], function (require, expor
     var PickerDate = (function (_super) {
         __extends(PickerDate, _super);
         function PickerDate(invalid, momentDate, day, sameMonth, event) {
-            _super.call(this, invalid, momentDate);
-            this.day = day;
-            this.sameMonth = sameMonth;
+            var _this = _super.call(this, invalid, momentDate) || this;
+            _this.day = day;
+            _this.sameMonth = sameMonth;
             if (event) {
-                this.event = event;
+                _this.event = event;
             }
+            return _this;
         }
         return PickerDate;
     }(BaseDate));
@@ -172,9 +165,10 @@ define("utils/DatePickerTypes", ["require", "exports"], function (require, expor
     var PickerMonth = (function (_super) {
         __extends(PickerMonth, _super);
         function PickerMonth(invalid, momentDate, month, sameYear) {
-            _super.call(this, invalid, momentDate);
-            this.month = month;
-            this.sameYear = sameYear;
+            var _this = _super.call(this, invalid, momentDate) || this;
+            _this.month = month;
+            _this.sameYear = sameYear;
+            return _this;
         }
         return PickerMonth;
     }(BaseDate));
@@ -185,8 +179,9 @@ define("utils/DatePickerTypes", ["require", "exports"], function (require, expor
     var PickerYear = (function (_super) {
         __extends(PickerYear, _super);
         function PickerYear(invalid, momentDate, year) {
-            _super.call(this, invalid, momentDate);
-            this.year = year;
+            var _this = _super.call(this, invalid, momentDate) || this;
+            _this.year = year;
+            return _this;
         }
         return PickerYear;
     }(BaseDate));
@@ -254,24 +249,40 @@ define("utils/DatePickerTypes", ["require", "exports"], function (require, expor
     }());
     exports.TimeModel = TimeModel;
 });
-/*
- Copyright (c) 2016 Werner Punz
-
- Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
- (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
- modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the
- Software is furnished to do so, subject to the following conditions:
-
- The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
- WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
- ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
- */
+/// <reference path="../../../node_modules/moment/moment.d.ts" />
 define("utils/DateUtils", ["require", "exports"], function (require, exports) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    /*
+     Copyright (c) 2016 Werner Punz
+    
+     Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
+     (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
+     modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the
+     Software is furnished to do so, subject to the following conditions:
+    
+     The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+    
+     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+     WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+     COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+     ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+    
+     */
+    var PickerConstants = (function () {
+        function PickerConstants() {
+        }
+        return PickerConstants;
+    }());
+    PickerConstants.DEFAULT_DATE_FORMAT = "DD.MM.YYYY";
+    PickerConstants.DEFAULT_DATE_TIME_FORMAT = "DD.MM.YYYY HH:mm";
+    PickerConstants.DEFAULT_PICKER_MODE = "DATE";
+    PickerConstants.PICKER_VIEW_DATE = "DATE";
+    PickerConstants.PICKER_VIEW_TIME = "TIME";
+    PickerConstants.PICKER_VIEW_MONTH = "MONTH";
+    PickerConstants.PICKER_VIEW_YEAR = "YEAR";
+    PickerConstants.DEFAULT_PICKER_LABEL = "Date";
+    exports.PickerConstants = PickerConstants;
     /**
      * A set of moment based utils classes
      */
@@ -386,6 +397,7 @@ define("utils/DateUtils", ["require", "exports"], function (require, exports) {
  */
 define("utils/ViewModelBuilder", ["require", "exports", "utils/DatePickerTypes"], function (require, exports, DatePickerTypes_1) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     /**
      * utils class to build the various view models
      */
@@ -587,6 +599,81 @@ define("utils/ViewModelBuilder", ["require", "exports", "utils/DatePickerTypes"]
  */
 define("utils/BehavioralFixes", ["require", "exports"], function (require, exports) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    //https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Array/from
+    if (!Array.from) {
+        Array.from = (function () {
+            var toStr = Object.prototype.toString;
+            var isCallable = function (fn) {
+                return typeof fn === 'function' || toStr.call(fn) === '[object Function]';
+            };
+            var toInteger = function (value) {
+                var number = Number(value);
+                if (isNaN(number)) {
+                    return 0;
+                }
+                if (number === 0 || !isFinite(number)) {
+                    return number;
+                }
+                return (number > 0 ? 1 : -1) * Math.floor(Math.abs(number));
+            };
+            var maxSafeInteger = Math.pow(2, 53) - 1;
+            var toLength = function (value) {
+                var len = toInteger(value);
+                return Math.min(Math.max(len, 0), maxSafeInteger);
+            };
+            // The length property of the from method is 1.
+            return function from(arrayLike /*, mapFn, thisArg */) {
+                // 1. Let C be the this value.
+                var C = this;
+                // 2. Let items be ToObject(arrayLike).
+                var items = Object(arrayLike);
+                // 3. ReturnIfAbrupt(items).
+                if (arrayLike == null) {
+                    throw new TypeError("Array.from requires an array-like object - not null or undefined");
+                }
+                // 4. If mapfn is undefined, then let mapping be false.
+                var mapFn = arguments.length > 1 ? arguments[1] : void undefined;
+                var T;
+                if (typeof mapFn !== 'undefined') {
+                    // 5. else
+                    // 5. a If IsCallable(mapfn) is false, throw a TypeError exception.
+                    if (!isCallable(mapFn)) {
+                        throw new TypeError('Array.from: when provided, the second argument must be a function');
+                    }
+                    // 5. b. If thisArg was supplied, let T be thisArg; else let T be undefined.
+                    if (arguments.length > 2) {
+                        T = arguments[2];
+                    }
+                }
+                // 10. Let lenValue be Get(items, "length").
+                // 11. Let len be ToLength(lenValue).
+                var len = toLength(items.length);
+                // 13. If IsConstructor(C) is true, then
+                // 13. a. Let A be the result of calling the [[Construct]] internal method of C with an argument list containing the single item len.
+                // 14. a. Else, Let A be ArrayCreate(len).
+                var A = isCallable(C) ? Object(new C(len)) : new Array(len);
+                // 16. Let k be 0.
+                var k = 0;
+                // 17. Repeat, while k < len… (also steps a - h)
+                var kValue;
+                while (k < len) {
+                    kValue = items[k];
+                    if (mapFn) {
+                        A[k] = typeof T === 'undefined' ? mapFn(kValue, k) : mapFn.call(T, kValue, k);
+                    }
+                    else {
+                        A[k] = kValue;
+                    }
+                    k += 1;
+                }
+                // 18. Let putStatus be Put(A, "length", len, true).
+                A.length = len;
+                // 20. Return A.
+                return A;
+            };
+        }());
+    }
     /**
      * Some bootstrtrap behavioral fixes
      */
@@ -594,33 +681,78 @@ define("utils/BehavioralFixes", ["require", "exports"], function (require, expor
         function BehavioralFixes() {
         }
         /**
+         * Get all of an element's parent elements up the DOM tree
+         * @param  {Node}   elem     The element
+         * @param  {String} selector Selector to match against [optional]
+         * @return {Array}           The parent elements
+         */
+        BehavioralFixes.getParents = function (elem, selector) {
+            debugger;
+            // Element.matches() polyfill
+            if (!Element.prototype.matches) {
+                Element.prototype.matches =
+                    Element.prototype.matchesSelector ||
+                        Element.prototype.mozMatchesSelector ||
+                        Element.prototype.msMatchesSelector ||
+                        Element.prototype.oMatchesSelector ||
+                        Element.prototype.webkitMatchesSelector ||
+                        function (s) {
+                            var matches = (this.document || this.ownerDocument).querySelectorAll(s), i = matches.length;
+                            while (--i >= 0 && matches.item(i) !== this) { }
+                            return i > -1;
+                        };
+            }
+            // Setup parents array
+            var parents = [];
+            // Get matching parent elements
+            for (; elem && elem !== document; elem = elem.parentNode) {
+                // Add matching parents to array
+                if (selector) {
+                    if (Element.matches(selector)) {
+                        parents.push(elem);
+                    }
+                }
+                else {
+                    parents.push(elem);
+                }
+            }
+            return parents;
+        };
+        ;
+        BehavioralFixes.trigger = function (element, selector, trigger) {
+            Array.from(element.querySelectorAll(selector)).forEach(trigger);
+        };
+        BehavioralFixes.addEventListener = function (element, selector, trigger) {
+            Array.from(element.querySelectorAll(selector)).forEach(trigger);
+        };
+        /**
          * we register some keyboard events
          * to override the default behavior
          *
          * @param $element
          */
-        BehavioralFixes.registerKeyBindings = function ($element) {
-            $element.on("keydown", function (event, controller) {
+        BehavioralFixes.registerKeyBindings = function (element) {
+            element.addEventListener("keydown", function (event) {
                 /*
                  * enter should trigger a form submit
                  */
                 if (event.keyCode == 13 /*enter*/) {
                     event.preventDefault();
-                    $element.parents("form").find("input[type=submit]").click();
+                    BehavioralFixes.trigger(BehavioralFixes.getParents(element, "form")[0], "input[type=submit]", function (button) { return button.click(); });
                     return false;
                 }
                 /*
                  * arrow down should open the date picker
                  */
                 if (event.keyCode == 40 /*arrow down*/) {
-                    $element.find(".picker-open").click();
+                    BehavioralFixes.trigger(element, ".picker-open", function (button) { return button.click(); });
                     return false;
                 }
                 /*
                  * escape should close it
                  */
                 if (event.keyCode == 27 /*escape*/) {
-                    $element.find(".picker-close").click();
+                    BehavioralFixes.trigger(element, ".picker-close", function (button) { return button.click(); });
                     return false;
                 }
             });
@@ -632,13 +764,13 @@ define("utils/BehavioralFixes", ["require", "exports"], function (require, expor
          * @param $element
          * @param controller
          */
-        BehavioralFixes.registerDocumentBindings = function ($element, controller) {
+        BehavioralFixes.registerDocumentBindings = function (element, controller) {
             if (!controller.documentClickHandler) {
                 var clickHandler = function () {
                     BehavioralFixes.unregisterDocumentBindings(controller);
-                    $element.find(".picker-close").click();
+                    BehavioralFixes.trigger(element, ".picker-close", function (button) { return button.click(); });
                 };
-                angular.element(document).bind("click", clickHandler);
+                document.addEventListener("click", clickHandler);
                 controller.documentClickHandler = clickHandler;
             }
         };
@@ -650,43 +782,39 @@ define("utils/BehavioralFixes", ["require", "exports"], function (require, expor
          */
         BehavioralFixes.unregisterDocumentBindings = function (controller) {
             if (controller.documentClickHandler) {
-                angular.element(document).unbind("click", controller.documentClickHandler);
+                document.removeEventListener("click", controller.documentClickHandler);
                 controller.documentClickHandler = null;
             }
         };
-        BehavioralFixes.registerPopupBindings = function ($element) {
-            $element.find(".picker-popup").on("click", function (event) {
-                event.stopImmediatePropagation();
-                event.stopPropagation();
+        BehavioralFixes.registerPopupBindings = function (element) {
+            Array.from(element.querySelectorAll(".picker-popup")).forEach(function (node) {
+                node.addEventListener("click", function (event) {
+                    event.stopImmediatePropagation();
+                    event.stopPropagation();
+                });
             });
         };
-        BehavioralFixes.openDropDown = function ($element, controller) {
+        BehavioralFixes.openDropDown = function (element, controller) {
             controller.isOpen = true;
-            $element.find(".dropdown").addClass("open");
+            Array.from(element.querySelectorAll(".dropdown")).forEach(function (node) {
+                node.classList.add("open");
+            });
         };
-        BehavioralFixes.closeDropDown = function ($element, controller) {
+        BehavioralFixes.closeDropDown = function (element, controller) {
             controller.isOpen = false;
-            $element.find(".dropdown").removeClass("open");
+            Array.from(element.querySelectorAll(".dropdown")).forEach(function (node) {
+                node.classList.remove("open");
+            });
         };
         return BehavioralFixes;
     }());
     exports.BehavioralFixes = BehavioralFixes;
 });
+/// <reference path="../../../node_modules/@types/angular/index.d.ts" />
+/// <reference path="../../../node_modules/moment/moment.d.ts" />
 define("datePicker/DatePickerController", ["require", "exports", "utils/DatePickerTypes", "utils/DateUtils", "utils/ViewModelBuilder", "utils/BehavioralFixes"], function (require, exports, DatePickerTypes_2, DateUtils_1, ViewModelBuilder_1, BehavioralFixes_1) {
     "use strict";
-    var PickerConstants = (function () {
-        function PickerConstants() {
-        }
-        PickerConstants.DEFAULT_DATE_FORMAT = "DD.MM.YYYY";
-        PickerConstants.DEFAULT_DATE_TIME_FORMAT = "DD.MM.YYYY HH:mm";
-        PickerConstants.DEFAULT_PICKER_MODE = "DATE";
-        PickerConstants.PICKER_VIEW_DATE = "DATE";
-        PickerConstants.PICKER_VIEW_TIME = "TIME";
-        PickerConstants.PICKER_VIEW_MONTH = "MONTH";
-        PickerConstants.PICKER_VIEW_YEAR = "YEAR";
-        PickerConstants.DEFAULT_PICKER_LABEL = "Date";
-        return PickerConstants;
-    }());
+    Object.defineProperty(exports, "__esModule", { value: true });
     var _DatePickerController = (function () {
         function _DatePickerController($scope, $element, $timeout) {
             var _this = this;
@@ -707,9 +835,9 @@ define("datePicker/DatePickerController", ["require", "exports", "utils/DatePick
              * @private
              */
             this.getDateFormat = function () {
-                return _this.dateFormat || ((_this.pickerMode === PickerConstants.DEFAULT_PICKER_MODE) ?
-                    PickerConstants.DEFAULT_DATE_FORMAT :
-                    PickerConstants.DEFAULT_DATE_TIME_FORMAT);
+                return _this.dateFormat || ((_this.pickerMode === DateUtils_1.PickerConstants.DEFAULT_PICKER_MODE) ?
+                    DateUtils_1.PickerConstants.DEFAULT_DATE_FORMAT :
+                    DateUtils_1.PickerConstants.DEFAULT_DATE_TIME_FORMAT);
             };
             /**
              * formats a date by using the controls appended parsers
@@ -743,11 +871,11 @@ define("datePicker/DatePickerController", ["require", "exports", "utils/DatePick
              */
             this.doubleBufferDate = null;
             this.buttonLabel = ("undefined" == typeof this.buttonLabel || null == this.buttonLabel) ?
-                PickerConstants.DEFAULT_PICKER_LABEL : this.buttonLabel;
+                DateUtils_1.PickerConstants.DEFAULT_PICKER_LABEL : this.buttonLabel;
             this.pickerMode = ("undefined" == typeof this.pickerMode || null == this.pickerMode) ?
-                PickerConstants.DEFAULT_PICKER_MODE : this.pickerMode;
+                DateUtils_1.PickerConstants.DEFAULT_PICKER_MODE : this.pickerMode;
             this.visibleDays = [];
-            this.view = PickerConstants.PICKER_VIEW_DATE;
+            this.view = DateUtils_1.PickerConstants.PICKER_VIEW_DATE;
             this.viewStack = [];
             /*we do the proper max min date validity checks over our setters*/
             Object.defineProperty(this, "currentHour", {
@@ -807,7 +935,7 @@ define("datePicker/DatePickerController", ["require", "exports", "utils/DatePick
                     //currentDate != modelValue?
                     var currentModel = moment.tz(_this.ngModel.$modelValue, _this.getTimezone());
                     //if there is a discrepancy we also update the model
-                    if (_this.pickerMode != PickerConstants.DEFAULT_PICKER_MODE || _this.pickerOnlyMode) {
+                    if (_this.pickerMode != DateUtils_1.PickerConstants.DEFAULT_PICKER_MODE || _this.pickerOnlyMode) {
                         if (!currentModel || currentModel.get("day") != _this.currentDate.get("day") ||
                             currentModel.get("month") != _this.currentDate.get("month") ||
                             currentModel.get("year") != _this.currentDate.get("year")) {
@@ -1024,7 +1152,7 @@ define("datePicker/DatePickerController", ["require", "exports", "utils/DatePick
                     this.currentDate.set("month", selectedDate.momentDate.get("month"));
                     this.currentDate.set("year", selectedDate.momentDate.get("year"));
                 }
-                if (this.pickerMode === PickerConstants.DEFAULT_PICKER_MODE) {
+                if (this.pickerMode === DateUtils_1.PickerConstants.DEFAULT_PICKER_MODE) {
                     (!this.endOfDay) ? this.currentDate.startOf("day") : this.currentDate.endOf("day");
                 }
                 this._fixCurrentDate();
@@ -1039,7 +1167,7 @@ define("datePicker/DatePickerController", ["require", "exports", "utils/DatePick
                     $date: this.currentDate.toDate()
                 });
                 /*in case of a date mode we are done*/
-                if (this.pickerMode === PickerConstants.DEFAULT_PICKER_MODE && !this.pickerOnlyMode) {
+                if (this.pickerMode === DateUtils_1.PickerConstants.DEFAULT_PICKER_MODE && !this.pickerOnlyMode) {
                     this.close();
                 }
             }
@@ -1129,10 +1257,10 @@ define("datePicker/DatePickerController", ["require", "exports", "utils/DatePick
             this.currentDate = (this.ngModel.$modelValue) ? moment.tz(this.ngModel.$modelValue, timezone) : moment.tz(new Date(), timezone);
             this.updatePickerData();
             //this.pickerVisible = true;
-            BehavioralFixes_1.BehavioralFixes.openDropDown(this.$element, this);
+            BehavioralFixes_1.BehavioralFixes.openDropDown(this.$element[0], this);
             if (!this.documentClickHandler) {
                 this.$timeout(function () {
-                    BehavioralFixes_1.BehavioralFixes.registerDocumentBindings(_this.$element, _this);
+                    BehavioralFixes_1.BehavioralFixes.registerDocumentBindings(_this.$element[0], _this);
                 });
             }
         };
@@ -1205,7 +1333,7 @@ define("datePicker/DatePickerController", ["require", "exports", "utils/DatePick
          */
         _DatePickerController.prototype.today = function () {
             this.currentDate = moment.tz(new Date(), this.getTimezone());
-            if (this.pickerMode == PickerConstants.DEFAULT_PICKER_MODE) {
+            if (this.pickerMode == DateUtils_1.PickerConstants.DEFAULT_PICKER_MODE) {
                 this.currentDate.startOf("day");
             }
             this._fixCurrentDate();
@@ -1218,11 +1346,11 @@ define("datePicker/DatePickerController", ["require", "exports", "utils/DatePick
          * @private
          */
         _DatePickerController.prototype.close = function () {
-            this.view = PickerConstants.DEFAULT_PICKER_MODE;
+            this.view = DateUtils_1.PickerConstants.DEFAULT_PICKER_MODE;
             this.viewStack = [];
             this.pickerVisible = false;
             BehavioralFixes_1.BehavioralFixes.unregisterDocumentBindings(this);
-            BehavioralFixes_1.BehavioralFixes.closeDropDown(this.$element, this);
+            BehavioralFixes_1.BehavioralFixes.closeDropDown(this.$element[0], this);
             this.$element.find("input[type=text]:first").focus();
         };
         ;
@@ -1244,7 +1372,7 @@ define("datePicker/DatePickerController", ["require", "exports", "utils/DatePick
          */
         _DatePickerController.prototype.switchToMonthView = function () {
             this.viewStack.unshift(this.view);
-            this.view = PickerConstants.PICKER_VIEW_MONTH;
+            this.view = DateUtils_1.PickerConstants.PICKER_VIEW_MONTH;
         };
         ;
         /**
@@ -1253,7 +1381,7 @@ define("datePicker/DatePickerController", ["require", "exports", "utils/DatePick
          */
         _DatePickerController.prototype.switchToYearView = function () {
             this.viewStack.unshift(this.view);
-            this.view = PickerConstants.PICKER_VIEW_YEAR;
+            this.view = DateUtils_1.PickerConstants.PICKER_VIEW_YEAR;
         };
         ;
         /**
@@ -1262,7 +1390,7 @@ define("datePicker/DatePickerController", ["require", "exports", "utils/DatePick
          */
         _DatePickerController.prototype.switchToTimeView = function () {
             this.viewStack.unshift(this.view);
-            this.view = PickerConstants.PICKER_VIEW_TIME;
+            this.view = DateUtils_1.PickerConstants.PICKER_VIEW_TIME;
         };
         ;
         /**
@@ -1284,13 +1412,13 @@ define("datePicker/DatePickerController", ["require", "exports", "utils/DatePick
                  * (we only want to have the popup closed when we click on the outside)
                  *
                  */
-                BehavioralFixes_1.BehavioralFixes.registerPopupBindings(_this.$element);
+                BehavioralFixes_1.BehavioralFixes.registerPopupBindings(_this.$element[0]);
                 /**
                  * we change the key handling a little bit
                  * an enter should trigger a form submit
                  * and a keydown should open the picker
                  */
-                BehavioralFixes_1.BehavioralFixes.registerKeyBindings(_this.$element);
+                BehavioralFixes_1.BehavioralFixes.registerKeyBindings(_this.$element[0]);
             });
             //with this trick we are able to traverse the outer ngModel view value into the inner ngModel
             this.ngModel.$render = function () {
@@ -1376,6 +1504,7 @@ define("datePicker/DatePickerController", ["require", "exports", "utils/DatePick
 });
 define("eventPicker/EventPicker", ["require", "exports", "utils/DateUtils", "utils/ViewModelBuilder"], function (require, exports, DateUtils_2, ViewModelBuilder_2) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     /**
      * rangeModel
      * key: date
@@ -1388,23 +1517,23 @@ define("eventPicker/EventPicker", ["require", "exports", "utils/DateUtils", "uti
     var _EventPickerView = (function () {
         function _EventPickerView() {
         }
-        _EventPickerView.template = function () {
-            return "\n        <div class=\"event-picker\">\n            <table ng-repeat=\"datePickerPage in ctrl.pickerPage.months\">\n                <thead>\n                     <tr>\n                          <td class=\"calendarMonth no-link\" colspan=\"8\"> {{::datePickerPage.month}} {{::datePickerPage.year}}</td>   \n                    </tr>\n                    <tr>\n                        <td class=\"calendarWeek\"><!-- week of year --></td>\n                        <td class=\"dayOfWeek\" ng-repeat=\"dayOfWeek in datePickerPage.dayOfWeek\" ng-click=\"ctrl.selectDate(dayOfWeek)\">{{::dayOfWeek}}</td>    \n                    </tr>\n                </thead>\n                <tbody>\n                     <tr ng-repeat=\"week in datePickerPage.weeks\">\n                                <td class=\"calendarWeek\">{{::week.calendarWeek}}</td>\n                                <td class=\"day {{::day.event.importance}}\" ng-repeat=\"day in week.days\" ng-class=\"{'outside': !day.sameMonth, 'invalid': day.invalid, 'selected' : ctrl.isSelectedDate(day), 'today': ctrl.isToday(day), 'noevent': !day.event , 'event': day.event }\" ng-click=\"ctrl.selectDate(day)\">{{::day.day}}</td>\n                   </tr>    \n                </tbody>\n            </table>\n        </div>\n        ";
-        };
-        _EventPickerView.controllerAs = "ctrl";
-        _EventPickerView.bindings = {
-            timezone: "@",
-            startDate: "<",
-            endDate: "<",
-            events: "<",
-            eventSelected: "&"
-        };
-        _EventPickerView.require = {
-            /*the selected date*/
-            "ngModel": 'ngModel'
-        };
         return _EventPickerView;
     }());
+    _EventPickerView.template = function () {
+        return "\n        <div class=\"event-picker\">\n            <table ng-repeat=\"datePickerPage in ctrl.pickerPage.months\">\n                <thead>\n                     <tr>\n                          <td class=\"calendarMonth no-link\" colspan=\"8\"> {{::datePickerPage.month}} {{::datePickerPage.year}}</td>   \n                    </tr>\n                    <tr>\n                        <td class=\"calendarWeek\"><!-- week of year --></td>\n                        <td class=\"dayOfWeek\" ng-repeat=\"dayOfWeek in datePickerPage.dayOfWeek\" ng-click=\"ctrl.selectDate(dayOfWeek)\">{{::dayOfWeek}}</td>    \n                    </tr>\n                </thead>\n                <tbody>\n                     <tr ng-repeat=\"week in datePickerPage.weeks\">\n                                <td class=\"calendarWeek\">{{::week.calendarWeek}}</td>\n                                <td class=\"day {{::day.event.importance}}\" ng-repeat=\"day in week.days\" ng-class=\"{'outside': !day.sameMonth, 'invalid': day.invalid, 'selected' : ctrl.isSelectedDate(day), 'today': ctrl.isToday(day), 'noevent': !day.event , 'event': day.event }\" ng-click=\"ctrl.selectDate(day)\">{{::day.day}}</td>\n                   </tr>    \n                </tbody>\n            </table>\n        </div>\n        ";
+    };
+    _EventPickerView.controllerAs = "ctrl";
+    _EventPickerView.bindings = {
+        timezone: "@",
+        startDate: "<",
+        endDate: "<",
+        events: "<",
+        eventSelected: "&"
+    };
+    _EventPickerView.require = {
+        /*the selected date*/
+        "ngModel": 'ngModel'
+    };
     var _EventPickerController = (function () {
         function _EventPickerController($scope, $element, $timeout) {
             var _this = this;
@@ -1508,6 +1637,7 @@ define("eventPicker/EventPicker", ["require", "exports", "utils/DateUtils", "uti
 });
 define("services/DatePickerService", ["require", "exports", "utils/DatePickerTypes"], function (require, exports, DatePickerTypes_3) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     /**
      * factory service which exposes the interfaces used by the picker and needed for the functionality
      */
@@ -1565,6 +1695,7 @@ define("services/DatePickerService", ["require", "exports", "utils/DatePickerTyp
  */
 define("DatePicker", ["require", "exports", "helperComponents/RangeInput", "datePicker/DatePickerView", "datePicker/DatePickerController", "eventPicker/EventPicker", "services/DatePickerService"], function (require, exports, RangeInput_1, DatePickerView_1, DatePickerController_1, EventPicker_1, DatePickerService_1) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     var DatePicker = (function () {
         function DatePicker() {
             this.template = DatePickerView_1._DatePickerView.template;

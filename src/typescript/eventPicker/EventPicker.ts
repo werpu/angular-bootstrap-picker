@@ -6,7 +6,7 @@ import INgModelOptions = angular.INgModelOptions;
 import INgModelController = angular.INgModelController;
 import {DateUtils} from "../utils/DateUtils";
 import {ViewModelBuilder, RangeModelDictionary} from "../utils/ViewModelBuilder";
-import Moment = moment.Moment;
+
 
 
 /**
@@ -135,7 +135,7 @@ class _EventPickerController {
 
 
 
-    eventPresent(moment: moment.Moment): EventModelValue {
+    eventPresent(moment: Moment): EventModelValue {
         if((<any>this).events) {
 
 

@@ -1,4 +1,6 @@
-import Moment = moment.Moment;
+/// <reference path="../../../node_modules/@types/angular/index.d.ts" />
+/// <reference path="../../../node_modules/moment/moment.d.ts" />
+
 import INgModelController = angular.INgModelController;
 import {
     PickerDate, PickerMonth, PickerYear, DatePickerPage, MonthPickerPage,
@@ -6,22 +8,10 @@ import {
 } from "../utils/DatePickerTypes";
 import IScope = angular.IScope;
 import ITimeoutService = angular.ITimeoutService;
-import {DateUtils} from "../utils/DateUtils";
+import {DateUtils, PickerConstants} from "../utils/DateUtils";
 import {ViewModelBuilder} from "../utils/ViewModelBuilder";
 import {BehavioralFixes} from "../utils/BehavioralFixes";
 
-
-class PickerConstants {
-    static DEFAULT_DATE_FORMAT = "DD.MM.YYYY";
-    static DEFAULT_DATE_TIME_FORMAT = "DD.MM.YYYY HH:mm";
-    static DEFAULT_PICKER_MODE = "DATE";
-    static PICKER_VIEW_DATE = "DATE";
-    static PICKER_VIEW_TIME = "TIME";
-    static PICKER_VIEW_MONTH = "MONTH";
-    static PICKER_VIEW_YEAR = "YEAR";
-    static DEFAULT_PICKER_LABEL = "Date";
-
-}
 
 
 export class _DatePickerController {
@@ -148,7 +138,7 @@ export class _DatePickerController {
          */
         $scope.$watch('ctrl.startDate', (newval: Date, oldval: Date) => {
             if (newval && this.currentDate) {
-                var newMinDate = moment.tz(newval, this.getTimezone());
+                let newMinDate = moment.tz(newval, this.getTimezone());
                 //no date change or mindate < than the currentDate in the min date, we safely can skip
                 //the rest of the date processing
                 if (newMinDate.isSameOrBefore(this.currentDate)) {
@@ -276,7 +266,7 @@ export class _DatePickerController {
     };
 
     isSameMonth(selectedMonth: PickerMonth) {
-        return DateUtils.isSameMonth(this.timezone, this.ngModel.$modelValue, this.selectedMonth.momentDate);
+        return DateUtils.isSameMonth(this.timezone, this.ngModel.$modelValue, selectedMonth.momentDate);
     };
 
     isChosenMonth(selectedMonth: PickerMonth) {
@@ -401,8 +391,8 @@ export class _DatePickerController {
      */
     private _fixCurrentDate() {
         var parsedData = this.currentDate;
-        var startDate: moment.Moment = (this.startDate) ? moment.tz(this.startDate, this.getTimezone()) : null;
-        var endDate: moment.Moment = (this.endDate) ? moment.tz(this.endDate, this.getTimezone()) : null;
+        var startDate: Moment = (this.startDate) ? moment.tz(this.startDate, this.getTimezone()) : null;
+        var endDate: Moment = (this.endDate) ? moment.tz(this.endDate, this.getTimezone()) : null;
 
         if (startDate && moment.tz(parsedData, this.getTimezone()).isBefore(startDate)) {
             this.currentDate = startDate;
@@ -558,12 +548,12 @@ export class _DatePickerController {
 
         this.updatePickerData();
         //this.pickerVisible = true;
-        BehavioralFixes.openDropDown(this.$element, this);
+        BehavioralFixes.openDropDown(this.$element[0], this);
 
 
         if (!this.documentClickHandler) {
             this.$timeout(() => {
-                BehavioralFixes.registerDocumentBindings(this.$element, this);
+                BehavioralFixes.registerDocumentBindings(this.$element[0], this);
             });
         }
     };
@@ -654,7 +644,7 @@ export class _DatePickerController {
         this.viewStack = [];
         this.pickerVisible = false;
         BehavioralFixes.unregisterDocumentBindings(this);
-        BehavioralFixes.closeDropDown(this.$element, this);
+        BehavioralFixes.closeDropDown(this.$element[0] , this);
         this.$element.find("input[type=text]:first").focus();
     };
 
@@ -716,14 +706,14 @@ export class _DatePickerController {
              * (we only want to have the popup closed when we click on the outside)
              *
              */
-            BehavioralFixes.registerPopupBindings(this.$element);
+            BehavioralFixes.registerPopupBindings(this.$element[0]);
 
             /**
              * we change the key handling a little bit
              * an enter should trigger a form submit
              * and a keydown should open the picker
              */
-            BehavioralFixes.registerKeyBindings(this.$element);
+            BehavioralFixes.registerKeyBindings(this.$element[0]);
         });
 
 
@@ -743,8 +733,8 @@ export class _DatePickerController {
             }
 
             var parsedData = (this.endOfDay) ? moment.tz(data, this.getDateFormat(), this.getTimezone()).endOf("day").toDate() : moment.tz(data, this.getDateFormat(), this.getTimezone()).toDate();
-            var startDate: moment.Moment = (this.startDate) ? moment.tz(this.startDate, this.getTimezone()) : null;
-            var endDate: moment.Moment = (this.endDate) ? moment.tz(this.endDate, this.getTimezone()) : null;
+            var startDate: Moment = (this.startDate) ? moment.tz(this.startDate, this.getTimezone()) : null;
+            var endDate: Moment = (this.endDate) ? moment.tz(this.endDate, this.getTimezone()) : null;
 
 
             if (startDate && moment.tz(parsedData, this.getTimezone()).isBefore(startDate) && startDate.isSame(parsedData, "day") && startDate.isSame(parsedData, "month") && startDate.isSame(parsedData, "year")) {

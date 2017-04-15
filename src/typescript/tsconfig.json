@@ -3,12 +3,14 @@
     "outDir": "../../build",
     "module": "umd",
     "target": "es5",
+    "moduleResolution": "node",
     "noImplicitAny": true,
     "removeComments": false,
     "preserveConstEnums": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "experimentalDecorators": true
   },
   "exclude": [
-    "../../node_modules"
+    "node_modules"
   ]
 }

@@ -1,0 +1,10 @@
+{
+  "globalDependencies": {
+    "jquery": "registry:dt/jquery#1.10.0+20170310222111",
+    "moment": "registry:dt/moment#2.11.1+20161010105546",
+    "moment-timezone": "registry:dt/moment-timezone#0.2.5+20161208060822"
+  },
+  "dependencies": {
+    "moment-range": "registry:dt/moment-range#2.0.4+20161118160245"
+  }
+}

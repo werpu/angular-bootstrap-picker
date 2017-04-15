@@ -14,7 +14,8 @@
  ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
  */
-
+import * as moment from 'moment';
+import Moment = moment.Moment;
 
 /**
  * Typescript 1.8 string enums

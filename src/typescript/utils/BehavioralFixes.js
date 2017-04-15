@@ -14,39 +14,40 @@
  ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
  */
-
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 //https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Array/from
-if (!(<any>Array).from) {
-    (<any>Array).from = (function () {
+if (!Array.from) {
+    Array.from = (function () {
         var toStr = Object.prototype.toString;
-        var isCallable = function (fn: Function) {
+        var isCallable = function (fn) {
             return typeof fn === 'function' || toStr.call(fn) === '[object Function]';
         };
-        var toInteger = function (value: any) {
+        var toInteger = function (value) {
             var number = Number(value);
-            if (isNaN(number)) { return 0; }
-            if (number === 0 || !isFinite(number)) { return number; }
+            if (isNaN(number)) {
+                return 0;
+            }
+            if (number === 0 || !isFinite(number)) {
+                return number;
+            }
             return (number > 0 ? 1 : -1) * Math.floor(Math.abs(number));
         };
         var maxSafeInteger = Math.pow(2, 53) - 1;
-        var toLength = function (value: any) {
+        var toLength = function (value) {
             var len = toInteger(value);
             return Math.min(Math.max(len, 0), maxSafeInteger);
         };
-
         // The length property of the from method is 1.
-        return function from(arrayLike: any/*, mapFn, thisArg */) {
+        return function from(arrayLike /*, mapFn, thisArg */) {
             // 1. Let C be the this value.
             var C = this;
-
             // 2. Let items be ToObject(arrayLike).
             var items = Object(arrayLike);
-
             // 3. ReturnIfAbrupt(items).
             if (arrayLike == null) {
                 throw new TypeError("Array.from requires an array-like object - not null or undefined");
             }
-
             // 4. If mapfn is undefined, then let mapping be false.
             var mapFn = arguments.length > 1 ? arguments[1] : void undefined;
             var T;
@@ -56,22 +57,18 @@ if (!(<any>Array).from) {
                 if (!isCallable(mapFn)) {
                     throw new TypeError('Array.from: when provided, the second argument must be a function');
                 }
-
                 // 5. b. If thisArg was supplied, let T be thisArg; else let T be undefined.
                 if (arguments.length > 2) {
                     T = arguments[2];
                 }
             }
-
             // 10. Let lenValue be Get(items, "length").
             // 11. Let len be ToLength(lenValue).
             var len = toLength(items.length);
-
             // 13. If IsConstructor(C) is true, then
             // 13. a. Let A be the result of calling the [[Construct]] internal method of C with an argument list containing the single item len.
             // 14. a. Else, Let A be ArrayCreate(len).
             var A = isCallable(C) ? Object(new C(len)) : new Array(len);
-
             // 16. Let k be 0.
             var k = 0;
             // 17. Repeat, while k < len… (also steps a - h)
@@ -80,7 +77,8 @@ if (!(<any>Array).from) {
                 kValue = items[k];
                 if (mapFn) {
                     A[k] = typeof T === 'undefined' ? mapFn(kValue, k) : mapFn.call(T, kValue, k);
-                } else {
+                }
+                else {
                     A[k] = kValue;
                 }
                 k += 1;
@@ -92,115 +90,89 @@ if (!(<any>Array).from) {
         };
     }());
 }
-
-
-export interface SelectableNode extends NodeSelector, HTMLElement {
-
-}
-
-type ClickCallback = (button : SelectableNode) => any;
-
 /**
  * Some bootstrtrap behavioral fixes
  */
-export class BehavioralFixes {
-
+var BehavioralFixes = (function () {
+    function BehavioralFixes() {
+    }
     /**
      * Get all of an element's parent elements up the DOM tree
      * @param  {Node}   elem     The element
      * @param  {String} selector Selector to match against [optional]
      * @return {Array}           The parent elements
      */
-    static getParents( elem: SelectableNode, selector?: string ): Array<SelectableNode> {
-
+    BehavioralFixes.getParents = function (elem, selector) {
         debugger;
         // Element.matches() polyfill
         if (!Element.prototype.matches) {
             Element.prototype.matches =
-                (<any>Element.prototype).matchesSelector ||
-                (<any>Element.prototype).mozMatchesSelector ||
-                Element.prototype.msMatchesSelector ||
-                (<any>Element.prototype).oMatchesSelector ||
-                (<any>Element.prototype).webkitMatchesSelector ||
-                function(s) {
-                    var matches = (this.document || this.ownerDocument).querySelectorAll(s),
-                        i = matches.length;
-                    while (--i >= 0 && matches.item(i) !== this) {}
-                    return i > -1;
-                };
+                Element.prototype.matchesSelector ||
+                    Element.prototype.mozMatchesSelector ||
+                    Element.prototype.msMatchesSelector ||
+                    Element.prototype.oMatchesSelector ||
+                    Element.prototype.webkitMatchesSelector ||
+                    function (s) {
+                        var matches = (this.document || this.ownerDocument).querySelectorAll(s), i = matches.length;
+                        while (--i >= 0 && matches.item(i) !== this) { }
+                        return i > -1;
+                    };
         }
-
         // Setup parents array
-        var parents: Array<SelectableNode> = [];
-
+        var parents = [];
         // Get matching parent elements
-        for ( ; elem && (<any>elem) !== document; elem = (<any>elem).parentNode ) {
-
+        for (; elem && elem !== document; elem = elem.parentNode) {
             // Add matching parents to array
-            if ( selector ) {
-                if ( (<any>Element).matches( selector ) ) {
-                    parents.push( elem);
+            if (selector) {
+                if (Element.matches(selector)) {
+                    parents.push(elem);
                 }
-            } else {
-                parents.push( elem );
             }
-
+            else {
+                parents.push(elem);
+            }
         }
-
         return parents;
-
     };
-
-    private static trigger(element: SelectableNode, selector: string, trigger: ClickCallback) {
-        (<any>Array).from(element.querySelectorAll(selector)).forEach(trigger);
-
-    }
-
-    private static addEventListener(element: SelectableNode, selector: string, trigger: ClickCallback) {
-        (<any>Array).from(element.querySelectorAll(selector)).forEach(trigger);
-
-    }
-
+    ;
+    BehavioralFixes.trigger = function (element, selector, trigger) {
+        Array.from(element.querySelectorAll(selector)).forEach(trigger);
+    };
+    BehavioralFixes.addEventListener = function (element, selector, trigger) {
+        Array.from(element.querySelectorAll(selector)).forEach(trigger);
+    };
     /**
      * we register some keyboard events
      * to override the default behavior
      *
      * @param $element
      */
-    static registerKeyBindings(element: SelectableNode) {
-
-
-        element.addEventListener("keydown",  (event: KeyboardEvent) => {
+    BehavioralFixes.registerKeyBindings = function (element) {
+        element.addEventListener("keydown", function (event) {
             /*
              * enter should trigger a form submit
              */
             if (event.keyCode == 13 /*enter*/) {
                 event.preventDefault();
-                BehavioralFixes.trigger(BehavioralFixes.getParents(element, "form")[0],"input[type=submit]", (button : SelectableNode) =>button.click());
-
+                BehavioralFixes.trigger(BehavioralFixes.getParents(element, "form")[0], "input[type=submit]", function (button) { return button.click(); });
                 return false;
             }
-
             /*
              * arrow down should open the date picker
              */
             if (event.keyCode == 40 /*arrow down*/) {
-                BehavioralFixes.trigger(element,".picker-open", (button : SelectableNode) =>button.click());
-
+                BehavioralFixes.trigger(element, ".picker-open", function (button) { return button.click(); });
                 return false;
             }
-
             /*
              * escape should close it
              */
             if (event.keyCode == 27 /*escape*/) {
-                BehavioralFixes.trigger(element,".picker-close", (button : SelectableNode) =>button.click());
-
+                BehavioralFixes.trigger(element, ".picker-close", function (button) { return button.click(); });
                 return false;
             }
         });
-    }
-
+    };
     /**
      * for clicks outside of our date picker area
      * the date picker automatically should close
@@ -208,54 +180,48 @@ export class BehavioralFixes {
      * @param $element
      * @param controller
      */
-    static registerDocumentBindings(element: SelectableNode, controller: any) {
+    BehavioralFixes.registerDocumentBindings = function (element, controller) {
         if (!controller.documentClickHandler) {
-            var clickHandler = () => {
-                    BehavioralFixes.unregisterDocumentBindings(controller);
-                    BehavioralFixes.trigger(element,".picker-close", (button : SelectableNode) =>button.click());
+            var clickHandler = function () {
+                BehavioralFixes.unregisterDocumentBindings(controller);
+                BehavioralFixes.trigger(element, ".picker-close", function (button) { return button.click(); });
             };
-
             document.addEventListener("click", clickHandler);
             controller.documentClickHandler = clickHandler;
         }
-    }
-
+    };
     /**
      * we also have to unregister global events
      *
      * @param clickHandler
      * @param controller
      */
-    static unregisterDocumentBindings(controller: any) {
+    BehavioralFixes.unregisterDocumentBindings = function (controller) {
         if (controller.documentClickHandler) {
             document.removeEventListener("click", controller.documentClickHandler);
             controller.documentClickHandler = null;
         }
-    }
-
-    static registerPopupBindings(element: SelectableNode) {
-        (<any>Array).from(element.querySelectorAll(".picker-popup")).forEach((node: SelectableNode) => {
-            node.addEventListener("click", (event: UIEvent) => {
+    };
+    BehavioralFixes.registerPopupBindings = function (element) {
+        Array.from(element.querySelectorAll(".picker-popup")).forEach(function (node) {
+            node.addEventListener("click", function (event) {
                 event.stopImmediatePropagation();
                 event.stopPropagation();
             });
         });
-    }
-
-    static openDropDown(element: SelectableNode, controller: any) {
-
+    };
+    BehavioralFixes.openDropDown = function (element, controller) {
         controller.isOpen = true;
-        (<any>Array).from(element.querySelectorAll(".dropdown")).forEach((node: SelectableNode) => {
+        Array.from(element.querySelectorAll(".dropdown")).forEach(function (node) {
             node.classList.add("open");
         });
-
-    }
-
-    static closeDropDown(element: SelectableNode, controller: any) {
+    };
+    BehavioralFixes.closeDropDown = function (element, controller) {
         controller.isOpen = false;
-        (<any>Array).from(element.querySelectorAll(".dropdown")).forEach((node: SelectableNode) => {
+        Array.from(element.querySelectorAll(".dropdown")).forEach(function (node) {
             node.classList.remove("open");
         });
-    }
-
-}
+    };
+    return BehavioralFixes;
+}());
+exports.BehavioralFixes = BehavioralFixes;

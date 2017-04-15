@@ -3,6 +3,7 @@
     "outFile": "../../dist/DatePickerFinal-amd.js",
     "module": "amd",
     "target": "es5",
+    "moduleResolution": "node",
     "noImplicitAny": true,
     "removeComments": false,
     "preserveConstEnums": true,
