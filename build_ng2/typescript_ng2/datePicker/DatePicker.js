@@ -17,6 +17,7 @@ var DatePickerTypes_1 = require("../../typescript/utils/DatePickerTypes");
 var BehavioralFixes_1 = require("../../typescript/utils/BehavioralFixes");
 var DateUtils_1 = require("../../typescript/utils/DateUtils");
 var ViewModelBuilder_1 = require("../../typescript/utils/ViewModelBuilder");
+var forms_1 = require("@angular/forms");
 var PickerConstants = (function () {
     function PickerConstants() {
     }
@@ -31,24 +32,28 @@ PickerConstants.PICKER_VIEW_MONTH = "MONTH";
 PickerConstants.PICKER_VIEW_YEAR = "YEAR";
 PickerConstants.DEFAULT_PICKER_LABEL = "Date";
 var template = function () {
-    var inputArea = "\n\n                <div class=\"input-group\">\n                   <input type=\"text\" [placeholder]=\"placeholder\" class=\"form-control\" name=\"{{name}}_inner\" [(ngModel)]=\"innerSelection\" >\n                   <span class=\"input-group-btn\">\n                       <button type=\"button\" class=\"picker-open btn btn-default\" (click)=\"openPicker()\">\n                             <span [className]=\"buttonStyleClass\" [ngClass]=\"{'glyphicon glyphicon-align-right glyph-icon glyphicon-calendar': !buttonStyleClass}\"> {{buttonLabel}} </span>\n                       </button>\n                   </span> \n               </div>\n               <input type=\"button\" class=\"picker-close\" (click)=\"close()\" value=\"Close\" [hidden]=\"true\"/>\n              \n        ";
-    var inputAreaHidden = "\n           <input type=\"text\" style=\"display: none;\"  class=\"form-control\" name=\"{{name}}_inner\" [(ngModel)]=\"innerSelection\">\n        ";
+    var inputArea = "\n\n                <div class=\"input-group\">\n                   <input type=\"text\" [placeholder]=\"placeholder\" class=\"form-control\" name=\"{{name}}_inner\" [(ngModel)]=\"innerSelection\" (change)=\"onChange($event)\" (keyup)=\"onChange($event)\">\n                   <span class=\"input-group-btn\">\n                       <button type=\"button\" class=\"picker-open btn btn-default\" (click)=\"openPicker()\">\n                             <span [className]=\"buttonStyleClass\" [ngClass]=\"{'glyphicon glyphicon-align-right glyph-icon glyphicon-calendar': !buttonStyleClass}\"> {{buttonLabel}} </span>\n                       </button>\n                   </span> \n               </div>\n               <input type=\"button\" class=\"picker-close\" (click)=\"close()\" value=\"Close\" [hidden]=\"true\"/>\n              \n        ";
+    var inputAreaHidden = "\n           <input type=\"text\" style=\"display: none;\"  class=\"form-control\" name=\"{{name}}_inner\" [(ngModel)]=\"innerSelection\" (change)=\"onChange($event)\" (keyup)=\"onChange($event)\">\n        ";
     var timePickerSpinning = "\n            <div class=\"time-picker\" *ngIf=\"view == 'DATE' && pickerMode == 'DATE_TIME'\" >\n                <table>\n                   <thead>\n                        \n                    </thead>\n                    <tbody>\n                        \n                         <tr>\n                            <td class=\"glyphicon glyphicon-chevron-up\" [ngClass]=\"{'invalid' : !isValidHour(currentDate.get('hour') + 1)}\" (click)=\"nextHour($event)\">\n                            </td>\n                            <td></td>\n                            <td class=\"glyphicon glyphicon-chevron-up\" [ngClass]=\"{'invalid' : !isValidMinute(currentDate.get('minute') + 1)}\" (click)=\"nextMinute($event)\">\n                            </td>\n                        </tr>\n                        <tr>\n                            <td class=\"selected-hour\">\n                                <internal-range-input ngDefaultControl class=\"hour-input\" [from]=\"0\" [to]=\"23\" [(ngModel)]=\"currentHour\"></internal-range-input>    \n                            </td>\n                            <td class=\"invalid\">:</td>\n                            <td class=\"selected-minute\">\n                                <internal-range-input ngDefaultControl  class=\"minute-input\" [from]=\"0\" [to]=\"59\" [(ngModel)]=\"currentMinute\"></internal-range-input> \n                            </td>\n                        </tr>\n                         <tr>\n                            <td class=\"glyphicon glyphicon-chevron-down\" [ngClass]=\"{'invalid' : !isValidHour(currentDate.get('hour') - 1)}\" (click)=\"prevHour($event)\">\n                            </td>\n                            <td></td>\n                            <td class=\"glyphicon glyphicon-chevron-down\" [ngClass]=\"{'invalid' : !isValidMinute(currentDate.get('minute') - 1)}\" (click)=\"prevMinute($event)\">\n                            </td>\n                        </tr>\n                    </tbody>\n                </table>\n                <div class=\"button-group bottom-buttons\" *ngIf=\"view == 'TIME'\">\n                  <input type=\"button\" class=\"btn btn-default btn-sm\" (click)=\"goBackInView($event)\" value=\"Back\" >\n                </div>\n            </div>\n        ";
     var datePicker = "\n               <!-- date view - default view -->\n               <div class=\"date-picker\" *ngIf=\"view == 'DATE'\">                \n                    <table>\n                        <thead>\n                        \n                            <tr *ngIf=\"pickerMode == 'DATE_TIME'\">\n                                <td colspan=\"8\" class=\"invalid picker-title\" >{{innerSelection}}</td>\n                            </tr>\n                            \n                            <tr>\n                                <td><a class=\"prev glyphicon glyphicon-menu-left\" (click)=\"prevMonth($event)\"></a></td><td colspan=\"2\" (click)=\"switchToMonthView($event)\">{{currentDate.format(\"MMMM\")}}</td><td><a class=\"next glyphicon glyphicon-menu-right\" (click)=\"nextMonth($event)\"></a></td>\n                                <td><a class=\"prev glyphicon glyphicon-menu-left\" (click)=\"prevYear($event)\"></a></td><td colspan=\"2\" (click)=\"switchToYearView($event)\">{{monthPickerData.year}}</td><td><a class=\"next glyphicon glyphicon-menu-right\" (click)=\"nextYear($event)\"></a></td>\n                            </tr>\n                            <tr>\n                                <td class=\"calendarWeek\"><!-- week of year --></td>\n                                <td class=\"dayOfWeek\" *ngFor=\"let dayOfWeek of monthPickerData.dayOfWeek\">{{dayOfWeek}}</td>    \n                            </tr>\n                        </thead>\n                        <tbody>\n                            <tr *ngFor=\"let week of monthPickerData.weeks\">\n                                <td class=\"calendarWeek\">{{week.calendarWeek}}</td>\n                                <td class=\"day\" *ngFor=\"let day of week.days\" [ngClass]=\"{'outside': !day.sameMonth, 'invalid': day.invalid, 'selected' : isSelectedDate(day), 'chosen' : isChosenDate(day), 'today': isToday(day)}\" class=\"{{(day.event) ? day.event.importance : ''}}\" (click)=\"selectDate(day, $event)\">{{day.day}}</td>\n                            </tr>\n                        </tbody>\n                        \n                    </table>\n                \n                    " + timePickerSpinning + "\n                    \n                    <div class=\"additional-content\">\n                        <ng-content select=\"additional-content-date\"></ng-content>\n                    </div>\n                    \n                    <div class=\"button-group bottom-buttons col-xs-12 col-sm-12 col-md-12 col-lg-12\">\n                      \n                        <ng-content class=\"additional-buttons\" select=\"additional-buttons-date\"></ng-content>\n              \n                        <input type=\"button\" class=\"set btn btn-default btn-sm\" (click)=\"set($event)\" value=\"Set\" *ngIf=\"pickerOnlyMode == 'DOUBLE_BUFFERED'\" >\n                        <input type=\"button\" class=\"clear btn btn-default btn-sm\" (click)=\"clear($event)\" value=\"Clear\" *ngIf=\"!pickerOnlyMode\" >\n                        <input type=\"button\" class=\"today btn btn-default btn-sm\" (click)=\"today($event)\" value=\"Today\" >\n                        <input type=\"button\" class=\"picker-close btn btn-default btn-sm\" (click)=\"close($event)\" *ngIf=\"!pickerOnlyMode\" value=\"Close\" >\n                    </div>\n               </div> \n        ";
     var monthPicker = "\n            <!-- month view -->\n            <div class=\"month-picker\" *ngIf=\"view == 'MONTH'\">\n                 <table>\n                    <thead>\n                          <tr>\n                          <td><a class=\"prev glyphicon glyphicon-menu-left\" (click)=\"prevYear($event)\" class=\"glyphicon glyphicon-menu-left\"></a></td>\n                          <td (click)=\"switchToYearView()\">{{monthPickerData.year}}</td>\n                          <td><a class=\"next glyphicon glyphicon-menu-right\" (click)=\"nextYear($event)\"></a></td>\n                          </tr>\n                    </thead>\n                    <tbody>\n                        <tr *ngFor=\"let monthRow of yearPickerData.row\">\n                            <td *ngFor=\"let month of monthRow\" [ngClass]=\"{'invalid': month.invalid, 'selected' : isSameMonth(month), 'chosen' : isChosenMonth(month), 'today': isTodayMonth(month)}\"\n                            (click)=\"selectMonth( month, $event)\"\n                            >{{month.month}}</td>\n                        </tr>\n                    </tbody>\n                 </table>   \n            \n                 <div class=\"additional-content\">\n                    <ng-content select=\"additional-content-month\"></ng-content>\n                 </div>\n                <div class=\"button-group bottom-buttons\">\n                    <div class=\"additional-buttons\">\n                        <ng-content select=\"additional-buttons-month\"></ng-content>\n                    </div>\n                    <input type=\"button\" class=\"btn btn-default btn-sm\" (click)=\"goBackInView($event)\" value=\"Back\" />\n                </div>\n            </div>    \n        ";
     var yearPicker = "\n            <!-- year view -->  \n            <div class=\"year-picker\" *ngIf=\"view == 'YEAR'\">\n                  <table>\n                    <thead>\n                    <tr>\n                        <td><a (click)=\"prevDecade($event)\" class=\"glyphicon glyphicon-menu-left\"></a></td>\n                        <td colspan=\"3\" class=\"no-link\">{{decadeFrom}} - {{decadeTo}}</td>\n                        <td><a (click)=\"nextDecade($event)\" class=\"glyphicon glyphicon-menu-right\"></a></td>\n                    </tr>\n                    </thead>\n                    <tbody>\n                        <tr *ngFor=\"let yearrow of decadePickerData.row\">\n                            <td *ngFor=\"let year of yearrow\"\n                            [ngClass]=\"{'invalid': year.invalid, 'selected' : isSameYear(year), 'chosen' : isChosenYear(year), 'today': isTodayYear(year)}\"\n                             (click)=\"selectYear(year, $event)\"\n                            >{{year.year}}</td>\n                        </tr>\n                    </table>\n                  <div class=\"additional-content\">\n                        <ng-content select=\"additional-content-year\"></ng-content>\n                  </div>  \n                  <div class=\"button-group bottom-buttons\">\n                    <div class=\"additional-buttons\">\n                        <ng-content select=\"additional-buttons-year\"></ng-content>\n                    </div>\n                    <input type=\"button\" class=\"btn btn-default btn-sm\" (click)=\"goBackInView($event)\" value=\"Back\" />\n                  </div>\n            </div>   \n        ";
     return "\n <!--\n           <div [ngClass]=\"{'dropdown': !pickerOnlyMode, 'dropdown picker-standalone':pickerOnlyMode}\" > \n             \n               <span *ngIf=\"!pickerOnlyMode\">" + inputArea + "</span>  \n               <span *ngIf=\"pickerOnlyMode\">" + inputAreaHidden + "</span>  \n               <div [ngClass]=\"{'dropdown-menu picker-popup':!pickerOnlyMode, 'picker-popup': pickerOnlyMode}\" (click)=\"$event.stopImmediatePropagation()\">\n                    \n                    <div class=\"content\" *ngIf=\"isOpen || pickerOnlyMode\">\n                       \n                      \n                   </div>\n               \n                </div>\n            </div> \n-->            \n      <div class=\"dropdown\" [ngClass]=\"{'picker-standalone':pickerOnlyMode}\" (click)=\"$event.stopImmediatePropagation()\"> \n             \n               <span *ngIf=\"!pickerOnlyMode\">" + inputArea + "</span>  \n               <span *ngIf=\"pickerOnlyMode\">" + inputAreaHidden + "</span>  \n               <div class=\"picker-popup\" [ngClass]=\"{'dropdown-menu':!pickerOnlyMode}\" (click)=\"$event.stopImmediatePropagation()\">\n                    <div class=\"content\" *ngIf=\"isOpen|| pickerOnlyMode\">\n                       \n                       " + datePicker + "\n                       \n                       " + monthPicker + "                   \n                             \n                       " + yearPicker + "\n                   </div>\n               \n                </div>\n            </div>            \n        ";
 };
-var DatePicker = (function () {
+//https://medium.com/@tarik.nzl/angular-2-custom-form-control-with-validation-json-input-2b4cf9bc2d73. thanks
+//for providing a dedicated tutorial for a self validating component
+var DatePicker = DatePicker_1 = (function () {
     function DatePicker(elementRef) {
         var _this = this;
         this.elementRef = elementRef;
-        this.ngModelChange = new core_1.EventEmitter(false);
+        //@Input() ngModel: Date;
+        //@Output() ngModelChange: EventEmitter<Date> = new EventEmitter(false);
         this.onYearSelection = new core_1.EventEmitter();
         this.onMonthSelection = new core_1.EventEmitter();
         this.onDateSelection = new core_1.EventEmitter(false);
         this.isOpen = false;
         this.viewStack = [];
+        this.propagateChange = function (_) { };
         /**
          * fetches the current or default timezone
          * @returns {string}
@@ -77,12 +82,17 @@ var DatePicker = (function () {
          */
         this.updateModel = function (value) {
             var innerSelection = value;
-            //for (var cnt = 0; this.ngModel.$formatters && cnt < this.ngModel.$formatters.length; cnt++) {
-            //    innerSelection = this.ngModel.$formatters[cnt](innerSelection);
+            //for (var cnt = 0; this._ngModel.$formatters && cnt < this._ngModel.$formatters.length; cnt++) {
+            //    innerSelection = this._ngModel.$formatters[cnt](innerSelection);
             //}
             innerSelection = _this.formatDate(value);
             _this.innerSelection = innerSelection;
+            if (!_this.validate(null)) {
+                _this._ngModel = _this.currentDate.toDate();
+            }
+            _this.propagateChange(_this._ngModel);
             _this.updatePickerData();
+            //this.onChange(this.innerSelection);
         };
         /**
          * current date viewed (aka navigational position=
@@ -125,7 +135,7 @@ var DatePicker = (function () {
          */
         BehavioralFixes_1.BehavioralFixes.registerKeyBindings(this.elementRef.nativeElement);
         //with this trick we are able to traverse the outer ngModel view value into the inner ngModel
-        this.innerSelection = this.formatDate(this.ngModel);
+        //this.innerSelection = this.formatDate(this._ngModel);
         if (this.pickerOnlyMode) {
             this.openPicker();
         }
@@ -177,7 +187,7 @@ var DatePicker = (function () {
             //otherwise we set the currentDate to the newMinDate
             this.currentDate = (this.endOfDay) ? newMinDate.endOf("day") : newMinDate;
             //currentDate != modelValue?
-            var currentModel = moment.tz(this.ngModel, this.getTimezone());
+            var currentModel = moment.tz(this._ngModel, this.getTimezone());
             //if there is a discrepancy we also update the model
             if (this.pickerMode != PickerConstants.DEFAULT_PICKER_MODE || this.pickerOnlyMode) {
                 if (!currentModel || currentModel.get("day") != this.currentDate.get("day") ||
@@ -198,11 +208,11 @@ var DatePicker = (function () {
      * @private
      */
     DatePicker.prototype.isSelectedDate = function (selectedDate) {
-        if (!this.ngModel) {
+        if (!this._ngModel) {
             return false;
         }
         else {
-            var modelDate = moment.tz(this.ngModel, this.getTimezone());
+            var modelDate = moment.tz(this._ngModel, this.getTimezone());
             return modelDate.isSame(selectedDate.momentDate, "date") &&
                 modelDate.isSame(selectedDate.momentDate, "month") &&
                 modelDate.isSame(selectedDate.momentDate, "year");
@@ -243,7 +253,7 @@ var DatePicker = (function () {
     };
     ;
     DatePicker.prototype.isSameMonth = function (selectedMonth) {
-        return DateUtils_1.DateUtils.isSameMonth(this.timezone, moment.tz(this.ngModel, this.getTimezone()), selectedMonth.momentDate);
+        return DateUtils_1.DateUtils.isSameMonth(this.timezone, moment.tz(this._ngModel, this.getTimezone()), selectedMonth.momentDate);
     };
     ;
     DatePicker.prototype.isChosenMonth = function (selectedMonth) {
@@ -260,7 +270,7 @@ var DatePicker = (function () {
     };
     ;
     DatePicker.prototype.isSameYear = function (selectedYear) {
-        return DateUtils_1.DateUtils.isSameYear(this.timezone, moment.tz(this.ngModel, this.getTimezone()), selectedYear.momentDate);
+        return DateUtils_1.DateUtils.isSameYear(this.timezone, moment.tz(this._ngModel, this.getTimezone()), selectedYear.momentDate);
     };
     ;
     DatePicker.prototype.isChosenYear = function (selectedMonth) {
@@ -381,7 +391,7 @@ var DatePicker = (function () {
     DatePicker.prototype.selectDate = function (selectedDate, event) {
         this.stopEventPropagation(event);
         if (!selectedDate.invalid) {
-            if (!this.ngModel) {
+            if (!this._ngModel) {
                 this.currentDate = selectedDate.momentDate;
                 if (this.pickerOnlyMode == "DOUBLE_BUFFERED") {
                     this.doubleBufferDate = moment.tz(this.currentDate.toDate(), this.getTimezone());
@@ -422,7 +432,7 @@ var DatePicker = (function () {
     DatePicker.prototype.selectMonth = function (selectedDate, event) {
         this.stopEventPropagation(event);
         if (!selectedDate.invalid) {
-            if (!this.ngModel) {
+            if (!this._ngModel) {
                 this.currentDate = moment.tz(new Date(), this.getTimezone());
                 this.currentDate.set("month", selectedDate.momentDate.get("month"));
             }
@@ -451,12 +461,12 @@ var DatePicker = (function () {
     DatePicker.prototype.selectYear = function (selectedDate, event) {
         this.stopEventPropagation(event);
         if (!selectedDate.invalid) {
-            if (!this.ngModel) {
+            if (!this._ngModel) {
                 this.currentDate = moment.tz(new Date(), this.getTimezone());
                 this.currentDate.set("year", selectedDate.momentDate.get("year"));
             }
             else {
-                var value = moment.tz(this.ngModel, this.getTimezone());
+                var value = moment.tz(this._ngModel, this.getTimezone());
                 this.currentDate.set("year", selectedDate.momentDate.get("year"));
             }
             this._fixCurrentDate();
@@ -505,7 +515,7 @@ var DatePicker = (function () {
         var _this = this;
         this.stopEventPropagation(event);
         var timezone = this.timezone || moment.tz.guess();
-        this.currentDate = (this.ngModel) ? moment.tz(this.ngModel, timezone) : moment.tz(new Date(), timezone);
+        this.currentDate = (this._ngModel) ? moment.tz(this._ngModel, timezone) : moment.tz(new Date(), timezone);
         this.updatePickerData();
         //this.pickerVisible = true;
         BehavioralFixes_1.BehavioralFixes.openDropDown(this.elementRef.nativeElement, this);
@@ -675,14 +685,13 @@ var DatePicker = (function () {
                 }
             };
         }
-        if (!this.validateDateRange(this.parseDate(this.innerSelection))) {
+        else if (!this.validateDateRange(this.parseDate(this.innerSelection))) {
             return {
                 dateRange: {
                     valid: false,
                 }
             };
         }
-        return null;
     };
     DatePicker.prototype.ngOnDestroy = function () {
         BehavioralFixes_1.BehavioralFixes.unregisterDocumentBindings(this);
@@ -743,18 +752,35 @@ var DatePicker = (function () {
         var timezone = this.timezone || moment.tz.guess();
         return moment.tz(data, timezone).format(this.getDateFormat());
     };
-    Object.defineProperty(DatePicker.prototype, "innerSelection", {
-        get: function () {
-            return this._innerSelection;
-        },
-        //no changes handler possible for inner selection, we are going to use a setter instead
-        set: function (val) {
-            this._innerSelection = val;
-            this.ngModelChange.emit(this.parseDate(val));
-        },
-        enumerable: true,
-        configurable: true
-    });
+    DatePicker.prototype.writeValue = function (obj) {
+        this._ngModel = obj;
+        if (obj) {
+            this.innerSelection = this.formatDate(obj);
+        }
+        else {
+            this.innerSelection = "";
+        }
+    };
+    DatePicker.prototype.registerOnChange = function (fn) {
+        this.propagateChange = fn;
+    };
+    DatePicker.prototype.registerOnTouched = function (fn) {
+        // throw new Error('Method not implemented.');
+    };
+    DatePicker.prototype.setDisabledState = function (isDisabled) {
+        // throw new Error('Method not implemented.');
+    };
+    DatePicker.prototype.onChange = function (event) {
+        try {
+            //we double validate if it fails, we propagate the last valid value upwards
+            if (!this.validate(null)) {
+                this._ngModel = this.parseDate(event.target.value);
+            }
+            this.propagateChange(this._ngModel);
+        }
+        catch (e) {
+        }
+    };
     return DatePicker;
 }());
 __decorate([
@@ -806,14 +832,6 @@ __decorate([
     __metadata("design:type", String)
 ], DatePicker.prototype, "timezone", void 0);
 __decorate([
-    core_1.Input(),
-    __metadata("design:type", Date)
-], DatePicker.prototype, "ngModel", void 0);
-__decorate([
-    core_1.Output(),
-    __metadata("design:type", core_1.EventEmitter)
-], DatePicker.prototype, "ngModelChange", void 0);
-__decorate([
     core_1.Output(),
     __metadata("design:type", core_1.EventEmitter)
 ], DatePicker.prototype, "onYearSelection", void 0);
@@ -825,12 +843,25 @@ __decorate([
     core_1.Output(),
     __metadata("design:type", core_1.EventEmitter)
 ], DatePicker.prototype, "onDateSelection", void 0);
-DatePicker = __decorate([
+DatePicker = DatePicker_1 = __decorate([
     core_1.Component({
         selector: "date-picker",
-        template: template()
+        template: template(),
+        providers: [
+            {
+                provide: forms_1.NG_VALUE_ACCESSOR,
+                useExisting: core_1.forwardRef(function () { return DatePicker_1; }),
+                multi: true,
+            },
+            {
+                provide: forms_1.NG_VALIDATORS,
+                useExisting: core_1.forwardRef(function () { return DatePicker_1; }),
+                multi: true,
+            }
+        ]
     }),
     __metadata("design:paramtypes", [core_1.ElementRef])
 ], DatePicker);
 exports.DatePicker = DatePicker;
+var DatePicker_1;
 //# sourceMappingURL=DatePicker.js.map

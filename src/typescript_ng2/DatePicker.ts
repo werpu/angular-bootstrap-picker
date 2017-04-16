@@ -4,7 +4,7 @@ import {RangeInput} from "./helperComponents/RangeInput";
 
 
 import * as mom from "moment";
-import {FormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {CommonModule} from "@angular/common";
 
 import {AdditionalContentDate} from "./datePicker/fakeDirectives/AdditionalContentDate";
@@ -13,6 +13,7 @@ import {AdditionalContentYear} from "./datePicker/fakeDirectives/AdditionalConte
 import {AdditionalContentMonth} from "./datePicker/fakeDirectives/AdditionalContentMonth";
 import {AdditionalButtonsMonth} from "./datePicker/fakeDirectives/AdditionalButtonsMonth";
 import {AdditionalButtonsYear} from "./datePicker/fakeDirectives/AdditionalButtonsYear";
+import {HttpModule} from "@angular/http";
 
 
 declare global {
@@ -23,7 +24,7 @@ declare global {
 
 
 @NgModule({
-    imports: [FormsModule, CommonModule],
+    imports: [FormsModule, ReactiveFormsModule,HttpModule, CommonModule],
     declarations: [
         DatePicker,
         RangeInput,
@@ -35,7 +36,6 @@ declare global {
         AdditionalContentYear
     ],
     exports: [
-        RangeInput,
         DatePicker,
         AdditionalButtonsDate,
         AdditionalButtonsMonth,

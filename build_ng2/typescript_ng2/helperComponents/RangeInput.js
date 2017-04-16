@@ -10,10 +10,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
-var RangeInput = (function () {
+var forms_1 = require("@angular/forms");
+var RangeInput = RangeInput_1 = (function () {
     function RangeInput(elementRef) {
         this.elementRef = elementRef;
-        this.ngModelChange = new core_1.EventEmitter(false);
     }
     RangeInput.prototype.ngOnChanges = function (changes) {
         if (changes.ngModel) {
@@ -23,20 +23,27 @@ var RangeInput = (function () {
     RangeInput.prototype.ngOnInit = function () {
     };
     RangeInput.prototype.validate = function (c) {
-        try {
-            parseInt(this.inputText);
-        }
-        catch (e) {
+        var val = parseInt(this.inputText);
+        if (isNaN(val)) {
             return {
                 validNumber: {
                     valid: false,
                 }
             };
         }
-        return null;
+        else if (val < this.from || val > this.to) {
+            return {
+                outOfRange: {
+                    valid: false,
+                }
+            };
+        }
     };
     RangeInput.prototype.changedExtraHandler = function (data) {
-        this.ngModelChange.emit(parseInt(data));
+        if (!this.validate(null)) {
+            this._ngModel = parseInt(data);
+        }
+        this.onChangeHandler(this._ngModel);
     };
     RangeInput.prototype.keyDown = function (event) {
         var keyCode = event.keyCode;
@@ -45,7 +52,7 @@ var RangeInput = (function () {
             return false;
         }
         if (keyCode >= 48 && keyCode <= 57) {
-            var finalValue = parseInt(event.target.getAttribute("value") + String.fromCharCode(keyCode));
+            var finalValue = parseInt(event.target.value + String.fromCharCode(keyCode));
             if (('undefined' != typeof this.from && this.from > finalValue) ||
                 ('undefined' != typeof this.to && this.to < finalValue)) {
                 event.preventDefault();
@@ -53,6 +60,17 @@ var RangeInput = (function () {
             }
             return true;
         }
+    };
+    RangeInput.prototype.writeValue = function (obj) {
+        if ("undefined" != typeof obj && null != obj) {
+            this._ngModel = obj;
+            this.inputText = this._ngModel.toString();
+        }
+    };
+    RangeInput.prototype.registerOnChange = function (fn) {
+        this.onChangeHandler = fn;
+    };
+    RangeInput.prototype.registerOnTouched = function (fn) {
     };
     return RangeInput;
 }());
@@ -64,20 +82,25 @@ __decorate([
     core_1.Input(),
     __metadata("design:type", Number)
 ], RangeInput.prototype, "to", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Number)
-], RangeInput.prototype, "ngModel", void 0);
-__decorate([
-    core_1.Output(),
-    __metadata("design:type", core_1.EventEmitter)
-], RangeInput.prototype, "ngModelChange", void 0);
-RangeInput = __decorate([
+RangeInput = RangeInput_1 = __decorate([
     core_1.Component({
         selector: "internal-range-input",
-        template: "<input type=\"text\" [(ngModel)]=\"inputText\" (ngModelChange)=\"changedExtraHandler($event)\" (keydown)=\"keyDown($event)\" >"
+        template: "<input type=\"text\" [(ngModel)]=\"inputText\" (ngModelChange)=\"changedExtraHandler($event)\"\n                      (keydown)=\"keyDown($event)\">",
+        providers: [
+            {
+                provide: forms_1.NG_VALUE_ACCESSOR,
+                useExisting: core_1.forwardRef(function () { return RangeInput_1; }),
+                multi: true,
+            },
+            {
+                provide: forms_1.NG_VALIDATORS,
+                useExisting: core_1.forwardRef(function () { return RangeInput_1; }),
+                multi: true,
+            }
+        ]
     }),
     __metadata("design:paramtypes", [core_1.ElementRef])
 ], RangeInput);
 exports.RangeInput = RangeInput;
+var RangeInput_1;
 //# sourceMappingURL=RangeInput.js.map

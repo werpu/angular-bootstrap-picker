@@ -113,8 +113,6 @@ export class BehavioralFixes {
      */
     static getParents( elem: SelectableNode, selector?: string ): Array<SelectableNode> {
 
-        debugger;
-        // Element.matches() polyfill
         if (!Element.prototype.matches) {
             Element.prototype.matches =
                 (<any>Element.prototype).matchesSelector ||
@@ -138,7 +136,7 @@ export class BehavioralFixes {
 
             // Add matching parents to array
             if ( selector ) {
-                if ( (<any>Element).matches( selector ) ) {
+                if (elem.matches && elem.matches( selector ) ) {
                     parents.push( elem);
                 }
             } else {

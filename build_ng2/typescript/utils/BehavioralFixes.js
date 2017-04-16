@@ -103,8 +103,6 @@ var BehavioralFixes = (function () {
      * @return {Array}           The parent elements
      */
     BehavioralFixes.getParents = function (elem, selector) {
-        debugger;
-        // Element.matches() polyfill
         if (!Element.prototype.matches) {
             Element.prototype.matches =
                 Element.prototype.matchesSelector ||
@@ -124,7 +122,7 @@ var BehavioralFixes = (function () {
         for (; elem && elem !== document; elem = elem.parentNode) {
             // Add matching parents to array
             if (selector) {
-                if (Element.matches(selector)) {
+                if (elem.matches && elem.matches(selector)) {
                     parents.push(elem);
                 }
             }

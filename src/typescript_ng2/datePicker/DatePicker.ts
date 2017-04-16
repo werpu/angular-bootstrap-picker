@@ -3,7 +3,7 @@
 /// <reference path="../../../node_modules/@types/moment-timezone/index.d.ts" />
 import {
     Component, Input, Output, EventEmitter, ElementRef, SimpleChanges, OnInit, OnDestroy,
-    OnChanges
+    OnChanges, forwardRef
 } from "@angular/core";
 import {
     PickerMonth, PickerDate, PickerYear, DatePickerPage,
@@ -14,9 +14,10 @@ import {BehavioralFixes} from "../../typescript/utils/BehavioralFixes";
 import {DateUtils} from "../../typescript/utils/DateUtils";
 import {ViewModelBuilder} from "../../typescript/utils/ViewModelBuilder";
 import {elementDef} from "@angular/core/src/view";
-import {ControlValueAccessor, Validator, AbstractControl, ValidationErrors} from "@angular/forms";
-
-
+import {
+    ControlValueAccessor, Validator, AbstractControl, ValidationErrors, NG_VALUE_ACCESSOR,
+    NG_VALIDATORS
+} from "@angular/forms";
 
 
 class PickerConstants {
@@ -36,7 +37,7 @@ var template = () => {
     var inputArea = `
 
                 <div class="input-group">
-                   <input type="text" [placeholder]="placeholder" class="form-control" name="{{name}}_inner" [(ngModel)]="innerSelection" >
+                   <input type="text" [placeholder]="placeholder" class="form-control" name="{{name}}_inner" [(ngModel)]="innerSelection" (change)="onChange($event)" (keyup)="onChange($event)">
                    <span class="input-group-btn">
                        <button type="button" class="picker-open btn btn-default" (click)="openPicker()">
                              <span [className]="buttonStyleClass" [ngClass]="{'glyphicon glyphicon-align-right glyph-icon glyphicon-calendar': !buttonStyleClass}"> {{buttonLabel}} </span>
@@ -48,7 +49,7 @@ var template = () => {
         `;
 
     var inputAreaHidden = `
-           <input type="text" style="display: none;"  class="form-control" name="{{name}}_inner" [(ngModel)]="innerSelection">
+           <input type="text" style="display: none;"  class="form-control" name="{{name}}_inner" [(ngModel)]="innerSelection" (change)="onChange($event)" (keyup)="onChange($event)">
         `;
 
     var timePickerSpinning = `
@@ -235,12 +236,26 @@ var template = () => {
         `;
 }
 
-
+//https://medium.com/@tarik.nzl/angular-2-custom-form-control-with-validation-json-input-2b4cf9bc2d73. thanks
+//for providing a dedicated tutorial for a self validating component
 @Component({
     selector: "date-picker",
-    template: template()
+    template: template(),
+    providers: [
+        {
+            provide: NG_VALUE_ACCESSOR,
+            useExisting: forwardRef(() =>  DatePicker),
+            multi: true,
+        },
+        {
+            provide: NG_VALIDATORS,
+            useExisting: forwardRef(() => DatePicker),
+            multi: true,
+        }
+    ]
 })
-export class DatePicker implements Validator,OnInit,OnDestroy, OnChanges {
+export class DatePicker implements Validator, OnInit, OnDestroy, OnChanges, ControlValueAccessor {
+
 
     @Input() placeholder: string;
     @Input() name: string;
@@ -255,15 +270,17 @@ export class DatePicker implements Validator,OnInit,OnDestroy, OnChanges {
     @Input() pickerMode: string;
     @Input() timezone: string;
 
-    @Input() ngModel: Date;
-    @Output() ngModelChange: EventEmitter<Date> = new EventEmitter(false);
+    //@Input() ngModel: Date;
+    //@Output() ngModelChange: EventEmitter<Date> = new EventEmitter(false);
+
+
 
     @Output() onYearSelection: EventEmitter<any> = new EventEmitter<any>();
     @Output() onMonthSelection: EventEmitter<any> = new EventEmitter<any>();
     @Output() onDateSelection: EventEmitter<any> = new EventEmitter<any>(false);
 
-
-    _innerSelection: string;
+    _ngModel: Date;
+    innerSelection: string;
     monthPickerData: DatePickerPage;
     yearPickerData: MonthPickerPage;
     decadePickerData: YearPickerPage;
@@ -289,6 +306,7 @@ export class DatePicker implements Validator,OnInit,OnDestroy, OnChanges {
 
     private viewStack: any = [];
 
+    private propagateChange = (_: any) => { };
 
 
     constructor(private elementRef: ElementRef) {
@@ -342,7 +360,7 @@ export class DatePicker implements Validator,OnInit,OnDestroy, OnChanges {
 
         //with this trick we are able to traverse the outer ngModel view value into the inner ngModel
 
-        this.innerSelection = this.formatDate(this.ngModel);
+        //this.innerSelection = this.formatDate(this._ngModel);
 
         if (this.pickerOnlyMode) {
             this.openPicker();
@@ -398,7 +416,7 @@ export class DatePicker implements Validator,OnInit,OnDestroy, OnChanges {
             this.currentDate = (this.endOfDay) ? newMinDate.endOf("day") : newMinDate;
 
             //currentDate != modelValue?
-            var currentModel = moment.tz(this.ngModel, this.getTimezone());
+            var currentModel = moment.tz(this._ngModel, this.getTimezone());
             //if there is a discrepancy we also update the model
             if (this.pickerMode != PickerConstants.DEFAULT_PICKER_MODE || this.pickerOnlyMode) {
                 if (!currentModel || currentModel.get("day") != this.currentDate.get("day") ||
@@ -447,16 +465,20 @@ export class DatePicker implements Validator,OnInit,OnDestroy, OnChanges {
      */
     private updateModel = (value: Date) => {
         var innerSelection: any = value;
-        //for (var cnt = 0; this.ngModel.$formatters && cnt < this.ngModel.$formatters.length; cnt++) {
-        //    innerSelection = this.ngModel.$formatters[cnt](innerSelection);
+        //for (var cnt = 0; this._ngModel.$formatters && cnt < this._ngModel.$formatters.length; cnt++) {
+        //    innerSelection = this._ngModel.$formatters[cnt](innerSelection);
         //}
         innerSelection = this.formatDate(value);
 
         this.innerSelection = innerSelection;
 
+        if(!this.validate(null)) {
+            this._ngModel = this.currentDate.toDate();
+        }
+        this.propagateChange(this._ngModel);
         this.updatePickerData();
 
-
+        //this.onChange(this.innerSelection);
     };
 
 
@@ -467,10 +489,10 @@ export class DatePicker implements Validator,OnInit,OnDestroy, OnChanges {
      * @private
      */
     isSelectedDate(selectedDate: PickerDate) {
-        if (!this.ngModel) {
+        if (!this._ngModel) {
             return false;
         } else {
-            var modelDate = moment.tz(this.ngModel, this.getTimezone());
+            var modelDate = moment.tz(this._ngModel, this.getTimezone());
             return modelDate.isSame(selectedDate.momentDate, "date") &&
                 modelDate.isSame(selectedDate.momentDate, "month") &&
                 modelDate.isSame(selectedDate.momentDate, "year");
@@ -510,7 +532,7 @@ export class DatePicker implements Validator,OnInit,OnDestroy, OnChanges {
     };
 
     isSameMonth(selectedMonth: PickerMonth) {
-        return DateUtils.isSameMonth(this.timezone, moment.tz(this.ngModel, this.getTimezone()), selectedMonth.momentDate);
+        return DateUtils.isSameMonth(this.timezone, moment.tz(this._ngModel, this.getTimezone()), selectedMonth.momentDate);
     };
 
     isChosenMonth(selectedMonth: PickerMonth) {
@@ -528,7 +550,7 @@ export class DatePicker implements Validator,OnInit,OnDestroy, OnChanges {
     };
 
     isSameYear(selectedYear: PickerYear) {
-        return DateUtils.isSameYear(this.timezone, moment.tz(this.ngModel, this.getTimezone()), selectedYear.momentDate);
+        return DateUtils.isSameYear(this.timezone, moment.tz(this._ngModel, this.getTimezone()), selectedYear.momentDate);
     };
 
     isChosenYear(selectedMonth: PickerYear) {
@@ -656,7 +678,7 @@ export class DatePicker implements Validator,OnInit,OnDestroy, OnChanges {
         this.stopEventPropagation(event);
 
         if (!selectedDate.invalid) {
-            if (!this.ngModel) {
+            if (!this._ngModel) {
                 this.currentDate = selectedDate.momentDate;
                 if (this.pickerOnlyMode == "DOUBLE_BUFFERED") {
                     this.doubleBufferDate = moment.tz(this.currentDate.toDate(), this.getTimezone());
@@ -696,7 +718,6 @@ export class DatePicker implements Validator,OnInit,OnDestroy, OnChanges {
             if (this.pickerMode === PickerConstants.DEFAULT_PICKER_MODE && !this.pickerOnlyMode) {
                 this.close(event);
             }
-
         }
 
     }
@@ -710,7 +731,7 @@ export class DatePicker implements Validator,OnInit,OnDestroy, OnChanges {
         this.stopEventPropagation(event);
 
         if (!selectedDate.invalid) {
-            if (!this.ngModel) {
+            if (!this._ngModel) {
                 this.currentDate = moment.tz(new Date(), this.getTimezone());
                 this.currentDate.set("month", selectedDate.momentDate.get("month"));
 
@@ -742,12 +763,12 @@ export class DatePicker implements Validator,OnInit,OnDestroy, OnChanges {
 
 
         if (!selectedDate.invalid) {
-            if (!this.ngModel) {
+            if (!this._ngModel) {
                 this.currentDate = moment.tz(new Date(), this.getTimezone());
                 this.currentDate.set("year", selectedDate.momentDate.get("year"));
 
             } else {
-                var value = moment.tz(this.ngModel, this.getTimezone());
+                var value = moment.tz(this._ngModel, this.getTimezone());
                 this.currentDate.set("year", selectedDate.momentDate.get("year"));
 
             }
@@ -762,7 +783,6 @@ export class DatePicker implements Validator,OnInit,OnDestroy, OnChanges {
             this.goBackInView(event);
         }
     };
-
 
 
     stopEventPropagation(event: UIEvent) {
@@ -806,7 +826,7 @@ export class DatePicker implements Validator,OnInit,OnDestroy, OnChanges {
 
         var timezone = this.timezone || moment.tz.guess();
 
-        this.currentDate = (this.ngModel) ? moment.tz(this.ngModel, timezone) : moment.tz(new Date(), timezone);
+        this.currentDate = (this._ngModel) ? moment.tz(this._ngModel, timezone) : moment.tz(new Date(), timezone);
 
         this.updatePickerData();
         //this.pickerVisible = true;
@@ -826,7 +846,7 @@ export class DatePicker implements Validator,OnInit,OnDestroy, OnChanges {
      * goes the the previous month
      * @private
      */
-    prevMonth(event ?:UIEvent) {
+    prevMonth(event ?: UIEvent) {
         this.stopEventPropagation(event);
 
 
@@ -945,6 +965,8 @@ export class DatePicker implements Validator,OnInit,OnDestroy, OnChanges {
             this.currentDate = moment.tz(this.doubleBufferDate.toDate(), this.getTimezone());
         }
         this.updateModel(this.currentDate.toDate());
+
+
     };
 
     /**
@@ -992,26 +1014,22 @@ export class DatePicker implements Validator,OnInit,OnDestroy, OnChanges {
     };
 
 
+    validate(c: AbstractControl): ValidationErrors | any {
+        if (!this.validDate(this.innerSelection)) {
 
-
-
-
-    validate(c: AbstractControl): ValidationErrors|any {
-        if(!this.validDate(this.innerSelection)) {
             return {
                 validDate: {
                     valid: false,
                 }
             }
-        }
-        if(!this.validateDateRange(this.parseDate(this.innerSelection))) {
+        } else
+        if (!this.validateDateRange(this.parseDate(this.innerSelection))) {
             return {
                 dateRange: {
                     valid: false,
                 }
             }
         }
-        return null;
     }
 
 
@@ -1091,16 +1109,39 @@ export class DatePicker implements Validator,OnInit,OnDestroy, OnChanges {
         return moment.tz(data, timezone).format(this.getDateFormat());
     }
 
-    //no changes handler possible for inner selection, we are going to use a setter instead
-    set innerSelection(val: string) {
-        this._innerSelection = val;
-        this.ngModelChange.emit(this.parseDate(val));
+
+    writeValue(obj: any): void {
+        this._ngModel = <Date> obj;
+        if (obj) {
+            this.innerSelection = this.formatDate(<Date> obj);
+        } else {
+            this.innerSelection = "";
+        }
     }
 
-    get innerSelection() {
-        return this._innerSelection;
+    registerOnChange(fn: any): void {
+        this.propagateChange =  fn;
     }
 
+    registerOnTouched(fn: any): void {
+        // throw new Error('Method not implemented.');
+    }
 
+    setDisabledState(isDisabled: boolean): void {
+        // throw new Error('Method not implemented.');
+    }
+
+    onChange(event: any) {
+        try {
+            //we double validate if it fails, we propagate the last valid value upwards
+            if(!this.validate(null)) {
+                this._ngModel = this.parseDate(event.target.value);
+            }
+            this.propagateChange(this._ngModel);
+        } catch (e) {
+
+        }
+
+    }
 
 }
