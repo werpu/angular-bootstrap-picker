@@ -71,13 +71,14 @@ export class RangeInput implements OnChanges, OnInit, Validator, ControlValueAcc
 
     validate(c: AbstractControl): ValidationErrors | any {
         let val = parseInt(this.inputText);
-        if (isNaN(val))  {
+        if (isNaN(val)) {
             return {
                 validNumber: {
                     valid: false,
                 }
             }
-        } else if (val < this.from ||val > this.to) {
+        } else if (('undefined' != typeof this.from && this.from > val) ||
+            ('undefined' != typeof this.to && this.to < val)) {
             return {
                 outOfRange: {
                     valid: false,
@@ -87,10 +88,10 @@ export class RangeInput implements OnChanges, OnInit, Validator, ControlValueAcc
     }
 
     changedExtraHandler(data: string) {
-       if(!this.validate(null)) {
-           this._ngModel = parseInt(data);
-       }
-       this.onChangeHandler(this._ngModel);
+        if(!this.validate(null)) {
+            this._ngModel = parseInt(data);
+        }
+        this.onChangeHandler(this._ngModel);
     }
 
     keyDown(event: KeyboardEvent) {

@@ -31,7 +31,8 @@ var RangeInput = RangeInput_1 = (function () {
                 }
             };
         }
-        else if (val < this.from || val > this.to) {
+        else if (('undefined' != typeof this.from && this.from > val) ||
+            ('undefined' != typeof this.to && this.to < val)) {
             return {
                 outOfRange: {
                     valid: false,
