@@ -7,13 +7,14 @@ import * as mom from "moment";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {CommonModule} from "@angular/common";
 
-import {AdditionalContentDate} from "./datePicker/fakeDirectives/AdditionalContentDate";
-import {AdditionalButtonsDate} from "./datePicker/fakeDirectives/AdditionalButtonsDate";
-import {AdditionalContentYear} from "./datePicker/fakeDirectives/AdditionalContentYear";
-import {AdditionalContentMonth} from "./datePicker/fakeDirectives/AdditionalContentMonth";
-import {AdditionalButtonsMonth} from "./datePicker/fakeDirectives/AdditionalButtonsMonth";
-import {AdditionalButtonsYear} from "./datePicker/fakeDirectives/AdditionalButtonsYear";
+import {AdditionalContentDate} from "./datePicker/transcludeDirectives/AdditionalContentDate";
+import {AdditionalButtonsDate} from "./datePicker/transcludeDirectives/AdditionalButtonsDate";
+import {AdditionalContentYear} from "./datePicker/transcludeDirectives/AdditionalContentYear";
+import {AdditionalContentMonth} from "./datePicker/transcludeDirectives/AdditionalContentMonth";
+import {AdditionalButtonsMonth} from "./datePicker/transcludeDirectives/AdditionalButtonsMonth";
+import {AdditionalButtonsYear} from "./datePicker/transcludeDirectives/AdditionalButtonsYear";
 import {HttpModule} from "@angular/http";
+import {EventPicker} from "./eventPicker/EventPicker";
 
 
 declare global {
@@ -27,6 +28,7 @@ declare global {
     imports: [FormsModule, ReactiveFormsModule,HttpModule, CommonModule],
     declarations: [
         DatePicker,
+        EventPicker,
         RangeInput,
         AdditionalButtonsDate,
         AdditionalButtonsMonth,
@@ -37,6 +39,7 @@ declare global {
     ],
     exports: [
         DatePicker,
+        EventPicker,
         AdditionalButtonsDate,
         AdditionalButtonsMonth,
         AdditionalButtonsYear,
