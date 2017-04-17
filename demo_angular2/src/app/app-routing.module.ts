@@ -1,5 +1,4 @@
 import {EventPickerPage} from "./eventPicker.component";
-import {AppComponent} from "./app.component";
 import {RouterModule, Routes} from "@angular/router";
 
 import {NgModule} from "@angular/core";
@@ -7,7 +6,7 @@ import {APP_BASE_HREF} from "@angular/common";
 import {DatePickerPage} from "./datePicker.component";
 import {FormsModule} from "@angular/forms";
 import {BrowserModule} from "@angular/platform-browser";
-import {DatePickerModule} from 'picker';
+import {DatePickerModule} from "picker";
 
 const appRoutes: Routes = [
     { path: 'index.html', redirectTo: "datePicker", pathMatch: 'full'},
@@ -20,7 +19,7 @@ const appRoutes: Routes = [
         BrowserModule,
         FormsModule,
         RouterModule.forRoot(
-            appRoutes
+            appRoutes, {useHash: true}
         ),
         DatePickerModule
     ],
@@ -28,7 +27,7 @@ const appRoutes: Routes = [
         RouterModule
     ],
     declarations: [DatePickerPage, EventPickerPage],
-    providers: [{provide: APP_BASE_HREF, useValue : '/angular-bootstrap-picker/demo_angular2/build/' }],
+    providers: [{provide: APP_BASE_HREF, useValue : '/' }],
     entryComponents: [DatePickerPage, EventPickerPage]
 })
 export class AppRoutingModule { }
