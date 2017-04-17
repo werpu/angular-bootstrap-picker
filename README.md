@@ -52,6 +52,12 @@ bower install werpu/angular-bootstrap-picker --save
 A live demo can be found in the demo folder or on
 https://werpu.github.io/angular-bootstrap-picker/demo/
 
+
+Also a live demo of the angular2/4 version of the picker can be found at
+https://werpu.github.io/angular-bootstrap-picker/demo_angular2/build/index.html
+
+
+
 ## Usage
 
 You simply can use the date picker like every other angular module. Once imported
@@ -168,6 +174,9 @@ export class EventModel {
 
 A live demo of the event picker can be found at 
 https://werpu.github.io/angular-bootstrap-picker/demo/eventpicker.html
+
+Also a live demo of the angular2/4 version of the picker can be found at
+https://werpu.github.io/angular-bootstrap-picker/demo_angular2/build/index.html#/eventPicker
 
 #Building
 
