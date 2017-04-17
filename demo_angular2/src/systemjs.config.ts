@@ -34,6 +34,20 @@
             "../../dist_ng2/DatepickerFinal.js": {
                 type:"amd"
             }
+        },
+        // packages tells the System loader how to load when no filename and/or no extension
+        packages: {
+            app: {
+                defaultExtension: 'js',
+                meta: {
+                    './*.js': {
+                        loader: 'systemjs-angular-loader.js'
+                    }
+                }
+            },
+            rxjs: {
+                defaultExtension: 'js'
+            }
         }
 
     });
