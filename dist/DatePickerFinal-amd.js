@@ -141,6 +141,7 @@ define("utils/DatePickerTypes", ["require", "exports"], function (require, expor
         }
         return BaseDate;
     }());
+    exports.BaseDate = BaseDate;
     /**
      * internal model class for a single date picker date
      * for the date view
@@ -687,8 +688,6 @@ define("utils/BehavioralFixes", ["require", "exports"], function (require, expor
          * @return {Array}           The parent elements
          */
         BehavioralFixes.getParents = function (elem, selector) {
-            debugger;
-            // Element.matches() polyfill
             if (!Element.prototype.matches) {
                 Element.prototype.matches =
                     Element.prototype.matchesSelector ||
@@ -708,7 +707,7 @@ define("utils/BehavioralFixes", ["require", "exports"], function (require, expor
             for (; elem && elem !== document; elem = elem.parentNode) {
                 // Add matching parents to array
                 if (selector) {
-                    if (Element.matches(selector)) {
+                    if (elem.matches && elem.matches(selector)) {
                         parents.push(elem);
                     }
                 }
@@ -1002,7 +1001,7 @@ define("datePicker/DatePickerController", ["require", "exports", "utils/DatePick
         };
         ;
         _DatePickerController.prototype.isSameMonth = function (selectedMonth) {
-            return DateUtils_1.DateUtils.isSameMonth(this.timezone, this.ngModel.$modelValue, this.selectedMonth.momentDate);
+            return DateUtils_1.DateUtils.isSameMonth(this.timezone, this.ngModel.$modelValue, selectedMonth.momentDate);
         };
         ;
         _DatePickerController.prototype.isChosenMonth = function (selectedMonth) {

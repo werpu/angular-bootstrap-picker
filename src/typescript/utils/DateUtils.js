@@ -1,3 +1,6 @@
+/// <reference path="../../../node_modules/moment/moment.d.ts" />
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 /*
  Copyright (c) 2016 Werner Punz
 
@@ -14,8 +17,6 @@
  ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
  */
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 var PickerConstants = (function () {
     function PickerConstants() {
     }

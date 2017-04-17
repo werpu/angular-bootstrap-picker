@@ -56,7 +56,7 @@ export class EventModel {
  Picker types internally used for the view representation
  */
 
-class BaseDate {
+export class BaseDate {
     invalid:boolean;
     momentDate:moment.Moment;
 

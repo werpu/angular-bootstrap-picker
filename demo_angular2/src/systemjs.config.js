@@ -28,14 +28,19 @@
       // other libraries
       'rxjs':                      'npm:rxjs',
       'angular-in-memory-web-api': 'npm:angular-in-memory-web-api/bundles/in-memory-web-api.umd.js',
-      'picker': "../../build_ng2/typescript_ng2/DatePicker.js"
+      '@werpu/picker': "../../dist_ng2/DatepickerFinal-amd.js"
+    },
+    meta: {
+        "../../dist_ng2/DatepickerFinal.js": {
+          type:"system"
+        }
     },
     // packages tells the System loader how to load when no filename and/or no extension
     packages: {
       app: {
         defaultExtension: 'js',
         meta: {
-          './*.js': {
+          './build/*.js': {
             loader: 'systemjs-angular-loader.js'
           }
         }

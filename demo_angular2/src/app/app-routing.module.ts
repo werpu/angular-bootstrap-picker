@@ -6,7 +6,7 @@ import {APP_BASE_HREF} from "@angular/common";
 import {DatePickerPage} from "./datePicker.component";
 import {FormsModule} from "@angular/forms";
 import {BrowserModule} from "@angular/platform-browser";
-import {DatePickerModule} from "picker";
+import {DatePickerModule} from "@werpu/picker";
 
 const appRoutes: Routes = [
     { path: 'index.html', redirectTo: "datePicker", pathMatch: 'full'},

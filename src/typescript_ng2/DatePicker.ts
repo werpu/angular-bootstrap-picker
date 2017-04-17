@@ -1,4 +1,8 @@
-import { NgModule }      from '@angular/core';
+/// <amd-module name="@werpu/picker" />
+/// <system-module name="@werpu/picker" />
+/// <umd-module name="@werpu/picker" />
+/// <commonjs-module name="@werpu/picker" />
+import {NgModule}      from '@angular/core';
 import {DatePicker} from "./datePicker/DatePicker";
 import {RangeInput} from "./helperComponents/RangeInput";
 
@@ -16,7 +20,6 @@ import {AdditionalButtonsYear} from "./datePicker/transcludeDirectives/Additiona
 import {HttpModule} from "@angular/http";
 import {EventPicker} from "./eventPicker/EventPicker";
 
-
 declare global {
 
     var moment: typeof mom;
@@ -25,7 +28,8 @@ declare global {
 
 
 @NgModule({
-    imports: [FormsModule, ReactiveFormsModule,HttpModule, CommonModule],
+    id: "picker",
+    imports: [FormsModule, ReactiveFormsModule, HttpModule, CommonModule],
     declarations: [
         DatePicker,
         EventPicker,
@@ -48,4 +52,5 @@ declare global {
         AdditionalContentYear
     ]
 })
-export class DatePickerModule {}
+export class DatePickerModule {
+}

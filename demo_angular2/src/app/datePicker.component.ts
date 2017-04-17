@@ -6,32 +6,9 @@ declare var moment: any;
 @Component({
     template: `
         <form #form="ngForm">
-            <h1>Hello {{name}}</h1>
             <a routerLink="/eventPicker" routerLinkActive="active">&gt;&gt;To the Event Picker Example</a>
 
-
-            {{greeting}}
-
-            <input type="text" id="name" class="form-control"
-                   required minlength="4" maxlength="24"
-                   name="name" [(ngModel)]="greeting"
-
-                   #name="ngModel">
-
-            <div *ngIf="name.errors && (name.dirty || name.touched)"
-                 class="alert alert-danger">
-                <div [hidden]="!name.errors.required">
-                    Name is required
-                </div>
-                <div [hidden]="!name.errors.minlength">
-                    Name must be at least 4 characters long.
-                </div>
-                <div [hidden]="!name.errors.maxlength">
-                    Name cannot be more than 24 characters long.
-                </div>
-            </div>
-
-            <p>Small Datepicker example</p>
+            <p>Small Datepicker example with validation</p>
             UTC Date: {{currentDate}}
 
             Europe GMT+1 with picker mode DATE_TIME
