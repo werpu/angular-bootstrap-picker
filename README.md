@@ -54,7 +54,7 @@ https://werpu.github.io/angular-bootstrap-picker/demo/
 
 
 Also a live demo of the angular2/4 version of the picker can be found at
-https://werpu.github.io/angular-bootstrap-picker/demo_angular2/build/index.html
+https://werpu.github.io/angular-bootstrap-picker/demo_angular2/index.html
 
 
 
@@ -176,7 +176,7 @@ A live demo of the event picker can be found at
 https://werpu.github.io/angular-bootstrap-picker/demo/eventpicker.html
 
 Also a live demo of the angular2/4 version of the picker can be found at
-https://werpu.github.io/angular-bootstrap-picker/demo_angular2/build/index.html#/eventPicker
+https://werpu.github.io/angular-bootstrap-picker/demo_angular2/index.html#/eventPicker
 
 #Building
 
