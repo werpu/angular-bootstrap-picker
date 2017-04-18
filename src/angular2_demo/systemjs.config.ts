@@ -6,7 +6,7 @@
     (<any>window).System.config({
         paths: {
             // paths serve as alias
-            'npm:': '../node_modules/'
+            'npm:': './node_modules/'
         },
         baseURL: '../',
         defaultJSExtensions: "js",
@@ -14,7 +14,6 @@
         map: {
             // our app is within the app folder
             'app': 'app',
-
             // angular bundles
             '@angular/core': 'https://npmcdn.com/@angular/core/bundles/core.umd.js',
             '@angular/common': 'https://npmcdn.com/@angular/common/bundles/common.umd.js',
@@ -24,15 +23,14 @@
             '@angular/http': 'https://npmcdn.com/@angular/http/bundles/http.umd.js',
             '@angular/router': 'https://npmcdn.com/@angular/router/bundles/router.umd.js',
             '@angular/forms': 'https://npmcdn.com/@angular/forms/bundles/forms.umd.js',
-
             // other libraries
-            'rxjs':                      'https://npmcdn.com/rxjs',
+            'rxjs': 'https://npmcdn.com/rxjs',
             'angular-in-memory-web-api': 'https://npmcdn.com/angular-in-memory-web-api/bundles/in-memory-web-api.umd.js',
-            '@werpu/picker': "../../dist_ng2/DatepickerFinal-amd.js"
+            '@werpu/picker': "../dist_ng2/DatepickerFinal-amd.js"
         },
         meta: {
-            "../../dist_ng2/DatepickerFinal.js": {
-                type:"amd"
+            "../dist_ng2/DatepickerFinal.js": {
+                type: "amd"
             }
         },
         // packages tells the System loader how to load when no filename and/or no extension

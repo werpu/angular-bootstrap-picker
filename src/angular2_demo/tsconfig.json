@@ -1,13 +1,14 @@
 {
   "compilerOptions": {
-    "outDir": "../build",
+    "outDir": "../../demo_angular2",
     "target": "es5",
-    "module": "amd",
+    "module": "commonjs",
     "moduleResolution": "node",
     "sourceMap": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "lib": [ "es2015", "dom" ],
+    "declaration": false,
     "noImplicitAny": true,
     "suppressImplicitAnyIndexErrors": true
   }
