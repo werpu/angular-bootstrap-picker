@@ -112,6 +112,9 @@ var _DatePickerController = (function () {
         this.visibleDays = [];
         this.view = DateUtils_1.PickerConstants.PICKER_VIEW_DATE;
         this.viewStack = [];
+        $scope.$on("$destroy", function () {
+            BehavioralFixes_1.BehavioralFixes.unregisterDocumentBindings(_this);
+        });
         /*we do the proper max min date validity checks over our setters*/
         Object.defineProperty(this, "currentHour", {
             get: function () {
@@ -729,9 +732,6 @@ var _DatePickerController = (function () {
         if (this.pickerOnlyMode) {
             this.openPicker();
         }
-    };
-    _DatePickerController.prototype.$onDestroy = function () {
-        BehavioralFixes_1.BehavioralFixes.unregisterDocumentBindings(this);
     };
     return _DatePickerController;
 }());
