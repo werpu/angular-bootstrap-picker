@@ -90,6 +90,10 @@ export class _DatePickerController {
         this.viewStack = [];
 
 
+        $scope.$on("$destroy", () => {
+            BehavioralFixes.unregisterDocumentBindings(this);
+        });
+
         /*we do the proper max min date validity checks over our setters*/
         Object.defineProperty(this, "currentHour", {
             get: (): number => {
@@ -806,9 +810,7 @@ export class _DatePickerController {
         }
     }
 
-    $onDestroy() {
-        BehavioralFixes.unregisterDocumentBindings(this);
-    }
+
 
 
 }
