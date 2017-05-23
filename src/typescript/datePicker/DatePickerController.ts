@@ -718,6 +718,15 @@ export class _DatePickerController {
              * and a keydown should open the picker
              */
             BehavioralFixes.registerKeyBindings(this.$element[0]);
+
+            if(this.pickerOnlyMode) {
+                this.$scope.$watch("ctrl.ngModel.$modelValue", (newValue: Date, oldValue: Date) => {
+                    this.$timeout(() => {
+                        this.currentDate = (this.ngModel.$modelValue) ? moment.tz(this.ngModel.$modelValue, this.getTimezone()) : moment.tz(new Date(), this.getTimezone());
+                        this.updatePickerData();
+                    });
+                });
+            }
         });
 
 

@@ -431,6 +431,14 @@ export class DatePicker implements Validator, OnInit, OnDestroy, OnChanges, Cont
                 this.updatePickerData();
             }
         }
+        if(this.pickerOnlyMode && changes.ngModel && changes.ngModel.previousValue != changes.ngModel.currentValue) {
+            setTimeout(() => {
+                this.currentDate = (this._ngModel) ? moment.tz(this._ngModel, this.getTimezone()) : moment.tz(new Date(), this.getTimezone());
+                this.updatePickerData();
+            }, 0);
+        }
+
+
 
     }
 
