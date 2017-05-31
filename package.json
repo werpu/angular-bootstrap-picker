@@ -19,7 +19,7 @@
     "build-js": "echo \"building final file\" && npm run build-ts && npm run build-ts-amd && npm run build-ts2 && npm run build-ts2-amd && npm run build-dev && npm run build-dev-ts2"
   },
   "author": "Werner Punz",
-  "homepage": "https://github.com/werpu/angular-bootstrap-picker/",
+  "homepage": "https://github.com/werpu/angular-bootstrap-picker",
   "license": "MIT",
   "dependencies": {
     "glob": "^7.1.1"
