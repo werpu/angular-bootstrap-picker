@@ -1,6 +1,6 @@
 {
   "name": "angular-bootstrap-picker",
-  "version": "0.9.5",
+  "version": "0.9.6",
   "description": "a date picker for angularjs 1.5.x and 4.x and bootstrap 3 with working timezone handling, it uses moment moment-timezone and moment-range",
   "main": "./index.js",
   "scripts": {
@@ -21,7 +21,6 @@
   "author": "Werner Punz",
   "license": "MIT",
   "homepage": "https://github.com/werpu/angular-bootstrap-picker/",
-
   "dependencies": {
     "glob": "^7.1.1"
   },
