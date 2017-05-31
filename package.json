@@ -21,6 +21,13 @@
   "author": "Werner Punz",
   "license": "MIT",
   "homepage": "https://github.com/werpu/angular-bootstrap-picker/",
+  "bugs": {
+    "url": "https://github.com/werpu/angular-bootstrap-picker/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/werpu/angular-bootstrap-picker"
+  },
   "dependencies": {
     "glob": "^7.1.1"
   },
