@@ -4,11 +4,11 @@ Bootstrap date picker with timezone support for angular 1.5.x
 
 | Simple Date Picker | Date Time Picker |
 | ------------------ | ---------------- |
-| ![Simple Date Picker](https://github.com/werpu/angular-bootstrap-picker/blob/master/doc/images/datepicker1.jpg) | ![Date Time Picker](https://github.com/werpu/angular-bootstrap-picker/blob/master/doc/images/datepicker2.jpg) |
+| ![Simple Date Picker](https://raw.githubusercontent.com/werpu/angular-bootstrap-picker/master/doc/images/datepicker1.jpg) | ![Date Time Picker](https://raw.githubusercontent.com/werpu/angular-bootstrap-picker/master/doc/images/datepicker2.jpg) |
 
 | Year Selector | Decade Selector |
 | ------------------ | ---------------- |
-| ![Year Selector](https://github.com/werpu/angular-bootstrap-picker/blob/master/doc/images/picker3.jpg) | ![Decade Selector](https://github.com/werpu/angular-bootstrap-picker/blob/master/doc/images/picker4.jpg) |
+| ![Year Selector](https://raw.githubusercontent.com/werpu/angular-bootstrap-picker/master/doc/images/picker3.jpg) | ![Decade Selector](https://raw.githubusercontent.com/werpu/angular-bootstrap-picker/master/doc/images/picker4.jpg) |
 
 ## Introduction
 
