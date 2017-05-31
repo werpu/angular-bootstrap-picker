@@ -657,6 +657,14 @@ var _DatePickerController = (function () {
              * and a keydown should open the picker
              */
             BehavioralFixes_1.BehavioralFixes.registerKeyBindings(_this.$element[0]);
+            if (_this.pickerOnlyMode) {
+                _this.$scope.$watch("ctrl.ngModel.$modelValue", function (newValue, oldValue) {
+                    _this.$timeout(function () {
+                        _this.currentDate = (_this.ngModel.$modelValue) ? moment.tz(_this.ngModel.$modelValue, _this.getTimezone()) : moment.tz(new Date(), _this.getTimezone());
+                        _this.updatePickerData();
+                    });
+                });
+            }
         });
         //with this trick we are able to traverse the outer ngModel view value into the inner ngModel
         this.ngModel.$render = function () {

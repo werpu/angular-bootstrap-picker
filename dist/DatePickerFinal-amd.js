@@ -876,6 +876,9 @@ define("datePicker/DatePickerController", ["require", "exports", "utils/DatePick
             this.visibleDays = [];
             this.view = DateUtils_1.PickerConstants.PICKER_VIEW_DATE;
             this.viewStack = [];
+            $scope.$on("$destroy", function () {
+                BehavioralFixes_1.BehavioralFixes.unregisterDocumentBindings(_this);
+            });
             /*we do the proper max min date validity checks over our setters*/
             Object.defineProperty(this, "currentHour", {
                 get: function () {
@@ -1418,6 +1421,14 @@ define("datePicker/DatePickerController", ["require", "exports", "utils/DatePick
                  * and a keydown should open the picker
                  */
                 BehavioralFixes_1.BehavioralFixes.registerKeyBindings(_this.$element[0]);
+                if (_this.pickerOnlyMode) {
+                    _this.$scope.$watch("ctrl.ngModel.$modelValue", function (newValue, oldValue) {
+                        _this.$timeout(function () {
+                            _this.currentDate = (_this.ngModel.$modelValue) ? moment.tz(_this.ngModel.$modelValue, _this.getTimezone()) : moment.tz(new Date(), _this.getTimezone());
+                            _this.updatePickerData();
+                        });
+                    });
+                }
             });
             //with this trick we are able to traverse the outer ngModel view value into the inner ngModel
             this.ngModel.$render = function () {
@@ -1493,9 +1504,6 @@ define("datePicker/DatePickerController", ["require", "exports", "utils/DatePick
             if (this.pickerOnlyMode) {
                 this.openPicker();
             }
-        };
-        _DatePickerController.prototype.$onDestroy = function () {
-            BehavioralFixes_1.BehavioralFixes.unregisterDocumentBindings(this);
         };
         return _DatePickerController;
     }());

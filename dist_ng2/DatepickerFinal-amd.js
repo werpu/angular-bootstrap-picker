@@ -879,6 +879,7 @@ define("typescript_ng2/datePicker/DatePicker", ["require", "exports", "@angular/
             configurable: true
         });
         DatePicker.prototype.ngOnChanges = function (changes) {
+            var _this = this;
             if (changes.startDate && changes.startDate.previousValue != changes.startDate.currentValue) {
                 var newMinDate = moment.tz(changes.startDate.currentValue, this.getTimezone());
                 //no date change or mindate < than the currentDate in the min date, we safely can skip
@@ -902,6 +903,12 @@ define("typescript_ng2/datePicker/DatePicker", ["require", "exports", "@angular/
                 if (this.currentDate) {
                     this.updatePickerData();
                 }
+            }
+            if (this.pickerOnlyMode && changes.ngModel && changes.ngModel.previousValue != changes.ngModel.currentValue) {
+                setTimeout(function () {
+                    _this.currentDate = (_this._ngModel) ? moment.tz(_this._ngModel, _this.getTimezone()) : moment.tz(new Date(), _this.getTimezone());
+                    _this.updatePickerData();
+                }, 0);
             }
         };
         /**
