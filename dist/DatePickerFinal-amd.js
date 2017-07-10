@@ -995,7 +995,7 @@ define("datePicker/DatePickerController", ["require", "exports", "utils/DatePick
         };
         ;
         _DatePickerController.prototype.isTodayMonth = function (selectedDate) {
-            return DateUtils_1.DateUtils.isCurrentMonth(this.timezone, this.selectedDate.momentDate);
+            return DateUtils_1.DateUtils.isCurrentMonth(this.timezone, selectedDate.momentDate);
         };
         ;
         _DatePickerController.prototype.isSameMonth = function (selectedMonth) {

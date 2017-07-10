@@ -262,7 +262,7 @@ export class _DatePickerController {
     };
 
     isTodayMonth(selectedDate: PickerMonth) {
-        return DateUtils.isCurrentMonth(this.timezone, this.selectedDate.momentDate);
+        return DateUtils.isCurrentMonth(this.timezone, selectedDate.momentDate);
     };
 
     isSameMonth(selectedMonth: PickerMonth) {
