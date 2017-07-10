@@ -43,7 +43,6 @@ angular.module('werpu.bootstrap.picker', [])
 
 },{"./datePicker/DatePickerController":2,"./datePicker/DatePickerView":3,"./eventPicker/EventPicker":4,"./helperComponents/RangeInput":5,"./services/DatePickerService":6}],2:[function(require,module,exports){
 /// <reference path="../../../node_modules/@types/angular/index.d.ts" />
-/// <reference path="../../../node_modules/moment/moment.d.ts" />
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var DatePickerTypes_1 = require("../utils/DatePickerTypes");
@@ -105,10 +104,6 @@ var _DatePickerController = (function () {
          * @private
          */
         this.doubleBufferDate = null;
-        this.buttonLabel = ("undefined" == typeof this.buttonLabel || null == this.buttonLabel) ?
-            DateUtils_1.PickerConstants.DEFAULT_PICKER_LABEL : this.buttonLabel;
-        this.pickerMode = ("undefined" == typeof this.pickerMode || null == this.pickerMode) ?
-            DateUtils_1.PickerConstants.DEFAULT_PICKER_MODE : this.pickerMode;
         this.visibleDays = [];
         this.view = DateUtils_1.PickerConstants.PICKER_VIEW_DATE;
         this.viewStack = [];
@@ -642,6 +637,10 @@ var _DatePickerController = (function () {
     ;
     _DatePickerController.prototype.$postLink = function () {
         var _this = this;
+        this.buttonLabel = ("undefined" == typeof this.buttonLabel || null == this.buttonLabel) ?
+            DateUtils_1.PickerConstants.DEFAULT_PICKER_LABEL : this.buttonLabel;
+        this.pickerMode = ("undefined" == typeof this.pickerMode || null == this.pickerMode) ?
+            DateUtils_1.PickerConstants.DEFAULT_PICKER_MODE : this.pickerMode;
         this.$timeout(function () {
             /**
              * we turn off event propagation

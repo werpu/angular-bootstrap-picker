@@ -810,7 +810,6 @@ define("utils/BehavioralFixes", ["require", "exports"], function (require, expor
     exports.BehavioralFixes = BehavioralFixes;
 });
 /// <reference path="../../../node_modules/@types/angular/index.d.ts" />
-/// <reference path="../../../node_modules/moment/moment.d.ts" />
 define("datePicker/DatePickerController", ["require", "exports", "utils/DatePickerTypes", "utils/DateUtils", "utils/ViewModelBuilder", "utils/BehavioralFixes"], function (require, exports, DatePickerTypes_2, DateUtils_1, ViewModelBuilder_1, BehavioralFixes_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -869,10 +868,6 @@ define("datePicker/DatePickerController", ["require", "exports", "utils/DatePick
              * @private
              */
             this.doubleBufferDate = null;
-            this.buttonLabel = ("undefined" == typeof this.buttonLabel || null == this.buttonLabel) ?
-                DateUtils_1.PickerConstants.DEFAULT_PICKER_LABEL : this.buttonLabel;
-            this.pickerMode = ("undefined" == typeof this.pickerMode || null == this.pickerMode) ?
-                DateUtils_1.PickerConstants.DEFAULT_PICKER_MODE : this.pickerMode;
             this.visibleDays = [];
             this.view = DateUtils_1.PickerConstants.PICKER_VIEW_DATE;
             this.viewStack = [];
@@ -1406,6 +1401,10 @@ define("datePicker/DatePickerController", ["require", "exports", "utils/DatePick
         ;
         _DatePickerController.prototype.$postLink = function () {
             var _this = this;
+            this.buttonLabel = ("undefined" == typeof this.buttonLabel || null == this.buttonLabel) ?
+                DateUtils_1.PickerConstants.DEFAULT_PICKER_LABEL : this.buttonLabel;
+            this.pickerMode = ("undefined" == typeof this.pickerMode || null == this.pickerMode) ?
+                DateUtils_1.PickerConstants.DEFAULT_PICKER_MODE : this.pickerMode;
             this.$timeout(function () {
                 /**
                  * we turn off event propagation

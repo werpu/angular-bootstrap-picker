@@ -1,5 +1,4 @@
 /// <reference path="../../../node_modules/@types/angular/index.d.ts" />
-/// <reference path="../../../node_modules/moment/moment.d.ts" />
 
 import INgModelController = angular.INgModelController;
 import {
@@ -81,10 +80,7 @@ export class _DatePickerController {
          */
         this.doubleBufferDate = null;
 
-        this.buttonLabel = ("undefined" == typeof  this.buttonLabel || null == this.buttonLabel) ?
-            PickerConstants.DEFAULT_PICKER_LABEL : this.buttonLabel;
-        this.pickerMode = ("undefined" == typeof  this.pickerMode || null == this.pickerMode) ?
-            PickerConstants.DEFAULT_PICKER_MODE : this.pickerMode;
+
         this.visibleDays = [];
         this.view = PickerConstants.PICKER_VIEW_DATE;
         this.viewStack = [];
@@ -702,6 +698,12 @@ export class _DatePickerController {
 
 
     $postLink() {
+
+        this.buttonLabel = ("undefined" == typeof  this.buttonLabel || null == this.buttonLabel) ?
+            PickerConstants.DEFAULT_PICKER_LABEL : this.buttonLabel;
+        this.pickerMode = ("undefined" == typeof  this.pickerMode || null == this.pickerMode) ?
+            PickerConstants.DEFAULT_PICKER_MODE : this.pickerMode;
+
         this.$timeout(() => {
             /**
              * we turn off event propagation
