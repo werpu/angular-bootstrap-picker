@@ -132,7 +132,7 @@ var template = () => {
                         <input type="button" class="set btn btn-default btn-sm" (click)="set($event)" value="Set" *ngIf="pickerOnlyMode == 'DOUBLE_BUFFERED'" >
                         <input type="button" class="clear btn btn-default btn-sm" (click)="clear($event)" value="Clear" *ngIf="!pickerOnlyMode" >
                         <input type="button" class="today btn btn-default btn-sm" (click)="today($event)" value="Today" >
-                        <input type="button" class="picker-close btn btn-default btn-sm" (click)="close($event)" *ngIf="!pickerOnlyMode" value="Close" >
+                        <input type="button" class="picker-close btn btn-default btn-sm" (click)="close($event)" *ngIf="!pickerOnlyMode" value="{{pickerMode == 'DATE' ? 'Cancel' : 'Close'}}" >
                     </div>
                </div> 
         `;

@@ -94,7 +94,7 @@ export class _DatePickerView {
                         <input type="button" class="Sset btn btn-default btn-sm" ng-click="ctrl.set()" value="Set" ng-if="ctrl.pickerOnlyMode == 'DOUBLE_BUFFERED'" />
                         <input type="button" class="clear btn btn-default btn-sm" ng-click="ctrl.clear()" value="Clear" ng-if="!ctrl.pickerOnlyMode" />
                         <input type="button" class="today btn btn-default btn-sm" ng-click="ctrl.today()" value="Today" />
-                        <input type="button" class="picker-close btn btn-default btn-sm" ng-click="ctrl.close()" ng-if="!ctrl.pickerOnlyMode" value="Close" ng-if="!ctrl.pickerOnlyMpde" />
+                        <input type="button" class="picker-close btn btn-default btn-sm" ng-click="ctrl.close()" ng-if="!ctrl.pickerOnlyMode" value="{{ctrl.pickerMode == 'DATE' ? 'Cancel' : 'Close'}}" ng-if="!ctrl.pickerOnlyMpde" />
                     </div>
                </div> 
         `;
