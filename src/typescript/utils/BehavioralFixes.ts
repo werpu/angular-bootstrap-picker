@@ -261,6 +261,14 @@ export class BehavioralFixes {
             node.classList.add("open");
 
         });
+        this.repositionPopup(controller, element);
+
+
+        this.onScroll(controller, element);
+
+    }
+
+    static repositionPopup(controller: any, element: SelectableNode) {
         if (controller.appendToBody) {
             (<any>Array).from(element.querySelectorAll(".dropdown-menu")).forEach((node: SelectableNode) => {
                 node.classList.add("fixedPos");
@@ -269,6 +277,13 @@ export class BehavioralFixes {
                     let top = element.getBoundingClientRect().top + element.querySelectorAll("input[type=\"text\"]")[0].clientHeight;
                     let left = element.getBoundingClientRect().left + element.clientWidth - node.clientWidth;
 
+                    if(top + node.clientHeight + 10 > window.innerHeight) {
+                        top = element.getBoundingClientRect().top - 5 - node.clientHeight;
+                        node.classList.add("top");
+                    } else {
+                        node.classList.remove("top");
+                    }
+
                     node.style.top = top + "px";
                     node.style.left = left + "px";
                     node.style.right = "auto";
@@ -276,10 +291,6 @@ export class BehavioralFixes {
 
             });
         }
-
-
-        this.onScroll(controller, element);
-
     }
 
     static closeDropDown(element: SelectableNode, controller: any) {

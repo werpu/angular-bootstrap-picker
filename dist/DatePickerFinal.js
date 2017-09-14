@@ -609,6 +609,7 @@ var _DatePickerController = (function () {
     _DatePickerController.prototype.switchToMonthView = function () {
         this.viewStack.unshift(this.view);
         this.view = DateUtils_1.PickerConstants.PICKER_VIEW_MONTH;
+        BehavioralFixes_1.BehavioralFixes.repositionPopup(this, this.$element[0]);
     };
     ;
     /**
@@ -618,6 +619,7 @@ var _DatePickerController = (function () {
     _DatePickerController.prototype.switchToYearView = function () {
         this.viewStack.unshift(this.view);
         this.view = DateUtils_1.PickerConstants.PICKER_VIEW_YEAR;
+        BehavioralFixes_1.BehavioralFixes.repositionPopup(this, this.$element[0]);
     };
     ;
     /**
@@ -627,6 +629,7 @@ var _DatePickerController = (function () {
     _DatePickerController.prototype.switchToTimeView = function () {
         this.viewStack.unshift(this.view);
         this.view = DateUtils_1.PickerConstants.PICKER_VIEW_TIME;
+        BehavioralFixes_1.BehavioralFixes.repositionPopup(this, this.$element[0]);
     };
     ;
     /**
@@ -636,6 +639,7 @@ var _DatePickerController = (function () {
     _DatePickerController.prototype.goBackInView = function () {
         this.updatePickerData();
         this.view = this.viewStack.shift();
+        BehavioralFixes_1.BehavioralFixes.repositionPopup(this, this.$element[0]);
     };
     ;
     _DatePickerController.prototype.$postLink = function () {
@@ -1248,19 +1252,29 @@ var BehavioralFixes = (function () {
         Array.from(element.querySelectorAll(".dropdown")).forEach(function (node) {
             node.classList.add("open");
         });
+        this.repositionPopup(controller, element);
+        this.onScroll(controller, element);
+    };
+    BehavioralFixes.repositionPopup = function (controller, element) {
         if (controller.appendToBody) {
             Array.from(element.querySelectorAll(".dropdown-menu")).forEach(function (node) {
                 node.classList.add("fixedPos");
                 setTimeout(function () {
                     var top = element.getBoundingClientRect().top + element.querySelectorAll("input[type=\"text\"]")[0].clientHeight;
                     var left = element.getBoundingClientRect().left + element.clientWidth - node.clientWidth;
+                    if (top + node.clientHeight + 10 > window.innerHeight) {
+                        top = element.getBoundingClientRect().top - 5 - node.clientHeight;
+                        node.classList.add("top");
+                    }
+                    else {
+                        node.classList.remove("top");
+                    }
                     node.style.top = top + "px";
                     node.style.left = left + "px";
                     node.style.right = "auto";
                 }, 100);
             });
         }
-        this.onScroll(controller, element);
     };
     BehavioralFixes.closeDropDown = function (element, controller) {
         controller.isOpen = false;

@@ -674,6 +674,7 @@ export class _DatePickerController {
     switchToMonthView() {
         this.viewStack.unshift(this.view);
         this.view = PickerConstants.PICKER_VIEW_MONTH;
+        BehavioralFixes.repositionPopup(this, this.$element[0]);
     };
 
     /**
@@ -683,6 +684,7 @@ export class _DatePickerController {
     switchToYearView() {
         this.viewStack.unshift(this.view);
         this.view = PickerConstants.PICKER_VIEW_YEAR;
+        BehavioralFixes.repositionPopup(this, this.$element[0]);
     };
 
     /**
@@ -692,6 +694,7 @@ export class _DatePickerController {
     switchToTimeView() {
         this.viewStack.unshift(this.view);
         this.view = PickerConstants.PICKER_VIEW_TIME;
+        BehavioralFixes.repositionPopup(this, this.$element[0]);
     };
 
     /**
@@ -701,6 +704,7 @@ export class _DatePickerController {
     goBackInView() {
         this.updatePickerData();
         this.view = this.viewStack.shift();
+        BehavioralFixes.repositionPopup(this, this.$element[0]);
     };
 
 

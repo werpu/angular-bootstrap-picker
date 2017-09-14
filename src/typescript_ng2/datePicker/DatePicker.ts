@@ -444,8 +444,6 @@ export class DatePicker implements Validator, OnInit, OnDestroy, OnChanges, Cont
             }, 0);
         }
 
-
-
     }
 
     /**
@@ -992,6 +990,7 @@ export class DatePicker implements Validator, OnInit, OnDestroy, OnChanges, Cont
 
         this.viewStack.unshift(this.view);
         this.view = PickerConstants.PICKER_VIEW_MONTH;
+        BehavioralFixes.repositionPopup(this, this.elementRef.nativeElement);
     };
 
     /**
@@ -1003,6 +1002,7 @@ export class DatePicker implements Validator, OnInit, OnDestroy, OnChanges, Cont
 
         this.viewStack.unshift(this.view);
         this.view = PickerConstants.PICKER_VIEW_YEAR;
+        BehavioralFixes.repositionPopup(this, this.elementRef.nativeElement);
     };
 
     /**
@@ -1014,6 +1014,7 @@ export class DatePicker implements Validator, OnInit, OnDestroy, OnChanges, Cont
 
         this.viewStack.unshift(this.view);
         this.view = PickerConstants.PICKER_VIEW_TIME;
+        BehavioralFixes.repositionPopup(this, this.elementRef.nativeElement);
     };
 
     /**
@@ -1025,6 +1026,7 @@ export class DatePicker implements Validator, OnInit, OnDestroy, OnChanges, Cont
 
         this.updatePickerData();
         this.view = this.viewStack.shift();
+        BehavioralFixes.repositionPopup(this, this.elementRef.nativeElement);
     };
 
 
