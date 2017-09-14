@@ -269,6 +269,7 @@ export class DatePicker implements Validator, OnInit, OnDestroy, OnChanges, Cont
     @Input() view: string;
     @Input() pickerMode: string;
     @Input() timezone: string;
+    @Input() appendToBody ?: boolean;
 
     //@Input() ngModel: Date;
     //@Output() ngModelChange: EventEmitter<Date> = new EventEmitter(false);
@@ -308,6 +309,7 @@ export class DatePicker implements Validator, OnInit, OnDestroy, OnChanges, Cont
 
     private propagateChange = (_: any) => { };
 
+    onParentScroll: Function;
 
     constructor(private elementRef: ElementRef) {
         /**
@@ -332,6 +334,10 @@ export class DatePicker implements Validator, OnInit, OnDestroy, OnChanges, Cont
         this.visibleDays = [];
         this.view = PickerConstants.PICKER_VIEW_DATE;
         this.viewStack = [];
+
+        this.onParentScroll = () => {
+            BehavioralFixes.closeDropDown(this.elementRef.nativeElement, this);
+        }
     }
 
     yearSelection() {
@@ -349,7 +355,7 @@ export class DatePicker implements Validator, OnInit, OnDestroy, OnChanges, Cont
          * (we only want to have the popup closed when we click on the outside)
          *
          */
-        BehavioralFixes.registerPopupBindings(this.elementRef.nativeElement);
+        BehavioralFixes.registerPopupBindings(this.elementRef.nativeElement, this);
 
         /**
          * we change the key handling a little bit
@@ -956,7 +962,7 @@ export class DatePicker implements Validator, OnInit, OnDestroy, OnChanges, Cont
         this.view = PickerConstants.DEFAULT_PICKER_MODE;
         this.viewStack = [];
         this.pickerVisible = false;
-        BehavioralFixes.unregisterDocumentBindings(this);
+        BehavioralFixes.unregisterDocumentBindings(this.elementRef.nativeElement, this);
         BehavioralFixes.closeDropDown(this.elementRef.nativeElement, this);
         this.elementRef.nativeElement.querySelectorAll("input[type=text]")[0].focus();
     };
@@ -1042,7 +1048,7 @@ export class DatePicker implements Validator, OnInit, OnDestroy, OnChanges, Cont
 
 
     ngOnDestroy() {
-        BehavioralFixes.unregisterDocumentBindings(this);
+        BehavioralFixes.unregisterDocumentBindings(this.elementRef.nativeElement, this);
     }
 
 

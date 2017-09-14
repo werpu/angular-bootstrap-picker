@@ -63,6 +63,8 @@ export class _DatePickerController {
     buttonStyleClass: string;/*optional stylecass for the button*/
 
 
+    private onParentScroll: Function;
+
     constructor(private $scope: IScope, private $element: JQuery, private $timeout: ITimeoutService) {
 
         /**
@@ -87,7 +89,7 @@ export class _DatePickerController {
 
 
         $scope.$on("$destroy", () => {
-            BehavioralFixes.unregisterDocumentBindings(this);
+            BehavioralFixes.unregisterDocumentBindings($element[0], this);
         });
 
         /*we do the proper max min date validity checks over our setters*/
@@ -170,6 +172,11 @@ export class _DatePickerController {
                 });
             }
         });
+
+
+        this.onParentScroll = () => {
+            BehavioralFixes.closeDropDown(this.$element[0], this);
+        }
 
     }
 
@@ -643,7 +650,7 @@ export class _DatePickerController {
         this.view = PickerConstants.DEFAULT_PICKER_MODE;
         this.viewStack = [];
         this.pickerVisible = false;
-        BehavioralFixes.unregisterDocumentBindings(this);
+        BehavioralFixes.unregisterDocumentBindings(this.$element[0], this);
         BehavioralFixes.closeDropDown(this.$element[0] , this);
         this.$element.find("input[type=text]:first").focus();
     };
@@ -712,7 +719,7 @@ export class _DatePickerController {
              * (we only want to have the popup closed when we click on the outside)
              *
              */
-            BehavioralFixes.registerPopupBindings(this.$element[0]);
+            BehavioralFixes.registerPopupBindings(this.$element[0], this);
 
             /**
              * we change the key handling a little bit

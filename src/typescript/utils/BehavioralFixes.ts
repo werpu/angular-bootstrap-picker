@@ -16,6 +16,7 @@
  */
 
 //https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Array/from
+
 if (!(<any>Array).from) {
     (<any>Array).from = (function () {
         var toStr = Object.prototype.toString;
@@ -24,8 +25,12 @@ if (!(<any>Array).from) {
         };
         var toInteger = function (value: any) {
             var number = Number(value);
-            if (isNaN(number)) { return 0; }
-            if (number === 0 || !isFinite(number)) { return number; }
+            if (isNaN(number)) {
+                return 0;
+            }
+            if (number === 0 || !isFinite(number)) {
+                return number;
+            }
             return (number > 0 ? 1 : -1) * Math.floor(Math.abs(number));
         };
         var maxSafeInteger = Math.pow(2, 53) - 1;
@@ -98,7 +103,7 @@ export interface SelectableNode extends NodeSelector, HTMLElement {
 
 }
 
-type ClickCallback = (button : SelectableNode) => any;
+type ClickCallback = (button: SelectableNode) => any;
 
 /**
  * Some bootstrtrap behavioral fixes
@@ -111,7 +116,7 @@ export class BehavioralFixes {
      * @param  {String} selector Selector to match against [optional]
      * @return {Array}           The parent elements
      */
-    static getParents( elem: SelectableNode, selector?: string ): Array<SelectableNode> {
+    static getParents(elem: SelectableNode, selector?: string): Array<SelectableNode> {
 
         if (!Element.prototype.matches) {
             Element.prototype.matches =
@@ -120,10 +125,11 @@ export class BehavioralFixes {
                 Element.prototype.msMatchesSelector ||
                 (<any>Element.prototype).oMatchesSelector ||
                 (<any>Element.prototype).webkitMatchesSelector ||
-                function(s) {
+                function (s) {
                     var matches = (this.document || this.ownerDocument).querySelectorAll(s),
                         i = matches.length;
-                    while (--i >= 0 && matches.item(i) !== this) {}
+                    while (--i >= 0 && matches.item(i) !== this) {
+                    }
                     return i > -1;
                 };
         }
@@ -132,15 +138,15 @@ export class BehavioralFixes {
         var parents: Array<SelectableNode> = [];
 
         // Get matching parent elements
-        for ( ; elem && (<any>elem) !== document; elem = (<any>elem).parentNode ) {
+        for (; elem && (<any>elem) !== document; elem = (<any>elem).parentNode) {
 
             // Add matching parents to array
-            if ( selector ) {
-                if (elem.matches && elem.matches( selector ) ) {
-                    parents.push( elem);
+            if (selector) {
+                if (elem.matches && elem.matches(selector)) {
+                    parents.push(elem);
                 }
             } else {
-                parents.push( elem );
+                parents.push(elem);
             }
 
         }
@@ -148,6 +154,10 @@ export class BehavioralFixes {
         return parents;
 
     };
+
+    private static isScrollable(node: SelectableNode): boolean {
+        return node.scrollWidth > node.clientWidth || node.scrollHeight > node.clientHeight;
+    }
 
     private static trigger(element: SelectableNode, selector: string, trigger: ClickCallback) {
         (<any>Array).from(element.querySelectorAll(selector)).forEach(trigger);
@@ -168,13 +178,13 @@ export class BehavioralFixes {
     static registerKeyBindings(element: SelectableNode) {
 
 
-        element.addEventListener("keydown",  (event: KeyboardEvent) => {
+        element.addEventListener("keydown", (event: KeyboardEvent) => {
             /*
              * enter should trigger a form submit
              */
             if (event.keyCode == 13 /*enter*/) {
                 event.preventDefault();
-                BehavioralFixes.trigger(BehavioralFixes.getParents(element, "form")[0],"input[type=submit]", (button : SelectableNode) =>button.click());
+                BehavioralFixes.trigger(BehavioralFixes.getParents(element, "form")[0], "input[type=submit]", (button: SelectableNode) => button.click());
 
                 return false;
             }
@@ -183,7 +193,7 @@ export class BehavioralFixes {
              * arrow down should open the date picker
              */
             if (event.keyCode == 40 /*arrow down*/) {
-                BehavioralFixes.trigger(element,".picker-open", (button : SelectableNode) =>button.click());
+                BehavioralFixes.trigger(element, ".picker-open", (button: SelectableNode) => button.click());
 
                 return false;
             }
@@ -192,7 +202,7 @@ export class BehavioralFixes {
              * escape should close it
              */
             if (event.keyCode == 27 /*escape*/) {
-                BehavioralFixes.trigger(element,".picker-close", (button : SelectableNode) =>button.click());
+                BehavioralFixes.trigger(element, ".picker-close", (button: SelectableNode) => button.click());
 
                 return false;
             }
@@ -209,8 +219,8 @@ export class BehavioralFixes {
     static registerDocumentBindings(element: SelectableNode, controller: any) {
         if (!controller.documentClickHandler) {
             var clickHandler = () => {
-                    BehavioralFixes.unregisterDocumentBindings(controller);
-                    BehavioralFixes.trigger(element,".picker-close", (button : SelectableNode) =>button.click());
+                BehavioralFixes.unregisterDocumentBindings(element, controller);
+                BehavioralFixes.trigger(element, ".picker-close", (button: SelectableNode) => button.click());
             };
 
             document.addEventListener("click", clickHandler);
@@ -224,14 +234,17 @@ export class BehavioralFixes {
      * @param clickHandler
      * @param controller
      */
-    static unregisterDocumentBindings(controller: any) {
+    static unregisterDocumentBindings(element: SelectableNode, controller: any) {
         if (controller.documentClickHandler) {
             document.removeEventListener("click", controller.documentClickHandler);
+            //TODO add parent scroll removal here
             controller.documentClickHandler = null;
         }
+        BehavioralFixes.offScroll(element, controller)
+
     }
 
-    static registerPopupBindings(element: SelectableNode) {
+    static registerPopupBindings(element: SelectableNode, controller: any) {
         (<any>Array).from(element.querySelectorAll(".picker-popup")).forEach((node: SelectableNode) => {
             node.addEventListener("click", (event: UIEvent) => {
                 event.stopImmediatePropagation();
@@ -240,12 +253,32 @@ export class BehavioralFixes {
         });
     }
 
+
     static openDropDown(element: SelectableNode, controller: any) {
 
         controller.isOpen = true;
         (<any>Array).from(element.querySelectorAll(".dropdown")).forEach((node: SelectableNode) => {
             node.classList.add("open");
+
         });
+        if (controller.appendToBody) {
+            (<any>Array).from(element.querySelectorAll(".dropdown-menu")).forEach((node: SelectableNode) => {
+                node.classList.add("fixedPos");
+
+                setTimeout(() => {
+                    let top = element.getBoundingClientRect().top + element.querySelectorAll("input[type=\"text\"]")[0].clientHeight;
+                    let left = element.getBoundingClientRect().left + element.clientWidth - node.clientWidth;
+
+                    node.style.top = top + "px";
+                    node.style.left = left + "px";
+                    node.style.right = "auto";
+                }, 100);
+
+            });
+        }
+
+
+        this.onScroll(controller, element);
 
     }
 
@@ -254,6 +287,33 @@ export class BehavioralFixes {
         (<any>Array).from(element.querySelectorAll(".dropdown")).forEach((node: SelectableNode) => {
             node.classList.remove("open");
         });
+        if (controller.appendToBody) {
+            (<any>Array).from(element.querySelectorAll(".dropdown-menu")).forEach((node: SelectableNode) => {
+                node.classList.add("fixedPos");
+            });
+        }
+
+        BehavioralFixes.offScroll(controller, element);
     }
 
+    private static onScroll(controller: any, element: SelectableNode) {
+
+        if (controller.appendToBody && controller.onParentScroll) {
+            (<any>Array).from(BehavioralFixes.getParents(element, "*")).forEach((node: SelectableNode) => {
+                if (BehavioralFixes.isScrollable(node)) {
+                    node.addEventListener("scroll", controller.onParentScroll);
+                }
+                window.addEventListener("scroll", controller.onParentScroll);
+            });
+        }
+    }
+
+    private static offScroll(controller: any, element: SelectableNode) {
+        if (controller.appendToBody && controller.onParentScroll) {
+            (<any>Array).from(BehavioralFixes.getParents(element, "*")).forEach(() => (node: SelectableNode) => {
+                node.removeEventListener("scroll", controller.onParentScroll);
+            });
+            window.removeEventListener("scroll", controller.onParentScroll);
+        }
+    }
 }

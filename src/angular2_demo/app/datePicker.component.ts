@@ -120,6 +120,25 @@ declare var moment: any;
                     </td>
                 </tr>
             </table>
+
+
+
+            <p>Date Picker with position fixed</p>
+            {{currentDate}}{{currentDate2}}
+
+            <div style="display: block; overflow-y: auto; height: 200px; width: 300px;">
+               
+                        <date-picker name="scrollPicker" 
+                                     [(ngModel)]="currentDate"
+                                     [startDate]="minDate" [endDate]="maxDate" [timezone]="'Europe/Zurich'"
+                                     [appendToBody]="true"   
+                                    
+                        >
+
+                        </date-picker>
+                        <div style="display block; height: 400px; width: 400px"></div>
+                  
+            </div>
         </form>
 
     `

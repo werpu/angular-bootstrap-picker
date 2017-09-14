@@ -3,6 +3,10 @@ date-picker {
     display: block;
 }
 
+date-picker .fixedPos {
+    position: fixed;
+}
+
 date-picker .picker-popup {
     /*position: absolute;
     right: 0px;

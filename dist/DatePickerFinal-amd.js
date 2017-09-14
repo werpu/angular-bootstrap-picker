@@ -92,7 +92,8 @@ define("datePicker/DatePickerView", ["require", "exports"], function (require, e
         onYearSelection: "&",
         onMonthSelection: "&",
         onDateSelection: "&",
-        buttonStyleClass: "@?" /*styleclass of the button*/
+        buttonStyleClass: "@?",
+        appendToBody: "<?" /*if set to true the popup is relative to the body (position fixed)*/
     };
     _DatePickerView.require = {
         "ngModel": 'ngModel',
@@ -697,7 +698,8 @@ define("utils/BehavioralFixes", ["require", "exports"], function (require, expor
                         Element.prototype.webkitMatchesSelector ||
                         function (s) {
                             var matches = (this.document || this.ownerDocument).querySelectorAll(s), i = matches.length;
-                            while (--i >= 0 && matches.item(i) !== this) { }
+                            while (--i >= 0 && matches.item(i) !== this) {
+                            }
                             return i > -1;
                         };
             }
@@ -718,6 +720,9 @@ define("utils/BehavioralFixes", ["require", "exports"], function (require, expor
             return parents;
         };
         ;
+        BehavioralFixes.isScrollable = function (node) {
+            return node.scrollWidth > node.clientWidth || node.scrollHeight > node.clientHeight;
+        };
         BehavioralFixes.trigger = function (element, selector, trigger) {
             Array.from(element.querySelectorAll(selector)).forEach(trigger);
         };
@@ -766,7 +771,7 @@ define("utils/BehavioralFixes", ["require", "exports"], function (require, expor
         BehavioralFixes.registerDocumentBindings = function (element, controller) {
             if (!controller.documentClickHandler) {
                 var clickHandler = function () {
-                    BehavioralFixes.unregisterDocumentBindings(controller);
+                    BehavioralFixes.unregisterDocumentBindings(element, controller);
                     BehavioralFixes.trigger(element, ".picker-close", function (button) { return button.click(); });
                 };
                 document.addEventListener("click", clickHandler);
@@ -779,13 +784,15 @@ define("utils/BehavioralFixes", ["require", "exports"], function (require, expor
          * @param clickHandler
          * @param controller
          */
-        BehavioralFixes.unregisterDocumentBindings = function (controller) {
+        BehavioralFixes.unregisterDocumentBindings = function (element, controller) {
             if (controller.documentClickHandler) {
                 document.removeEventListener("click", controller.documentClickHandler);
+                //TODO add parent scroll removal here
                 controller.documentClickHandler = null;
             }
+            BehavioralFixes.offScroll(element, controller);
         };
-        BehavioralFixes.registerPopupBindings = function (element) {
+        BehavioralFixes.registerPopupBindings = function (element, controller) {
             Array.from(element.querySelectorAll(".picker-popup")).forEach(function (node) {
                 node.addEventListener("click", function (event) {
                     event.stopImmediatePropagation();
@@ -798,12 +805,49 @@ define("utils/BehavioralFixes", ["require", "exports"], function (require, expor
             Array.from(element.querySelectorAll(".dropdown")).forEach(function (node) {
                 node.classList.add("open");
             });
+            if (controller.appendToBody) {
+                Array.from(element.querySelectorAll(".dropdown-menu")).forEach(function (node) {
+                    node.classList.add("fixedPos");
+                    setTimeout(function () {
+                        var top = element.getBoundingClientRect().top + element.querySelectorAll("input[type=\"text\"]")[0].clientHeight;
+                        var left = element.getBoundingClientRect().left + element.clientWidth - node.clientWidth;
+                        node.style.top = top + "px";
+                        node.style.left = left + "px";
+                        node.style.right = "auto";
+                    }, 100);
+                });
+            }
+            this.onScroll(controller, element);
         };
         BehavioralFixes.closeDropDown = function (element, controller) {
             controller.isOpen = false;
             Array.from(element.querySelectorAll(".dropdown")).forEach(function (node) {
                 node.classList.remove("open");
             });
+            if (controller.appendToBody) {
+                Array.from(element.querySelectorAll(".dropdown-menu")).forEach(function (node) {
+                    node.classList.add("fixedPos");
+                });
+            }
+            BehavioralFixes.offScroll(controller, element);
+        };
+        BehavioralFixes.onScroll = function (controller, element) {
+            if (controller.appendToBody && controller.onParentScroll) {
+                Array.from(BehavioralFixes.getParents(element, "*")).forEach(function (node) {
+                    if (BehavioralFixes.isScrollable(node)) {
+                        node.addEventListener("scroll", controller.onParentScroll);
+                    }
+                    window.addEventListener("scroll", controller.onParentScroll);
+                });
+            }
+        };
+        BehavioralFixes.offScroll = function (controller, element) {
+            if (controller.appendToBody && controller.onParentScroll) {
+                Array.from(BehavioralFixes.getParents(element, "*")).forEach(function () { return function (node) {
+                    node.removeEventListener("scroll", controller.onParentScroll);
+                }; });
+                window.removeEventListener("scroll", controller.onParentScroll);
+            }
         };
         return BehavioralFixes;
     }());
@@ -872,7 +916,7 @@ define("datePicker/DatePickerController", ["require", "exports", "utils/DatePick
             this.view = DateUtils_1.PickerConstants.PICKER_VIEW_DATE;
             this.viewStack = [];
             $scope.$on("$destroy", function () {
-                BehavioralFixes_1.BehavioralFixes.unregisterDocumentBindings(_this);
+                BehavioralFixes_1.BehavioralFixes.unregisterDocumentBindings($element[0], _this);
             });
             /*we do the proper max min date validity checks over our setters*/
             Object.defineProperty(this, "currentHour", {
@@ -946,6 +990,9 @@ define("datePicker/DatePickerController", ["require", "exports", "utils/DatePick
                     });
                 }
             });
+            this.onParentScroll = function () {
+                BehavioralFixes_1.BehavioralFixes.closeDropDown(_this.$element[0], _this);
+            };
         }
         /**
          * checks if the current picker date is the selected one
@@ -1346,7 +1393,7 @@ define("datePicker/DatePickerController", ["require", "exports", "utils/DatePick
             this.view = DateUtils_1.PickerConstants.DEFAULT_PICKER_MODE;
             this.viewStack = [];
             this.pickerVisible = false;
-            BehavioralFixes_1.BehavioralFixes.unregisterDocumentBindings(this);
+            BehavioralFixes_1.BehavioralFixes.unregisterDocumentBindings(this.$element[0], this);
             BehavioralFixes_1.BehavioralFixes.closeDropDown(this.$element[0], this);
             this.$element.find("input[type=text]:first").focus();
         };
@@ -1413,7 +1460,7 @@ define("datePicker/DatePickerController", ["require", "exports", "utils/DatePick
                  * (we only want to have the popup closed when we click on the outside)
                  *
                  */
-                BehavioralFixes_1.BehavioralFixes.registerPopupBindings(_this.$element[0]);
+                BehavioralFixes_1.BehavioralFixes.registerPopupBindings(_this.$element[0], _this);
                 /**
                  * we change the key handling a little bit
                  * an enter should trigger a form submit

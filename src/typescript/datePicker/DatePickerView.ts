@@ -200,7 +200,8 @@ export class _DatePickerView {
         onYearSelection: "&", /*function($picker, $date) callback for the year selection*/
         onMonthSelection: "&", /*function($picker, $date) callback for the month selection*/
         onDateSelection: "&", /*function($picker, $date) callback for the date selection*/
-        buttonStyleClass: "@?" /*styleclass of the button*/
+        buttonStyleClass: "@?", /*styleclass of the button*/
+        appendToBody: "<?" /*if set to true the popup is relative to the body (position fixed)*/
     };
 
     static require = {
