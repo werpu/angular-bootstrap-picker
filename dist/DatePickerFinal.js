@@ -1260,7 +1260,7 @@ var BehavioralFixes = (function () {
             Array.from(element.querySelectorAll(".dropdown-menu")).forEach(function (node) {
                 node.classList.add("fixedPos");
                 setTimeout(function () {
-                    var top = element.getBoundingClientRect().top + element.querySelectorAll("input[type=\"text\"]")[0].clientHeight;
+                    var top = element.querySelectorAll("input[type=\"text\"]")[0].getBoundingClientRect().bottom;
                     var left = element.getBoundingClientRect().left + element.clientWidth - node.clientWidth;
                     if (top + node.clientHeight + 10 > window.innerHeight) {
                         top = element.getBoundingClientRect().top - 5 - node.clientHeight;

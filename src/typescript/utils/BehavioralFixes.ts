@@ -274,7 +274,7 @@ export class BehavioralFixes {
                 node.classList.add("fixedPos");
 
                 setTimeout(() => {
-                    let top = element.getBoundingClientRect().top + element.querySelectorAll("input[type=\"text\"]")[0].clientHeight;
+                    let top = element.querySelectorAll("input[type=\"text\"]")[0].getBoundingClientRect().bottom;
                     let left = element.getBoundingClientRect().left + element.clientWidth - node.clientWidth;
 
                     if(top + node.clientHeight + 10 > window.innerHeight) {

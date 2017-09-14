@@ -62,6 +62,7 @@ export class _DatePickerController {
 
     buttonStyleClass: string;/*optional stylecass for the button*/
 
+    appendToBody:boolean;
 
     private onParentScroll: Function;
 
