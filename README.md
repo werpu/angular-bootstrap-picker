@@ -41,10 +41,10 @@ Both things might be added in the future if the need arises or someone provides 
 
 ## Installation
 
-Installation via bower
+Installation via npm
 
 ```
-bower install werpu/angular-bootstrap-picker --save
+npm install angular-bootstrap-picker --save
 ```
 
 ## Demo
@@ -100,6 +100,10 @@ You simply can use the date picker like every other angular module. Once importe
 * pickerOnlyMode {"SINGLE_BUFFERED" | "DOUBLE_BUFFERED"} if this is set, the date picker is shown in picker only mode, SINGLE_BUFFRED means that the selection
 is instantly reflected in the model. DOUBLE_BUFFERED means a set button has to be pressed to update the model.
 * endOfDay {optional:boolean} if a new date is picked the end of day is returned automatically (do not mix this with pickermode DATE_TIME)
+* appendToBody {optional:boolean} this is a styling related attribute, sometimes a relative positioning of the popup does not work in certain styling
+situations (aka embedded scrollbars for instance), in thise case you can set this attribute to true and a position fixed positioning
+with popop offset calculation is used.
+
 
 ### Following callbacks are available
 
