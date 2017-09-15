@@ -1,0 +1,187 @@
+date-picker {
+    position: relative;
+    display: block;
+}
+
+date-picker .fixedPos {
+    position: fixed;
+}
+
+date-picker .picker-popup {
+    /*position: absolute;
+    right: 0px;
+    z-index: 10;
+    display: block;*/
+    left: auto;
+    right: 0;
+    padding: 5px;
+
+    border: 1px solid silver;
+    background-color: #f2f2f2;
+}
+
+date-picker .picker-standalone .picker-popup .content {
+    display: table;
+}
+
+date-picker .picker-popup thead,
+date-picker .picker-popup table,
+event-picker .picker-popup thead,
+event-picker .picker-popup table
+
+{
+    border-bottom: 1px solid #5F82D9;
+}
+
+date-picker .picker-popup td,
+event-picker td
+{
+    padding: 5px;
+    text-align: center;
+    cursor: pointer;
+    color: #337ab7;
+}
+
+date-picker .picker-popup td.no-link,
+event-picker  td.no-link
+{
+    color: inherit;
+    cursor: inherit;
+}
+
+date-picker .picker-popup td:hover:not(.no-link),
+date-picker .picker-popup td:focus:not(.no-link),
+event-picker td.event:hover:not(.no-link),
+event-picker td.event:focus:not(.no-link)
+{
+    color: #23527c;
+    text-decoration: underline;
+}
+
+event-picker td.noevent,
+event-picker td.noevent,
+event-picker td.event.invalid:hover:not(.no-link),
+event-picker td.event.inalid:focus:not(.no-link)
+{
+    color: inherit;
+    text-decoration: inherit;
+
+}
+
+date-picker .picker-popup td.invalid,
+date-picker .picker-popup td.invalid:hover,
+event-picker td.invalid,
+event-picker td.invalid:hover{
+    color: grey;
+    cursor: inherit;
+    text-decoration: inherit;
+}
+
+
+
+date-picker .picker-popup td.chosen,
+event-picker td.chosen
+{
+    border: 1px dotted silver;
+    background-color: #eaeaea;
+}
+
+date-picker .picker-popup td.selected,
+event-picker td.selected
+{
+    background-color: white;
+}
+
+
+date-picker .picker-popup td.today,
+event-picker td.today
+{
+    color: #f25b15;
+}
+
+date-picker .picker-popup td.calendarWeek,
+date-picker .picker-popup td.dayOfWeek,
+event-picker td.calendarWeek,
+event-picker td.dayOfWeek
+{
+    background-color: #5F82D9;
+    color: white;
+    cursor: inherit;
+    text-decoration: inherit !important;
+}
+
+date-picker .picker-popup td.outside,
+event-picker td.outside
+{
+    background-color: #cfcfcf;
+}
+
+
+date-picker table,
+event-picker table
+{
+    margin-bottom: 5px;
+}
+
+date-picker.ng-invalid input {
+    border-color: red !important;
+}
+
+date-picker .bottom-buttons,
+event-picker .bottom-buttons
+{
+    text-align: right;
+    padding-right: 0;
+}
+
+
+date-picker .time-picker table {
+    width: 100%;
+}
+
+date-picker .time-picker td.glyphicon {
+    display:table-cell;
+}
+
+date-picker .time-picker input[type="text"] {
+    width: 30px;
+    text-align: center;
+}
+
+date-picker .picker-popup td.invalid.picker-title,
+event-picker td.invalid.picker-title
+{
+    color: inherit;
+    border-bottom: 1px solid #5F82D9;
+    font-size: 15px;
+}
+
+
+date-picker .additional-buttons,
+event-picker .additional-buttons{
+    display: inline;
+}
+
+
+
+event-picker table {
+    float: left;
+    margin-right: 10px;
+}
+
+
+event-picker .event {
+    border: 1px dotted silver;
+}
+
+event-picker .event.invalid {
+    border: none;
+}
+
+event-picker .invalid {
+    cursor: default;
+}
+
+event-picker .selected {
+    background-color: aliceblue !important;
+}
