@@ -854,6 +854,7 @@ define("utils/BehavioralFixes", ["require", "exports"], function (require, expor
                         node.addEventListener("scroll", controller.onParentScroll);
                     }
                     window.addEventListener("scroll", controller.onParentScroll);
+                    window.addEventListener("resize", controller.onParentScroll);
                 });
             }
         };
@@ -863,6 +864,7 @@ define("utils/BehavioralFixes", ["require", "exports"], function (require, expor
                     node.removeEventListener("scroll", controller.onParentScroll);
                 }; });
                 window.removeEventListener("scroll", controller.onParentScroll);
+                window.removeEventListener("resize", controller.onParentScroll);
             }
         };
         return BehavioralFixes;

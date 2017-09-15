@@ -321,6 +321,7 @@ export class BehavioralFixes {
                     node.addEventListener("scroll", controller.onParentScroll);
                 }
                 window.addEventListener("scroll", controller.onParentScroll);
+                window.addEventListener("resize", controller.onParentScroll);
             });
         }
     }
@@ -331,6 +332,7 @@ export class BehavioralFixes {
                 node.removeEventListener("scroll", controller.onParentScroll);
             });
             window.removeEventListener("scroll", controller.onParentScroll);
+            window.removeEventListener("resize", controller.onParentScroll);
         }
     }
 }

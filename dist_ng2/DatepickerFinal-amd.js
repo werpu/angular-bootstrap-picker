@@ -430,6 +430,7 @@ define("typescript/utils/BehavioralFixes", ["require", "exports"], function (req
                         node.addEventListener("scroll", controller.onParentScroll);
                     }
                     window.addEventListener("scroll", controller.onParentScroll);
+                    window.addEventListener("resize", controller.onParentScroll);
                 });
             }
         };
@@ -439,6 +440,7 @@ define("typescript/utils/BehavioralFixes", ["require", "exports"], function (req
                     node.removeEventListener("scroll", controller.onParentScroll);
                 }; });
                 window.removeEventListener("scroll", controller.onParentScroll);
+                window.removeEventListener("resize", controller.onParentScroll);
             }
         };
         return BehavioralFixes;

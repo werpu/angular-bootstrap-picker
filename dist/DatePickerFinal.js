@@ -1301,6 +1301,7 @@ var BehavioralFixes = (function () {
                     node.addEventListener("scroll", controller.onParentScroll);
                 }
                 window.addEventListener("scroll", controller.onParentScroll);
+                window.addEventListener("resize", controller.onParentScroll);
             });
         }
     };
@@ -1310,6 +1311,7 @@ var BehavioralFixes = (function () {
                 node.removeEventListener("scroll", controller.onParentScroll);
             }; });
             window.removeEventListener("scroll", controller.onParentScroll);
+            window.removeEventListener("resize", controller.onParentScroll);
         }
     };
     return BehavioralFixes;
