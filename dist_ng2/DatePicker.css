@@ -3,6 +3,10 @@ date-picker {
     display: block;
 }
 
+hidden {
+    visibility: hidden !important;
+}
+
 date-picker .fixedPos {
     position: fixed;
 }

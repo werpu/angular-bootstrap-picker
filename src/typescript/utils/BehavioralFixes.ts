@@ -272,21 +272,27 @@ export class BehavioralFixes {
         if (controller.appendToBody) {
             (<any>Array).from(element.querySelectorAll(".dropdown-menu")).forEach((node: SelectableNode) => {
                 node.classList.add("fixedPos");
+                //node.classList.add("hidden");
 
                 setTimeout(() => {
-                    let top = element.querySelectorAll("input[type=\"text\"]")[0].getBoundingClientRect().bottom;
-                    let left = element.getBoundingClientRect().left + element.clientWidth - node.clientWidth;
+                    try {
+                        let top = element.querySelectorAll("input[type=\"text\"]")[0].getBoundingClientRect().bottom;
+                        let left = element.getBoundingClientRect().left + element.clientWidth - node.clientWidth;
 
-                    if(top + node.clientHeight + 10 > window.innerHeight) {
-                        top = element.getBoundingClientRect().top - 5 - node.clientHeight;
-                        node.classList.add("top");
-                    } else {
-                        node.classList.remove("top");
+                        if(top + node.clientHeight + 10 > window.innerHeight) {
+                            top = element.querySelectorAll("input[type=\"text\"]")[0].getBoundingClientRect().top - 5 - node.clientHeight;
+                            node.classList.add("top");
+                        } else {
+                            node.classList.remove("top");
+                        }
+
+                        node.style.top = top + "px";
+                        node.style.left = left + "px";
+                        node.style.right = "auto";
+                    } finally {
+                       // node.classList.remove("hidden");
                     }
 
-                    node.style.top = top + "px";
-                    node.style.left = left + "px";
-                    node.style.right = "auto";
                 }, 100);
 
             });
