@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "outDir": "../../dist_ng2/",
+    "outDir": "../../dist_ng2/commonjs",
     "target": "es5",
     "module": "commonjs",
     "moduleResolution": "node",
